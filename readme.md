@@ -42,3 +42,18 @@ npm run dev:local
 ```
 
 - [ ] **TODO: this**
+
+## Contribution
+
+Let's try to follow [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/#summary). Use one of these prefixes for commit messages:
+
+- fix: 
+- feat: 
+- build: 
+- chore: 
+- ci: 
+- docs: 
+- style: 
+- refactor: 
+- perf: 
+- test: 
