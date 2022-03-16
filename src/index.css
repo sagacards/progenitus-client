@@ -1,13 +1,55 @@
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+:root {
+    --chrome-1-dark: #000;
+    --chrome-2-dark: #333;
+    --chrome-3-dark: #666;
+    --chrome-4-dark: #999;
+    --chrome-5-dark: #CCC;
+    --chrome-6-dark: #FFF;
+    --chrome-1-light: #FFF;
+    --chrome-2-light: #CCC;
+    --chrome-3-light: #999;
+    --chrome-4-light: #666;
+    --chrome-5-light: #333;
+    --chrome-6-light: #000;
+
+    --background: var(--chrome-1-dark);
+    --foreground: var(--chrome-6-dark);
+};
+
+html {
+    --background: var(--chrome-1-dark);
+    --foreground: var(--chrome-6-dark);
+
+    --chrome-1: var(--chrome-1-dark);
+    --chrome-2: var(--chrome-2-dark);
+    --chrome-3: var(--chrome-3-dark);
+    --chrome-4: var(--chrome-4-dark);
+    --chrome-5: var(--chrome-5-dark);
+    --chrome-6: var(--chrome-6-dark);
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
+html[data-theme=light] {
+    --background: var(--chrome-1-light);
+    --foreground: var(--chrome-6-light);
+
+    --chrome-1: var(--chrome-1-light);
+    --chrome-2: var(--chrome-2-light);
+    --chrome-3: var(--chrome-3-light);
+    --chrome-4: var(--chrome-4-light);
+    --chrome-5: var(--chrome-5-light);
+    --chrome-6: var(--chrome-6-light);
+}
+
+html, body, #root {
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    margin: 0;
+
+    background-color: var(--background);
+    color: var(--foreground);
+}
+
+* {
+    box-sizing: border-box;
 }
