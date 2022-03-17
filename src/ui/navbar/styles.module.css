@@ -64,6 +64,22 @@
     display: none;
 }
 
+.balance {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    white-space: nowrap;
+}
+
+.icp {
+    font-size: .8em;
+}
+
+.icpImg {
+    width: 24px;
+}
+
 @media (max-width: 639px) {
     .breakNavToggle {
         display: block;

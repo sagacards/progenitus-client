@@ -22,7 +22,7 @@
 
 .root:hover .frame {
     box-shadow: 0 0 0 1px var(--chrome-3);
-    transform: scale(1.1);
+    transform: scale(1.05);
 }
 
 .root:active .frame {

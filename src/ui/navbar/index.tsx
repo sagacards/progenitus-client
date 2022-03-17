@@ -1,8 +1,9 @@
-import React from 'react'
-import Button from 'ui/button';
-import SchemeToggle from 'ui/scheme-toggle';
-import { MenuIcon } from 'ui/svgcons';
 import Styles from './styles.module.css'
+import React from 'react'
+import Button from 'ui/button'
+import SchemeToggle from 'ui/scheme-toggle'
+import { MenuIcon } from 'ui/svgcons'
+import ICP from 'assets/currency/icp.png'
 
 interface Props {
     children?: React.ReactNode;
@@ -36,6 +37,7 @@ export default function Navbar (props : Props) {
                         {i.name}
                     </div>)}
                 </div>
+                <div className={Styles.balance}>4 <span className={Styles.icp}>ICP</span> <img className={Styles.icpImg} src={ICP} /></div>
                 <Button>Connect</Button>
             </div>
             <div className={Styles.aside}>
