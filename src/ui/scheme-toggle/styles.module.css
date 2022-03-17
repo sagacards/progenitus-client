@@ -1,0 +1,52 @@
+.root {
+    width: 100%;
+    height: 100%;
+}
+
+.root svg {
+    transition: fill 160ms ease-out, stroke 240ms ease-out;
+}
+
+.dark:hover svg {
+    fill: #ffc400;
+    stroke: #ffc400;
+}
+.light:hover svg {
+    fill: #c5b8ff;
+    stroke: #c5b8ff;
+}
+
+/* Switcher */
+
+.switcher {
+    position: relative;
+    height: 100%;
+    width: 100%;
+
+    overflow: clip;
+}
+
+.switch .a, .switch .b {
+    transform: translateY(-100%);
+}
+
+.a, .b {
+    position: absolute;
+    transform: translateY(0%);
+    transition: transform 320ms ease-out;
+
+    height: 100%;
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.a {
+    top: 0%;
+}
+
+.b {
+    top: 100%;
+}

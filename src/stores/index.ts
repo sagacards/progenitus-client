@@ -5,7 +5,34 @@ type ColorScheme = 'dark' | 'light';
 interface Store {
     colorScheme: ColorScheme;
     setColorScheme: (c : ColorScheme) => void;
+
+    isLocal : boolean;
+    edges   : boolean;
+    setEdges: (e : boolean) => void;
+
 };
+
+const useStore = create<Store>((set, get) => ({
+
+    // Dev config
+
+    isLocal: import.meta.env.PROGENITUS_IS_LOCAL === 'true',
+    edges: false,
+    setEdges: (edges) => set({ edges }),
+
+    // Dark/Light Color Scheme
+
+    colorScheme: getUserColorScheme(),
+    setColorScheme (colorScheme) {
+        set({ colorScheme });
+        window.localStorage.setItem('prefers-color-scheme', colorScheme);
+        document.querySelector('html')?.setAttribute('data-theme', colorScheme);
+    },
+
+}));
+
+export default useStore;
+
 
 function getUserColorScheme () : ColorScheme {
     let scheme : ColorScheme = 'dark';
@@ -27,19 +54,4 @@ function getUserColorScheme () : ColorScheme {
     document.querySelector('html')?.setAttribute('data-theme', scheme);
 
     return scheme;
-}
-      
-const useStore = create<Store>((set, get) => ({
-
-    // Dark/Light Color Scheme
-
-    colorScheme: getUserColorScheme(),
-    setColorScheme (colorScheme) {
-        set({ colorScheme });
-        window.localStorage.setItem('prefers-color-scheme', colorScheme);
-        document.querySelector('html')?.setAttribute('data-theme', colorScheme);
-    },
-
-})) 
-
-export default useStore;
+};

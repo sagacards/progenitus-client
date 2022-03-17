@@ -5,6 +5,8 @@ import NodeGlobalsPolyfillPlugin from '@esbuild-plugins/node-globals-polyfill'
 
 // https://vitejs.dev/config/
 export default defineConfig({
+    envDir: './env',
+    envPrefix: 'PROGENITUS_',
     plugins: [react(), tsconfigPaths()],
     define: {
         global: 'window',

@@ -12,6 +12,13 @@
     --chrome-5-light: #333;
     --chrome-6-light: #000;
 
+    --chrome-1: var(--chrome-1-dark);
+    --chrome-2: var(--chrome-2-dark);
+    --chrome-3: var(--chrome-3-dark);
+    --chrome-4: var(--chrome-4-dark);
+    --chrome-5: var(--chrome-5-dark);
+    --chrome-6: var(--chrome-6-dark);
+
     --background: var(--chrome-1-dark);
     --foreground: var(--chrome-6-dark);
 };
@@ -48,6 +55,16 @@ html, body, #root {
 
     background-color: var(--background);
     color: var(--foreground);
+
+    transition: background-color 320ms ease-out, color 320ms ease-out;
+
+    font-family: inter, sans-serif;
+}
+
+@supports (font-variation-settings: normal) {
+    html, body, #root {
+        font-family: 'InterVariable', sans-serif;
+    }
 }
 
 * {

@@ -1,5 +1,8 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
+import '@fontsource/space-grotesk'
+import '@fontsource/inter/400.css'
+import '@fontsource/inter/variable.css'
 import './index.css'
 import App from './App'
 
