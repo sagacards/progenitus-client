@@ -28,7 +28,7 @@ function getUserColorScheme () : ColorScheme {
 
     return scheme;
 }
-
+      
 const useStore = create<Store>((set, get) => ({
 
     // Dark/Light Color Scheme
