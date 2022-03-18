@@ -7,6 +7,7 @@ import Container from 'ui/container';
 import Button from 'ui/button';
 import Hash from 'ui/hash';
 import useStore from 'stores/index';
+import { Navigate } from 'react-router-dom';
 
 interface Props { };
 
@@ -32,7 +33,7 @@ export default function AccountPage(props: Props) {
         },
     };
 
-    const { balance, fetchBalance} = useStore();
+    const { balance, fetchBalance, disconnect, connected } = useStore();
     React.useEffect(() => {
         fetchBalance();
     }, []);
@@ -108,7 +109,9 @@ export default function AccountPage(props: Props) {
         <div>{pageIndex + 1} / {pageCount}</div>
         {pageIndex < pageCount - 1 && <div onClick={nextPage}>Next</div>}
         {pageIndex > 0 && <div onClick={prevPage}>Prev</div>}
-    </div>
+    </div>;
+
+    if (!connected) return <Navigate to="/" />
 
     return <>
         <Navbar />
@@ -116,7 +119,10 @@ export default function AccountPage(props: Props) {
             <div className={Styles.root}>
                 <div className={Styles.top}>
                     <h1>Account</h1>
-                    <div className={Styles.address}>Address: <Hash>{account}</Hash></div>
+                    <div className={Styles.address}>
+                        <Button size='small' onClick={disconnect}>Disconnect</Button>
+                        Address: <Hash>{account}</Hash>
+                    </div>
                 </div>
                 <div className={Styles.card}>
                     <div>Balance</div>

@@ -10,6 +10,12 @@
     gap: 4px;
 }
 
+.address {
+    display: flex;
+    gap: 16px;
+    align-items: baseline;
+}
+
 .card {
     box-shadow: 0 0 0 1px var(--chrome-2);
     border-radius: 20px;
