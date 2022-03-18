@@ -6,6 +6,7 @@ interface Props {
     onClick?: (e : React.MouseEvent) => void;
     flush?: boolean;
     size?: Size;
+    alt?: boolean;
 }
 
 type Size = 'tiny' | 'small' | 'medium' | 'large' | 'xl';
@@ -23,10 +24,11 @@ export default function Button ({
     onClick,
     children,
     size = 'medium',
+    alt = false,
 } : Props) {
     const w = sizeMap[size], height = w, p = w/2;
     return <div
-        className={[Styles.root, flush ? Styles.flush : '', Styles[size]].join(' ')}
+        className={[Styles.root, flush ? Styles.flush : '', Styles[size], alt ? Styles.alt : ''].join(' ')}
         onClick={onClick}
         style={{ height, minWidth: w }}
     >

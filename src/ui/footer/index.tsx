@@ -2,45 +2,67 @@ import Styles from './styles.module.css'
 import React from 'react'
 import { FaInstagram, FaTwitter, FaDiscord } from 'react-icons/fa'
 import Button from 'ui/button';
+import Feed from 'assets/feed.xml'
 
 interface Props {
     children?: React.ReactNode;
 }
 
 export default function Footer (props : Props) {
-    // https://posts.saga.cards/feed
+    const feed : {figure : HTMLElement, link: string, date: string, title: string}[] = React.useMemo(() => {
+        const parser = new DOMParser();
+        return Feed.rss.channel[0].item.map((item : any) => {
+            const xml = parser.parseFromString(item['content:encoded'], 'text/html');
+            return {
+                figure: xml.querySelector('figure'),
+                link: item.link[0],
+                date: item.pubDate[0],
+                title: item.title[0],
+            }
+        });
+    }, []);
     return <div className={Styles.root}>
         <div className={Styles.container}>
             <div className={Styles.section}>
-                <div><strong>The Saga Tarot Network</strong></div>
-                <div className={Styles.links}>
-                    <div>
-                        <a href="https://legends.saga.cards">Legends Series</a>
+                <div className={Styles.column}>
+                    <div className={Styles.title}>The Saga Tarot Network</div>
+                    <div className={Styles.links}>
+                        <div className={Styles.smallTitle}>Info</div>
+                        <div>
+                            <a href="https://legends.saga.cards">Legends Series</a>
+                        </div>
+                        <div className={Styles.smallTitle}>Apps</div>
+                        <div>
+                            <a href="https://table.saga.cards">Tarot Table</a>
+                        </div>
+                        <div>
+                            <a href="https://l2jyf-nqaaa-aaaah-qadha-cai.raw.ic0.app">Daily Single Card Draw</a>
+                        </div>
                     </div>
                     <div>
-                        <a href="https://table.saga.cards">Tarot Table</a>
-                    </div>
-                    <div>
-                        <a href="https://l2jyf-nqaaa-aaaah-qadha-cai.raw.ic0.app">Daily Single Card Draw</a>
+                        <div className={Styles.socials}>
+                                <a className={Styles.social} href="https://twitter.com/sagacards">
+                            <Button size="large" alt>
+                                    <FaTwitter />
+                            </Button>
+                                </a>
+                                <a className={Styles.social} href="https://instagram.com/sagacards">
+                            <Button size="large" alt>
+                                    <FaInstagram />
+                            </Button>
+                                </a>
+                                <a className={Styles.social} href="http://discord.gg/jNgjgvzCGC">
+                            <Button size="large" alt>
+                                    <FaDiscord />
+                            </Button>
+                                </a>
+                        </div>
                     </div>
                 </div>
-                <div>
-                    <div className={Styles.socials}>
-                            <a className={Styles.social} href="https://twitter.com/sagacards">
-                        <Button size="large">
-                                <FaTwitter />
-                        </Button>
-                            </a>
-                            <a className={Styles.social} href="https://instagram.com/sagacards">
-                        <Button size="large">
-                                <FaInstagram />
-                        </Button>
-                            </a>
-                            <a className={Styles.social} href="http://discord.gg/jNgjgvzCGC">
-                        <Button size="large">
-                                <FaDiscord />
-                        </Button>
-                            </a>
+                <div className={Styles.column}>
+                    <div className={Styles.links}>
+                        <div className={Styles.smallTitle}>News</div>
+                        {feed.map((item, i) => <div><a href={item.link}>{item.title}</a></div>)}
                     </div>
                 </div>
             </div>

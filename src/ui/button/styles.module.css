@@ -12,13 +12,18 @@
 .frame {
     position: absolute;
     top: 0; left: 0;
+    z-index: 0;
 
     width: 100%;
     height: 100%;
 
     /* border-radius: 20px; */
     box-shadow: 0 0 0 1px var(--chrome-2);
-    transition: 160ms box-shadow ease-out, 160ms transform ease-out;
+    transition: 160ms box-shadow ease-out, 160ms transform ease-out, 320ms background-color ease-out;
+}
+
+.alt .frame {
+    background-color: var(--chrome-2);
 }
 
 .root:hover .frame {
@@ -32,6 +37,9 @@
 
 /* The contents of the component */
 .body {
+    position: relative;
+    z-index: 1;
+
     height: 100%;
     width: 100%;
  

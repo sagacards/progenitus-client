@@ -81,5 +81,5 @@ a, a:link, a:visited, a:active, a:hover {
 }
 
 a:hover {
-    filter: brightness(125%);
+    filter: brightness(150%);
 }

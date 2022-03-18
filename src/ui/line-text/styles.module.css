@@ -9,9 +9,8 @@
 .fore {
     padding: 5px;
     position: relative;
-    z-index: 1;
+    z-index: 2;
     
-    backdrop-filter: blur(5px) opacity(20%) ;
     
     color: var(--background);
 }
@@ -19,15 +18,16 @@
 .back {
     padding: 5px;
     position: absolute;
-    z-index: 0;
+    z-index: 1;
     top: 0; left: 0;
     
     width: 100%;
+    backdrop-filter: blur(10px) opacity(100%) ;
     
     -webkit-text-stroke-width: 2px;
-    -webkit-text-stroke-color: var(--chrome-4);
+    -webkit-text-stroke-color: rgb(255, 164, 252);
     -webkit-text-fill-color: transparent;
-    text-shadow: 0 0 5px rgba(255, 255, 255, .25);
+    text-shadow: 0 0 5px rgb(255, 164, 252);
 }
 
 .glow {
@@ -38,7 +38,7 @@
 
     width: 100%;
 
-    background: linear-gradient(45deg, rgb(175, 5, 166), rgb(83, 9, 168), rgb(28, 24, 255), rgb(0, 195, 255), rgb(0, 251, 63), rgb(255, 102, 0));
+    background: linear-gradient(50deg, rgb(88, 136, 238), rgb(88, 136, 238), rgb(222, 55, 255), rgb(255, 55, 75), rgb(255, 238, 55));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 }

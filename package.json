@@ -3,9 +3,10 @@
   "private": true,
   "version": "0.0.0",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview"
+    "dev": "npm run rss && vite",
+    "build": "tsc && npm run rss && vite build",
+    "preview": "vite preview",
+    "rss": "node ./rss.js"
   },
   "dependencies": {
     "@fontsource/inter": "^4.5.5",
@@ -20,9 +21,11 @@
     "@dfinity/identity": "^0.10.4",
     "@dfinity/principal": "^0.10.4",
     "@esbuild-plugins/node-globals-polyfill": "^0.1.1",
+    "@originjs/vite-plugin-content": "^1.0.1",
     "@types/react": "^17.0.33",
     "@types/react-dom": "^17.0.10",
     "@vitejs/plugin-react": "^1.0.7",
+    "axios": "^0.26.1",
     "ic-stoic-identity": "^2.0.0",
     "leva": "^0.9.23",
     "react-router-dom": "^6.2.2",

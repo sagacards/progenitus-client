@@ -12,9 +12,16 @@
     max-width: 1000px;
     width: 100%;
 
+    padding: 0 24px;
+
     display: flex;
     flex-direction: column;
     gap: 24px;
+}
+
+.title {
+    font-size: 18px;
+    font-weight: 500;
 }
 
 .section {
@@ -22,8 +29,15 @@
     padding-bottom: 24px;
 
     display: flex;
+    gap: 24px;
+    align-items: center;
+}
+
+.column {
+    display: flex;
     flex-direction: column;
     gap: 24px;
+    width: 100%;
 }
 
 .links {
@@ -44,13 +58,33 @@
 
     color: var(--chrome-5);
     font-size: 38px;
+
+    transition: 320ms ease-out color;
 }
 
 .foot {
     display: flex;
     justify-content: space-between;
     color: var(--chrome-3);
-    font-weight: bold;
+    font-weight: 500;
     font-size: 12px;
     /* text-transform: uppercase; */
+}
+
+.articleCard {
+    height: 160px;
+    box-shadow: 0 0 0 1px var(--chrome-2);
+    border-radius: 20px;
+    overflow: clip;
+}
+
+.articleCard img {
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+}
+
+.smallTitle {
+    margin: .5em 0;
+    font-weight: 500;
 }
