@@ -46,6 +46,7 @@ export default function AccountPage(props: Props) {
 
     // Fetch transactions from rosetta
     React.useEffect(() => {
+        if (!address) return;
         axios.post(`${Rosetta}/search/transactions`, data)
             .then(r => {
                 setTxs(r.data.transactions
@@ -62,7 +63,7 @@ export default function AccountPage(props: Props) {
                     .sort((a: Transaction, b: Transaction) => b.timestamp.getTime() - a.timestamp.getTime())
                 );
             })
-    }, []);
+    }, [address]);
 
     const columns = React.useMemo(() => [
         {
