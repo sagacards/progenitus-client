@@ -88,7 +88,7 @@
     width: 24px;
 }
 
-@media (max-width: 639px) {
+@media (max-width: 679px) {
     .breakNavToggle {
         display: block;
     }

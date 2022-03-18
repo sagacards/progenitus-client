@@ -62,7 +62,7 @@ export default function Footer (props : Props) {
                 <div className={Styles.column}>
                     <div className={Styles.links}>
                         <div className={Styles.smallTitle}>News</div>
-                        {feed.map((item, i) => <div><a href={item.link}>{item.title}</a></div>)}
+                        {feed.map((item, i) => <div key={`feed${i}`}><a href={item.link}>{item.title}</a></div>)}
                     </div>
                 </div>
             </div>

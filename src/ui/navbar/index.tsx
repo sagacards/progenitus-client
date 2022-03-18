@@ -5,6 +5,7 @@ import SchemeToggle from 'ui/scheme-toggle'
 import { MenuIcon } from 'ui/svgcons'
 import ICP from 'assets/currency/icp.png'
 import Container from 'ui/container'
+import { Link } from 'react-router-dom'
 
 interface Props {
     children?: React.ReactNode;
@@ -40,7 +41,7 @@ export default function Navbar (props : Props) {
                         </div>)}
                     </div>
                     <div className={Styles.balance}>4 <span className={Styles.icp}>ICP</span> <img className={Styles.icpImg} src={ICP} /></div>
-                    <Button onClick={() => alert(`that doesn't work yet 😅`)}>Connect</Button>
+                    <Link to="/connect" className="no-fancy"><Button>Connect</Button></Link>
                 </div>
                 <div className={Styles.aside}>
                     <div className={Styles.scheme}><SchemeToggle /></div>

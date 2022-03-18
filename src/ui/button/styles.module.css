@@ -6,6 +6,7 @@
     min-width: 40px; */
 
     cursor: pointer;
+    flex-shrink: 0;
 }
 
 /* Provides a fluid visual frame unbounded by the box model */
@@ -53,9 +54,29 @@
     font-weight: 500;
 }
 
+.icon {
+    position: absolute;
+    left: .5em; top: 0; bottom: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon img {
+    width: 70%;
+    height: 70%;
+    object-fit: contain;
+}
+
 /* .root:not(.flush) .body {
     padding: 0 20px;
 } */
+
+.large {
+    font-size: 18px;
+    font-weight: 450;
+}
 
 .xl {
     font-size: 24px;

@@ -1,0 +1,43 @@
+.root {
+    display: flex;
+    gap: 24px;
+    width: 100%;
+    height: 100%;
+}
+
+.art {
+    width: 38%;
+    height: 100%;
+    background-color: var(--chrome-2);
+    transition: 320ms ease-out background-color;
+}
+
+.content {
+    height: 100%;
+    width: 100%;
+    max-width: 380px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.wallets {
+    width: 100%;
+    max-width: 380px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    justify-content: stretch;
+}
+
+@media (max-width: 679px) {
+    .art {
+        display: none;
+    }
+
+    .content {
+        max-width: 100%;
+    }
+}

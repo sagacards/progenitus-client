@@ -7,6 +7,7 @@ interface Props {
     flush?: boolean;
     size?: Size;
     alt?: boolean;
+    icon?: React.ReactNode;
 }
 
 type Size = 'tiny' | 'small' | 'medium' | 'large' | 'xl';
@@ -25,6 +26,7 @@ export default function Button ({
     children,
     size = 'medium',
     alt = false,
+    icon,
 } : Props) {
     const w = sizeMap[size], height = w, p = w/2;
     return <div
@@ -34,6 +36,7 @@ export default function Button ({
     >
         <div className={Styles.frame} style={{ borderRadius: p }} />
         <div className={Styles.body} style={{ borderRadius: p, padding: flush ? '' : `0 ${p}px` }}>
+            {icon && <div className={Styles.icon} children={icon} />}
             {children}
         </div>
     </div>

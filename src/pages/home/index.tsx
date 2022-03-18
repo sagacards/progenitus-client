@@ -6,11 +6,15 @@ import LineText from 'ui/line-text';
 import Button from 'ui/button';
 import DropCardList from 'ui/drop-card/list';
 import CollectionCardList from 'ui/collection-card/list';
+import { Link } from 'react-router-dom';
+import Navbar from 'ui/navbar';
+import Footer from 'ui/footer';
 
 interface Props {};
 
 export default function HomePage () {
     return <>
+        <Navbar />
         <Container>
             <div className={Styles.root}>
                 <div className={Styles.splash}>
@@ -19,7 +23,7 @@ export default function HomePage () {
                         Project Progenitus is the <span className={Styles.rainbow}>Saga Tarot NFT Drop Hub</span> where we are bringing Open Tarot to life, one Legend mint at a time
                     </div>
                 </div>
-                <Button size="xl" onClick={() => alert(`that doesn't work yet 😅`)}>Connect</Button>
+                <Link className="no-fancy" to="/connect"><Button size="xl">Connect</Button></Link>
                 <div className={Styles.drops}>
                     <h2><LineText>Upcoming Drops</LineText></h2>
                     <DropCardList />
@@ -30,5 +34,6 @@ export default function HomePage () {
                 </div>
             </div>
         </Container>
+        <Footer />
     </>
 };

@@ -71,7 +71,7 @@ html, body, #root {
     box-sizing: border-box;
 }
 
-a, a:link, a:visited, a:active, a:hover {
+a:not(.no-fancy), a:link:not(.no-fancy), a:visited:not(.no-fancy), a:active:not(.no-fancy), a:hover:not(.no-fancy) {
     font-weight: 500;
     background: linear-gradient(50deg, rgb(88, 136, 238), rgb(222, 55, 255));
     -webkit-background-clip: text;
@@ -80,6 +80,15 @@ a, a:link, a:visited, a:active, a:hover {
     transition: filter 200ms ease-out;
 }
 
-a:hover {
+a:hover:not(.no-fancy) {
     filter: brightness(150%);
+}
+
+a.no-fancy {
+    text-decoration: none;
+    color: var(--foreground);
+}
+
+h1 {
+    font-size: 3em;
 }
