@@ -14,7 +14,7 @@ const sizeMap : { [key in Size] : number } = {
     tiny: 16,
     small: 24,
     medium: 40,
-    large: 62,
+    large: 56,
     xl: 80,
 }
 

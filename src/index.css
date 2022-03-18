@@ -70,3 +70,16 @@ html, body, #root {
 * {
     box-sizing: border-box;
 }
+
+a, a:link, a:visited, a:active, a:hover {
+    font-weight: 500;
+    background: linear-gradient(50deg, rgb(88, 136, 238), rgb(222, 55, 255));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+
+    transition: filter 200ms ease-out;
+}
+
+a:hover {
+    filter: brightness(125%);
+}
