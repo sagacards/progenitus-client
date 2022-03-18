@@ -1,18 +1,21 @@
-import { Leva } from 'leva';
 import React from 'react'
+import { Leva } from 'leva';
 import useStore from 'stores/index';
-import Container from 'ui/container';
 import Navbar from 'ui/navbar';
-import SchemeToggle from 'ui/scheme-toggle';
+import { Route, Routes } from 'react-router-dom';
+import HomePage from 'pages/home';
+import Footer from 'ui/footer';
 
 function App() {
-    const { colorScheme, setColorScheme, isLocal } = useStore();
-    return <Container>
+    const { isLocal } = useStore();
+    return <div>
         <Navbar />
-        <h1>Hello World!</h1>
-        <p>Lorem ipsum dolor sit amet...</p>
+        <Routes>
+            <Route path="/" element={<HomePage />} />
+        </Routes>
+        <Footer />
         <Leva hidden={!isLocal} collapsed />
-    </Container>
+    </div>
 }
 
 export default App

@@ -1,0 +1,13 @@
+.list {
+    width: 100%;
+    /* overflow: clip; */
+    display: flex;
+    gap: 24px;
+}
+
+.dropcard {
+    width: 33%;
+    height: 620px;
+    border-radius: 20px;
+    box-shadow: 0 0 0 1px var(--chrome-2);
+}

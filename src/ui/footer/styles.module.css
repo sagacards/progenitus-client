@@ -1,0 +1,8 @@
+.root {
+    margin-top: 62px;
+    border-top: 1px solid var(--chrome-2);
+}
+
+.container {
+    max-width: 1000px
+}

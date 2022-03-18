@@ -1,0 +1,10 @@
+.root {
+    width: 100%;
+    height: 380px;
+
+    background-color: var(--chrome-2);
+    border-radius: 100px;
+    box-shadow: 0 0 0 1px var(--chrome-3) inset;
+
+    transition: 320ms ease-out box-shadow, 320ms ease-out background-color;
+}
