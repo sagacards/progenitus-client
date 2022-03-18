@@ -16,6 +16,7 @@
     height: 100%;
     width: 100%;
     max-width: 380px;
+    padding: 0 24px;
 
     display: flex;
     flex-direction: column;
@@ -30,6 +31,10 @@
     flex-direction: column;
     gap: 16px;
     justify-content: stretch;
+}
+
+.spinner {
+    transform: scale(.7);
 }
 
 @media (max-width: 679px) {

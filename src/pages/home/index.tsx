@@ -9,10 +9,12 @@ import CollectionCardList from 'ui/collection-card/list';
 import { Link } from 'react-router-dom';
 import Navbar from 'ui/navbar';
 import Footer from 'ui/footer';
+import useStore from 'stores/index';
 
 interface Props {};
 
 export default function HomePage () {
+    const { connected } = useStore();
     return <>
         <Navbar />
         <Container>
@@ -23,7 +25,7 @@ export default function HomePage () {
                         Project Progenitus is the <span className={Styles.rainbow}>Saga Tarot NFT Drop Hub</span> where we are bringing Open Tarot to life, one Legend mint at a time
                     </div>
                 </div>
-                <Link className="no-fancy" to="/connect"><Button size="xl">Connect</Button></Link>
+                {!connected && <Link className="no-fancy" to="/connect"><Button size="xl">Connect</Button></Link>}
                 <div className={Styles.drops}>
                     <h2><LineText>Upcoming Drops</LineText></h2>
                     <DropCardList />

@@ -1,0 +1,14 @@
+.root {
+    display: inline-flex;
+
+    padding: 2px 8px;
+
+    border-radius: 8px;
+    box-shadow: 0 0 0 1px var(--chrome-2);
+
+    color: var(--chrome-5);
+    font-size: 12px;
+    font-family: 'Space Mono';
+
+    transition: color 320ms ease-out, box-shadow 320ms ease-out;
+}

@@ -6,12 +6,14 @@ import { MenuIcon } from 'ui/svgcons'
 import ICP from 'assets/currency/icp.png'
 import Container from 'ui/container'
 import { Link } from 'react-router-dom'
+import useStore from 'stores/index'
 
 interface Props {
     children?: React.ReactNode;
 }
 
 export default function Navbar (props : Props) {
+    const { connected, balance } = useStore();
     const nav = [
         {
             name: 'Drops',
@@ -31,17 +33,23 @@ export default function Navbar (props : Props) {
         <Container>
             <div className={Styles.root}>
                 <div className={Styles.logo}>
-                    <div className={Styles.wordmark}>Progenitus</div>
+                    <Link className="no-fancy" to="/">
+                        <div className={Styles.wordmark}>Progenitus</div>
+                    </Link>
                 </div>
                 <div className={[Styles.breakNav, open ? Styles.open : ''].join(' ')}>
                     <div className={Styles.nav}>
-                        {nav.map(i => <div key={`navitem${i.name}`} className={Styles.navItem}>
-                            {/* link to=i.path */}
-                            {i.name}
-                        </div>)}
+                        {nav.map(i => <Link className="no-fancy" to={i.path} key={`navitem${i.name}`}>
+                            <div className={Styles.navItem}>
+                                {i.name}
+                            </div>
+                        </Link>)}
                     </div>
-                    <div className={Styles.balance}>4 <span className={Styles.icp}>ICP</span> <img className={Styles.icpImg} src={ICP} /></div>
-                    <Link to="/connect" className="no-fancy"><Button>Connect</Button></Link>
+                    {connected && <div className={Styles.balance}>{balance?.toFixed(2)} <span className={Styles.icp}>ICP</span> <img className={Styles.icpImg} src={ICP} /></div>}
+                    {connected
+                        ? <Link to="/account" className="no-fancy"><Button>Account</Button></Link>
+                        : <Link to="/connect" className="no-fancy"><Button>Connect</Button></Link>
+                    }
                 </div>
                 <div className={Styles.aside}>
                     <div className={Styles.scheme}><SchemeToggle /></div>

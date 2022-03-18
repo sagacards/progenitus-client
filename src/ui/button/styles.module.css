@@ -50,7 +50,9 @@
 
     /* border-radius: 20px; */
     overflow: clip;
+    transition: color 320ms ease-out;
 
+    color: var(--foreground);
     font-weight: 500;
 }
 

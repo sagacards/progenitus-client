@@ -30,9 +30,12 @@
 }
 
 .wordmark {
+    color: var(--foreground);
     font-family: 'Space Grotesk', inter, sans-serif;
     font-size: 24px;
     font-weight: bold;
+
+    transition: color 320ms ease-out;
 }
 
 .nav {
@@ -40,13 +43,13 @@
 
     display: flex;
     gap: 16px;
-
-    color: var(--chrome-3);
 }
 
 .navItem {
     transition: color 160ms ease-out;
     cursor: pointer;
+    
+    color: var(--chrome-3);
     font-weight: 600;
 }
 

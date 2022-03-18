@@ -1,0 +1,72 @@
+.root {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.top {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.card {
+    box-shadow: 0 0 0 1px var(--chrome-2);
+    border-radius: 20px;
+
+    padding: 16px;
+    width: 240px;
+
+    font-size: 18px;
+    font-weight: 500;
+
+    transition: 320ms ease-out box-shadow;
+}
+
+.amount {
+    font-size: 38px;
+}
+
+.currency {
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.actions {
+    display: flex;
+    gap: 16px;
+}
+
+.txTable {
+    box-shadow: 0 0 0 1px var(--chrome-2);
+    border-radius: 20px;
+
+    padding: 24px;
+    width: 100%;
+
+    text-align: left;
+
+    transition: 320ms ease-out box-shadow;
+}
+
+.txTh, .txTd {
+    padding: 4px 0;
+}
+
+.txTh > *, .txTr > * {
+    display: table-cell;
+}
+
+.pagination {
+    display: flex;
+
+    padding: 16px 0;
+
+    font-size: 12px;
+    text-align: center;
+}
+
+.pagination > * {
+    width: 60px;
+    cursor: pointer;
+}

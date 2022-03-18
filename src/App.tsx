@@ -4,6 +4,10 @@ import useStore from 'stores/index';
 import { Route, Routes } from 'react-router-dom';
 import HomePage from 'pages/home';
 import ConnectPage from 'pages/connect';
+import AccountPage from 'pages/account';
+import DropsPage from 'pages/drops';
+import CollectionsPage from 'pages/collections';
+import ProfilePage from 'pages/profile';
 
 function App() {
     const { isLocal } = useStore();
@@ -11,6 +15,10 @@ function App() {
         <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/connect" element={<ConnectPage />} />
+            <Route path="/account" element={<AccountPage />} />
+            <Route path="/drops" element={<DropsPage />} />
+            <Route path="/collections" element={<CollectionsPage />} />
+            <Route path="/profile" element={<ProfilePage />} />
         </Routes>
         <Leva hidden={true} collapsed />
     </>
