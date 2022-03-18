@@ -1,14 +1,17 @@
 import create from 'zustand'
 import { StoicIdentity } from "ic-stoic-identity";
-import { ActorSubclass, HttpAgent } from '@dfinity/agent'
+import { Actor, ActorSubclass, HttpAgent } from '@dfinity/agent'
 import { IDL } from '@dfinity/candid'
 import { Principal } from '@dfinity/principal';
 import axios from 'axios';
+// @ts-ignore
+import { Rex, idlFactory } from 'canisters/progenitus/progenitus.did.js'
 
 type ColorScheme = 'dark' | 'light';
 
 interface Store {
 
+    actor?          : ActorSubclass<Rex>;
     principal?      : Principal;
     connected       : boolean;
     connecting      : boolean;
@@ -63,8 +66,7 @@ const useStore = create<Store>((set, get) => ({
         if (connecting) return null;
         set({ connecting: true });
         return () => {
-            set({ connecting: false, address: mockAccount });
-            get().fetchBalance();
+            set({ connecting: false });
         };
     },
 
@@ -89,13 +91,16 @@ const useStore = create<Store>((set, get) => ({
             isLocal && agent.fetchRootKey();
 
             // Create an actor canister
-            // const actor = Actor.createActor<Canister>(idlFactory, {
-            //     agent,
-            //     canisterId,
-            // });
+            const actor = Actor.createActor<Rex>(idlFactory, {
+                agent,
+                canisterId,
+            });
+
+            actor.getPersonalAccount()
+            .then(r => set({ address: buf2hex(new Uint8Array(r)) }))
 
             complete();
-            set(() => ({ connected: true, principal: identity.getPrincipal() }));
+            set(() => ({ connected: true, principal: identity.getPrincipal(), actor }));
         });
     },
 
@@ -116,19 +121,22 @@ const useStore = create<Store>((set, get) => ({
         isLocal && agent.fetchRootKey();
         const principal = await agent.getPrincipal();
 
-        // const actor = await window?.ic?.plug?.createActor<Canister>({
-        //     canisterId,
-        //     interfaceFactory: idlFactory,
-        // });
+        const actor = await window?.ic?.plug?.createActor<Rex>({
+            canisterId,
+            interfaceFactory: idlFactory,
+        });
+
+        actor.getPersonalAccount()
+        .then(r => set({ address: buf2hex(new Uint8Array(r)) }))
 
         complete();
-        set(() => ({ connected: true, principal }));
+        set(() => ({ connected: true, principal, actor }));
     },
 
     disconnect () {
         StoicIdentity.disconnect();
         window.ic?.plug?.deleteAgent();
-        set({ connected: false, principal: undefined, address: undefined });
+        set({ connected: false, principal: undefined, address: undefined, actor: undefined });
     },
 
     // Account
@@ -167,6 +175,12 @@ const useStore = create<Store>((set, get) => ({
 
 export default useStore;
 
+
+function buf2hex(buffer : ArrayBuffer) { // buffer is an ArrayBuffer
+return [...new Uint8Array(buffer)]
+    .map(x => x.toString(16).padStart(2, '0'))
+    .join('');
+}  
 
 function getUserColorScheme () : ColorScheme {
     let scheme : ColorScheme = 'dark';

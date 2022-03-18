@@ -4,6 +4,9 @@
   "version": "0.0.0",
   "scripts": {
     "dev": "npm run rss && vite",
+    "dev:local": "cd progenitus && dfx start --clean --background && dfx deploy --no-wallet mock_nft && dfx deploy --no-wallet mock_ledger && dfx deploy --no-wallet progenitus --argument '(\"ryjl3-tyaaa-aaaaa-aaaba-cai\", \"rwlgt-iiaaa-aaaaa-aaaaa-cai\")' && npm run dev",
+    "dev:local:stop": "cd progenitus && dfx stop",
+    "did:local": "mkdir -p ./src/canisters/progenitus/ && cp progenitus/.dfx/local/canisters/progenitus/progenitus.did.* ./src/canisters/progenitus/",
     "build": "tsc && npm run rss && vite build",
     "preview": "vite preview",
     "rss": "node ./rss.js"

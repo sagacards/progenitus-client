@@ -21,7 +21,12 @@ interface Transaction {
 };
 
 export default function AccountPage(props: Props) {
-    const account = '769b645e881a0f5cf8891c1714b8235130984d07dd0c6ccc2aa13076682fd4bb';
+
+    const { balance, fetchBalance, disconnect, connected, address } = useStore();
+    React.useEffect(() => {
+        fetchBalance();
+    }, []);
+
     const Rosetta = 'https://rosetta-api.internetcomputer.org';
     const data = {
         "network_identifier": {
@@ -29,14 +34,9 @@ export default function AccountPage(props: Props) {
             "network": "00000000000000020101",
         },
         "account_identifier": {
-            "address": account,
+            "address": address,
         },
     };
-
-    const { balance, fetchBalance, disconnect, connected } = useStore();
-    React.useEffect(() => {
-        fetchBalance();
-    }, []);
 
     const [txs, setTxs] = React.useState<Transaction[]>([]);
     const [perPage, setPerPage] = React.useState<number>(25);
@@ -52,7 +52,7 @@ export default function AccountPage(props: Props) {
                     .map((x: any) => {
                         return {
                             id: x.transaction.transaction_identifier.hash,
-                            operation: x.transaction.operations[0].account.address === account ? 'Withdrawal' : 'Deposit',
+                            operation: x.transaction.operations[0].account.address === address ? 'Withdrawal' : 'Deposit',
                             from: x.transaction.operations[0].account.address,
                             to: x.transaction.operations[1].account.address,
                             amount: (parseInt(x.transaction.operations[1].amount.value) / 10 ** 8).toFixed(),
@@ -121,7 +121,7 @@ export default function AccountPage(props: Props) {
                     <h1>Account</h1>
                     <div className={Styles.address}>
                         <Button size='small' onClick={disconnect}>Disconnect</Button>
-                        Address: <Hash>{account}</Hash>
+                        Address: <Hash>{address}</Hash>
                     </div>
                 </div>
                 <div className={Styles.card}>
