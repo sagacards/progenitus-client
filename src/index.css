@@ -49,7 +49,7 @@ html[data-theme=light] {
 
 html, body, #root {
     min-width: 100%;
-    min-height: 100%;
+    height: 100%;
     padding: 0;
     margin: 0;
 
@@ -59,6 +59,11 @@ html, body, #root {
     transition: background-color 320ms ease-out, color 320ms ease-out;
 
     font-family: inter, sans-serif;
+}
+
+#root {
+    height: auto;
+    min-height: 100%;
 }
 
 @supports (font-variation-settings: normal) {
