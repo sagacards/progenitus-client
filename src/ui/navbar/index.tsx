@@ -14,19 +14,19 @@ interface Props {
 
 export default function Navbar (props : Props) {
     const { connected, balance } = useStore();
-    const nav = [
-        {
-            name: 'Drops',
-            path: '/drops',
-        },
-        {
-            name: 'Collections',
-            path: '/collections',
-        },
-        {
-            name: 'Profile',
-            path: '/profile',
-        },
+    const nav : {name: string; path: string}[] = [
+        // {
+        //     name: 'Drops',
+        //     path: '/drops',
+        // },
+        // {
+        //     name: 'Collections',
+        //     path: '/collections',
+        // },
+        // {
+        //     name: 'Profile',
+        //     path: '/profile',
+        // },
     ];
     const [open, setOpen] = React.useState<boolean>(false);
     return <div className={Styles.container}>

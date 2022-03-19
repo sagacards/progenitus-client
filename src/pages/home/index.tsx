@@ -30,10 +30,10 @@ export default function HomePage () {
                     <h2><LineText>Upcoming Drops</LineText></h2>
                     <DropCardList />
                 </div>
-                <div className={Styles.collections}>
+                {/* <div className={Styles.collections}>
                     <h2><LineText>Collections</LineText></h2>
                     <CollectionCardList />
-                </div>
+                </div> */}
             </div>
         </Container>
         <Footer />
