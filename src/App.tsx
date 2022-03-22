@@ -9,6 +9,7 @@ import DropsPage from 'pages/drops';
 import CollectionsPage from 'pages/collections';
 import ProfilePage from 'pages/profile';
 import DropDetailPage from 'pages/drop-detail';
+import Messages from 'ui/messages';
 
 function App() {
     // const { isLocal } = useStore();
@@ -23,6 +24,7 @@ function App() {
             <Route path="/profile" element={<ProfilePage />} />
         </Routes>
         <Leva hidden={true} collapsed />
+        <Messages />
     </>
 }
 

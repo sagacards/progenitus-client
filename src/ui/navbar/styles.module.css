@@ -29,6 +29,12 @@
     width: 100%;
 }
 
+.logo {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+}
+
 .wordmark {
     color: var(--foreground);
     font-family: 'Space Grotesk', inter, sans-serif;
@@ -66,7 +72,7 @@
 .breakNav {
     display: flex;
     gap: 24px;
-    align-items: baseline;
+    align-items: center;
 
     width: 100%;
 }
@@ -92,6 +98,10 @@
 }
 
 @media (max-width: 679px) {
+    .wordmark {
+        display: none;
+    }
+
     .breakNavToggle {
         display: block;
     }

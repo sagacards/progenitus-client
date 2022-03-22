@@ -10,32 +10,64 @@
     gap: 4px;
 }
 
-.address {
+.body {
     display: flex;
-    gap: 16px;
-    align-items: baseline;
+    gap: 38px;
 }
 
-.card {
-    box-shadow: 0 0 0 1px var(--chrome-2);
-    border-radius: 20px;
+.main {
+    width: 62%;
+}
+
+.aside {
+    width: 38%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 24px;
+}
+
+.asideGroup {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 
     padding: 16px;
-    width: 240px;
 
-    font-size: 18px;
+    border-bottom: 1px solid var(--chrome-2);
+}
+
+.asideGroup:last-child {
+    /* border: none; */
+}
+
+.asideLabel {
+    font-weight: 600;
+}
+
+.asideRow {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+}
+
+.asideCard {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.subtitle {
+    margin: 0;
+    font-size: 16px;
     font-weight: 500;
-
-    transition: 320ms ease-out box-shadow;
 }
 
-.amount {
-    font-size: 38px;
-}
-
-.currency {
-    font-size: 18px;
-    font-weight: 700;
+.couple {
+    display: flex;
+    align-items: center;
+    gap: 4px;
 }
 
 .actions {
@@ -63,8 +95,15 @@
     display: table-cell;
 }
 
+.paginationHead {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
 .pagination {
     display: flex;
+    justify-content: flex-end;
 
     padding: 16px 0;
 
@@ -75,4 +114,13 @@
 .pagination > * {
     width: 60px;
     cursor: pointer;
+}
+
+@media (max-width: 1000px) {
+    .body {
+        flex-direction: column;
+    }
+    .main, .aside {
+        width: 100%;
+    }
 }

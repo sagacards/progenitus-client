@@ -1,0 +1,15 @@
+.root {
+    width: 40px;
+    height: 40px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: var(--foreground);
+    border-radius: 8px;
+    
+    color: var(--background);
+    font-size: 38px;
+    font-weight: 1000;
+}

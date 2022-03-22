@@ -4,7 +4,6 @@
     height: 50px;
     border-radius: 50%;
     box-shadow: 0 0 0 1px var(--chrome-2);
-    animation: spin 1s linear infinite;
 }
 
 .inner {
@@ -16,16 +15,45 @@
     box-shadow: 0 0 0 1px var(--chrome-2), 0 0 0 10px var(--chrome-1);
 }
 
+.rotate {
+    animation: spin 1s linear infinite;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
 .ball {
     position: absolute;
     width: 10px;
     height: 10px;
     margin: 0 0 0 20px;
+
+    background: var(--chrome-1);
     border-radius: 50%;
     box-shadow: 0 0 0 1px var(--chrome-3);
+}
+
+.root, .inner, .ball {
+    transition: 320ms ease-out box-shadow, 320ms ease-out background-color;
 }
 
 @keyframes spin {
     from { transform: rotate(0deg) }
     to { transform: rotate(360deg) }
+}
+
+.small {
+    width: 25px;
+    height: 25px;
+    box-shadow: 0 0 0 2px var(--chrome-1) inset, 0 0 0 3px var(--chrome-2) inset, 0 0 0 1px var(--chrome-1);
+}
+
+.small .inner {
+    display: none;
+}
+
+.small .ball {
+    width: 5px;
+    height: 5px;
+    margin: 0 0 0 10px;
 }

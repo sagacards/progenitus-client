@@ -9,3 +9,11 @@
     max-width: 1400px;
     margin: 0 16px;
 }
+
+.standard {
+    max-width: 1400px;
+}
+
+.narrow {
+    max-width: 1000px;
+}

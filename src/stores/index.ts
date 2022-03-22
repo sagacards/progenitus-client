@@ -9,6 +9,14 @@ import { Rex, idlFactory } from 'canisters/progenitus/progenitus.did.js'
 
 type ColorScheme = 'dark' | 'light';
 
+export type Wallet = 'plug' | 'stoic' | 'earth' | 'ii';
+
+export interface Message {
+    type    : 'error' | 'info';
+    message : string;
+    read?   : boolean;
+};
+
 interface Store {
 
     actor?          : ActorSubclass<Rex>;
@@ -19,6 +27,7 @@ interface Store {
     stoicConnect    : () => void;
     plugConnect     : () => void;
     disconnect      : () => void;
+    wallet?         : Wallet;
 
     address?: string;
     balance?: number;
@@ -32,6 +41,10 @@ interface Store {
     setEdges: (e : boolean) => void;
 
     init: () => void;
+
+    messages: { [key: number] : Message };
+    pushMessage: (m : Message) => void;
+    readMessage: (i : number) => void;
 
 };
 
@@ -96,11 +109,13 @@ const useStore = create<Store>((set, get) => ({
                 canisterId,
             });
 
+            // Get account and balance after login
             actor.getPersonalAccount()
             .then(r => set({ address: buf2hex(new Uint8Array(r)) }))
+            .then(() => get().fetchBalance());
 
             complete();
-            set(() => ({ connected: true, principal: identity.getPrincipal(), actor }));
+            set(() => ({ connected: true, principal: identity.getPrincipal(), actor, wallet: 'stoic' }));
         });
     },
 
@@ -126,17 +141,19 @@ const useStore = create<Store>((set, get) => ({
             interfaceFactory: idlFactory,
         });
 
+        // Get account and balance after login
         actor.getPersonalAccount()
         .then(r => set({ address: buf2hex(new Uint8Array(r)) }))
+        .then(() => get().fetchBalance());
 
         complete();
-        set(() => ({ connected: true, principal, actor }));
+        set(() => ({ connected: true, principal, actor, wallet: 'plug' }));
     },
 
     disconnect () {
         StoicIdentity.disconnect();
         window.ic?.plug?.deleteAgent();
-        set({ connected: false, principal: undefined, address: undefined, actor: undefined });
+        set({ connected: false, principal: undefined, address: undefined, actor: undefined, balance: undefined, wallet: undefined });
     },
 
     // Account
@@ -169,7 +186,19 @@ const useStore = create<Store>((set, get) => ({
 
     init () {
         get().fetchBalance();
-    }
+    },
+
+    // Generic UI messages
+
+    messages: {},
+
+    pushMessage (message) {
+        set(state => ({ messages: { ...state.messages, [Object.values(state.messages).length - 1]: message } }))
+    },
+
+    readMessage (i) {
+        set(state => ({ messages: { ...state.messages, [i]: { ...state.messages[i], read: true } }}))
+    },
 
 }));
 

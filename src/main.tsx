@@ -6,6 +6,7 @@ import '@fontsource/space-mono'
 import '@fontsource/inter/400.css'
 import '@fontsource/inter/variable.css'
 import './index.css'
+import 'react-toastify/dist/ReactToastify.css'
 import App from './App'
 
 ReactDOM.render(

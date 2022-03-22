@@ -6,6 +6,8 @@ The client application for Saga Tarot's _Project Progenitus_, the minting platfo
 
 ## Local Development
 
+**Don't transfer funds to your account in local dev!** You'll lose ICP 😆.
+
 This app is built with:
 
 - vitejs

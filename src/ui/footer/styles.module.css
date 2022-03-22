@@ -88,3 +88,14 @@
     margin: .5em 0;
     font-weight: 500;
 }
+
+@media (max-width: 800px) {
+    .root, .section {
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .column {
+        max-width: 400px;
+    }
+}

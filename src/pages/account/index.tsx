@@ -8,6 +8,8 @@ import Button from 'ui/button';
 import Hash from 'ui/hash';
 import useStore from 'stores/index';
 import { Navigate } from 'react-router-dom';
+import WalletIcon from 'ui/wallet-icon';
+import Swap from 'ui/swap';
 
 interface Props { };
 
@@ -22,7 +24,7 @@ interface Transaction {
 
 export default function AccountPage(props: Props) {
 
-    const { balance, fetchBalance, disconnect, connected, address } = useStore();
+    const { balance, fetchBalance, disconnect, connected, address, principal, } = useStore();
     React.useEffect(() => {
         fetchBalance();
     }, []);
@@ -119,44 +121,67 @@ export default function AccountPage(props: Props) {
         <Container>
             <div className={Styles.root}>
                 <div className={Styles.top}>
-                    <h1>Account</h1>
-                    <div className={Styles.address}>
-                        <Button size='small' onClick={disconnect}>Disconnect</Button>
-                        Address: <Hash>{address}</Hash>
+                    <h1 className="page-title">Account</h1>
+                </div>
+                <div className={Styles.body}>
+                    <div className={Styles.aside}>
+                        <div className={Styles.asideCard}>
+                            <div className={Styles.asideGroup}>
+                                <div className={Styles.asideLabel}>Wallet</div>
+                                <div className={Styles.asideRow}>
+                                    <WalletIcon size='small' />
+                                    <Hash>{principal}</Hash>
+                                    <Button size='small' onClick={disconnect}>Disconnect</Button>
+                                </div>
+                            </div>
+                            <div className={Styles.asideGroup}>
+                                <div className={Styles.asideLabel}>Minting Account</div>
+                                <div className={Styles.asideRow}>
+                                    <Hash>{address}</Hash>
+                                    <small>Use for minting events, move funds freely</small>
+                                </div>
+                            </div>
+                            <div className={Styles.asideGroup}>
+                                <div className={Styles.asideLabel}>Balance</div>
+                                <div className={Styles.asideRow}>
+                                    <div>
+                                        {balance?.toFixed(2)} <span>ICP</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <Swap />
                     </div>
-                </div>
-                <div className={Styles.card}>
-                    <div>Balance</div>
-                    <div className={Styles.amount}>{balance?.toFixed(2)} <span className={Styles.currency}>ICP</span></div>
-                </div>
-                <div className={Styles.actions}>
-                    <Button>Deposit</Button>
-                    <Button>Withdraw</Button>
-                </div>
-                <div>
-                    {pagination}
-                    <table className={Styles.txTable}>
-                        <thead>
-                            <tr className={Styles.txTr}>
-                                {columns.map(({ accessor, Header }) => <th
-                                    key={`th${accessor}`}
-                                    children={Header}
-                                />)}
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {page.map(tx => <tr key={`tx${tx.id}`} className={Styles.txTr}>
-                                {columns.map(({ accessor, Cell }) => <td key={`td${tx.id}${accessor}`} className={Styles.txTd}>
-                                    {/* @ts-ignore */}
-                                    <Cell v={tx[accessor]} />
-                                </td>)}
-                            </tr>)}
-                        </tbody>
-                    </table>
-                    {pagination}
+                    <div className={Styles.main}>
+                        <div>
+                            <div className={Styles.paginationHead}>
+                                <h2 className={Styles.subtitle}>Transaction History</h2>
+                                {pagination}
+                            </div>
+                            <table className={Styles.txTable}>
+                                <thead>
+                                    <tr className={Styles.txTr}>
+                                        {columns.map(({ accessor, Header }) => <th
+                                            key={`th${accessor}`}
+                                            children={Header}
+                                        />)}
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {page.map(tx => <tr key={`tx${tx.id}`} className={Styles.txTr}>
+                                        {columns.map(({ accessor, Cell }) => <td key={`td${tx.id}${accessor}`} className={Styles.txTd}>
+                                            {/* @ts-ignore */}
+                                            <Cell v={tx[accessor]} />
+                                        </td>)}
+                                    </tr>)}
+                                </tbody>
+                            </table>
+                            {pagination}
+                        </div>
+                    </div>
                 </div>
             </div>
         </Container>
-        <Footer />
+        {/* <Footer /> */}
     </>
 };

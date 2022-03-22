@@ -1,5 +1,7 @@
 .root {
     display: inline-flex;
+    align-items: center;
+    gap: 4px;
 
     padding: 2px 8px;
 
@@ -11,4 +13,26 @@
     font-family: 'Space Mono';
 
     transition: color 320ms ease-out, box-shadow 320ms ease-out;
+    cursor: pointer;
+}
+
+.root:hover {
+    box-shadow: 0 0 0 1px var(--chrome-3);
+}
+
+.large {
+    gap: 16px;
+
+    padding: 8px 16px;
+
+    font-size: 18px;
+}
+
+.icon {
+    width: 24px;
+    height: 24px;
+}
+
+.alt {
+    background-color: var(--chrome-2);
 }

@@ -7,6 +7,8 @@ import ICP from 'assets/currency/icp.png'
 import Container from 'ui/container'
 import { Link } from 'react-router-dom'
 import useStore from 'stores/index'
+import Logo from 'ui/logo'
+import Spinner from 'ui/spinner'
 
 interface Props {
     children?: React.ReactNode;
@@ -34,6 +36,9 @@ export default function Navbar (props : Props) {
             <div className={Styles.root}>
                 <div className={Styles.logo}>
                     <Link className="no-fancy" to="/">
+                        <Logo />
+                    </Link>
+                    <Link className="no-fancy" to="/">
                         <div className={Styles.wordmark}>Progenitus</div>
                     </Link>
                 </div>
@@ -45,7 +50,7 @@ export default function Navbar (props : Props) {
                             </div>
                         </Link>)}
                     </div>
-                    {connected && <div className={Styles.balance}>{balance?.toFixed(2)} <span className={Styles.icp}>ICP</span> <img className={Styles.icpImg} src={ICP} /></div>}
+                    {connected && <div className={Styles.balance}>{balance !== undefined ? balance.toFixed(2) : <Spinner size='small' />} <span className={Styles.icp}>ICP</span> <img className={Styles.icpImg} src={ICP} /></div>}
                     {connected
                         ? <Link to="/account" className="no-fancy"><Button>Account</Button></Link>
                         : <Link to="/connect" className="no-fancy"><Button>Connect</Button></Link>
