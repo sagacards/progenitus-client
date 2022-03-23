@@ -58,7 +58,7 @@ interface Store {
 const isLocal = import.meta.env.PROGENITUS_IS_LOCAL === 'true';
 const host = import.meta.env.PROGENITUS_IC_HOST as string;
 const canisterId = import.meta.env.PROGENITUS_CANISTER_ID as string;
-const nnsCanisterId = import.meta.env.NNS_CANISTER_ID as string;
+const nnsCanisterId = import.meta.env.PROGENITUS_NNS_CANISTER_ID as string;
 
 const rosetta = 'https://rosetta-api.internetcomputer.org';
 const mockAccount = '769b645e881a0f5cf8891c1714b8235130984d07dd0c6ccc2aa13076682fd4bb';
@@ -224,9 +224,9 @@ const useStore = create<Store>((set, get) => ({
         };
 
         async function transferStoic (amount : number, to : string) {
-            const actor = get().ledgerActor;
-            if (!actor) return;
-            return actor.transfer({
+            const { ledgerActor, pushMessage } = get();
+            if (!ledgerActor) return;
+            return ledgerActor.transfer({
                 to: Array.from(hexStringToByteArray(to)),
                 amount: { e8s: BigInt(amount.toFixed()) },
                 memo: BigInt(0),
@@ -240,7 +240,16 @@ const useStore = create<Store>((set, get) => ({
             })
             .then(r => {
                 console.log(r);
-                setTimeout(get().fetchBalance, 1000)
+                // @ts-ignore
+                if (r?.Err) {
+                    pushMessage({
+                        type: 'error',
+                        // @ts-ignore
+                        message: Object.keys(r.Err)[0],
+                    })
+                } else {
+                    setTimeout(get().fetchBalance, 1000)
+                }
             });
         };
 
