@@ -13,21 +13,11 @@ interface Props {
 
 export default function Swap (props : Props) {
 
-    const { principal, pushMessage } = useStore()
+    const { principal, pushMessage, deposit, withdraw, fetchBalance } = useStore()
 
     const [active, setActive] = React.useState<'deposit' | 'withdraw'>('deposit');
-    const [amount, setAmount] = React.useState<number>(0);
+    const [amount, setAmount] = React.useState<string>('0');
     const [loading, setLoading] = React.useState<boolean>(false);
-
-    function go () {
-        console.log(active, amount);
-        setLoading(true);
-        setTimeout(() => setLoading(false), 1000);
-        pushMessage({
-            type: 'info',
-            message: 'test',
-        })
-    };
 
     return <div className={[Styles.root, Styles[active]].join(' ')}>
         <div className={Styles.top}>
@@ -44,7 +34,7 @@ export default function Swap (props : Props) {
             <div className={Styles.fee}>Fee: 0.0001 ICP</div>
         </div>
         <div className={Styles.inputGroup}>
-            <input className={Styles.input} type="text" value={amount} onChange={v => setAmount(parseInt(v.currentTarget.value))} />
+            <input className={Styles.input} type="text" value={amount} onChange={v => setAmount(v.currentTarget.value)} />
             <div className={Styles.conversion}>~$0.00</div>
             <div className={Styles.currencyContainer}>
                 <div className={Styles.currency}>ICP</div>
@@ -57,7 +47,20 @@ export default function Swap (props : Props) {
             <Hash icon={<WalletIcon />} size='large' alt>{principal}</Hash>
         </div>                
         <div className={Styles.actions}>
-            <Button onClick={go}>{loading ? <Spinner size='small' /> : active}</Button>
+            <Button onClick={() => {
+                setLoading(true);
+                if (active === 'deposit') {
+                    deposit(parseFloat(amount) * 10**8).then(() => {
+                        setLoading(false);
+                        setTimeout(fetchBalance, 1000);
+                    });
+                } else {
+                    withdraw(parseFloat(amount) * 10**8).then(() => {
+                        setLoading(false);
+                        setTimeout(fetchBalance, 1000);
+                    });
+                };
+            }}>{loading ? <Spinner size='small' /> : active}</Button>
         </div>
     </div>
 }

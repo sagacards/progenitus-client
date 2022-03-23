@@ -6,6 +6,10 @@ import { Principal } from '@dfinity/principal';
 import axios from 'axios';
 // @ts-ignore
 import { Rex, idlFactory } from 'canisters/progenitus/progenitus.did.js'
+// @ts-ignore
+import { Ledger, idlFactory as nnsIdl } from 'canisters/ledger/ledger.did.js'
+// @ts-ignore
+import { principalToAccountIdentifier } from 'util/ext'
 
 type ColorScheme = 'dark' | 'light';
 
@@ -28,10 +32,13 @@ interface Store {
     plugConnect     : () => void;
     disconnect      : () => void;
     wallet?         : Wallet;
-
-    address?: string;
-    balance?: number;
-    fetchBalance: () => void;
+    
+    ledgerActor?    : ActorSubclass<Ledger>;
+    address?        : string;
+    balance?        : number;
+    fetchBalance    : () => void;
+    deposit         : (a : number) => Promise<void>;
+    withdraw        : (a : number) => Promise<void>;
 
     colorScheme: ColorScheme;
     setColorScheme: (c : ColorScheme) => void;
@@ -103,8 +110,14 @@ const useStore = create<Store>((set, get) => ({
 
             isLocal && agent.fetchRootKey();
 
-            // Create an actor canister
+            // Create a projenitus actor
             const actor = Actor.createActor<Rex>(idlFactory, {
+                agent,
+                canisterId,
+            });
+
+            // Create an nns actor
+            const nns = Actor.createActor<Ledger>(nnsIdl, {
                 agent,
                 canisterId,
             });
@@ -115,7 +128,7 @@ const useStore = create<Store>((set, get) => ({
             .then(() => get().fetchBalance());
 
             complete();
-            set(() => ({ connected: true, principal: identity.getPrincipal(), actor, wallet: 'stoic' }));
+            set(() => ({ connected: true, principal: identity.getPrincipal(), actor, wallet: 'stoic', ledgerActor: nns }));
         });
     },
 
@@ -153,7 +166,7 @@ const useStore = create<Store>((set, get) => ({
     disconnect () {
         StoicIdentity.disconnect();
         window.ic?.plug?.deleteAgent();
-        set({ connected: false, principal: undefined, address: undefined, actor: undefined, balance: undefined, wallet: undefined });
+        set({ connected: false, principal: undefined, address: undefined, actor: undefined, balance: undefined, wallet: undefined, ledgerActor: undefined });
     },
 
     // Account
@@ -165,6 +178,42 @@ const useStore = create<Store>((set, get) => ({
             .then(r => {
                 set({ balance : parseInt(r.data.balances[0].value) / 10**8 })
             })
+    },
+
+    async withdraw (amount : number) {
+
+        const { actor, principal } = get();
+
+        if (!principal || !actor) return;
+
+        const address = principalToAccountIdentifier(principal);
+
+        return actor.transfer({ e8s: BigInt(amount) }, address)
+        .then(() => get().fetchBalance())
+        .catch(e => get().pushMessage(e.toString()));
+    },
+
+    async deposit (amount : number) {
+
+        const { address, wallet } = get();
+
+        if (!address || !wallet) return;
+
+        async function transferPlug (amount : number, to : string) {
+            return window.ic?.plug?.requestTransfer({ to, amount }).catch(e => get().pushMessage(e.toString())).then(() => undefined);
+        };
+
+        async function transferStoic (amount : number, to : string) {
+            const actor = get().ledgerActor;
+            if (!actor) return;
+            return actor.transfer({ to: Array.from(hexStringToByteArray(to)), amount: { e8s: BigInt(amount) }, memo: BigInt(0), fee: { e8s: BigInt(10_000) }, from_subaccount: [], created_at_time: [] }).catch(e => get().pushMessage(e.toString())).then(() => undefined);
+        };
+
+        if (wallet === 'stoic') {
+            return transferStoic(amount, address);
+        } else {
+            return transferPlug(amount, address);
+        }
     },
 
     // Dev config
@@ -276,4 +325,16 @@ declare global {
             };
         };
     }
+}
+
+function hexStringToByteArray(hexString : string) {
+    if (hexString.length % 2 !== 0) {
+        throw "Must have an even number of hex digits to convert to bytes";
+    }
+    var numBytes = hexString.length / 2;
+    var byteArray = new Uint8Array(numBytes);
+    for (var i=0; i<numBytes; i++) {
+        byteArray[i] = parseInt(hexString.substr(i*2, 2), 16);
+    }
+    return byteArray;
 }

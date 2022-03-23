@@ -58,14 +58,14 @@ export default function AccountPage(props: Props) {
                             operation: x.transaction.operations[0].account.address === address ? 'Withdrawal' : 'Deposit',
                             from: x.transaction.operations[0].account.address,
                             to: x.transaction.operations[1].account.address,
-                            amount: (parseInt(x.transaction.operations[1].amount.value) / 10 ** 8).toFixed(),
+                            amount: (parseFloat(x.transaction.operations[1].amount.value) / 10 ** 8).toFixed(2),
                             timestamp: new Date(x.transaction.metadata.timestamp / 1000000),
                         }
                     })
                     .sort((a: Transaction, b: Transaction) => b.timestamp.getTime() - a.timestamp.getTime())
                 );
             })
-    }, [address]);
+    }, [address, balance]);
 
     const columns = React.useMemo(() => [
         {
@@ -81,7 +81,7 @@ export default function AccountPage(props: Props) {
         {
             accessor: 'amount',
             Header: 'Amount',
-            Cell: ({ v } : { v : Transaction['amount']}) => <>{v}</>
+            Cell: ({ v } : { v : Transaction['amount']}) => <>{v} <small>ICP</small></>
         },
         {
             accessor: 'from',

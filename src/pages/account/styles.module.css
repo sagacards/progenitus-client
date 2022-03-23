@@ -76,10 +76,10 @@
 }
 
 .txTable {
-    box-shadow: 0 0 0 1px var(--chrome-2);
+    /* box-shadow: 0 0 0 1px var(--chrome-2); */
     border-radius: 20px;
 
-    padding: 24px;
+    /* padding: 24px; */
     width: 100%;
 
     text-align: left;
@@ -88,7 +88,7 @@
 }
 
 .txTh, .txTd {
-    padding: 4px 0;
+    padding: 8px 0;
 }
 
 .txTh > *, .txTr > * {
