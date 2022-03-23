@@ -183,20 +183,29 @@ const useStore = create<Store>((set, get) => ({
 
     async withdraw (amount : number) {
 
-        const { actor, principal } = get();
+        const { actor, principal, pushMessage, fetchBalance } = get();
 
-        console.log(actor, principal);
         if (!principal || !actor) return;
         
         const address = Object.values(principalToAccountIdentifier(principal)) as number[];
-        console.log(address);
 
-        return actor.transfer({ e8s: BigInt(amount) }, address)
+        return actor.transfer({ e8s: BigInt(amount.toFixed()) }, address)
         .catch(e => {
             console.error(e);
-            get().pushMessage({ type: 'error', message: 'Transfer failed!'});
+            pushMessage({ type: 'error', message: 'Transfer failed!'});
         })
-        .then(() => void setTimeout(get().fetchBalance, 1000));
+        .then(r => {
+            // @ts-ignore
+            if (r?.Err) {
+                pushMessage({
+                    type: 'error',
+                    // @ts-ignore
+                    message: Object.keys(r.Err)[0],
+                })
+            } else {
+                setTimeout(fetchBalance, 1000);
+            }
+        });
     },
 
     async deposit (amount : number) {
@@ -219,7 +228,7 @@ const useStore = create<Store>((set, get) => ({
             if (!actor) return;
             return actor.transfer({
                 to: Array.from(hexStringToByteArray(to)),
-                amount: { e8s: BigInt(amount) },
+                amount: { e8s: BigInt(amount.toFixed()) },
                 memo: BigInt(0),
                 fee: { e8s: BigInt(10_000) },
                 from_subaccount: [],
@@ -229,7 +238,10 @@ const useStore = create<Store>((set, get) => ({
                 console.error(e);
                 get().pushMessage({ type: 'error', message: 'Transfer failed!'});
             })
-            .then(() => void setTimeout(get().fetchBalance, 1000));
+            .then(r => {
+                console.log(r);
+                setTimeout(get().fetchBalance, 1000)
+            });
         };
 
         if (wallet === 'stoic') {
