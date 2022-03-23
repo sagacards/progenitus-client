@@ -1,3 +1,4 @@
 [submodule "progenitus"]
 	path = progenitus
 	url = git@github.com:sagacards/progenitus.git
+	branch = minting
