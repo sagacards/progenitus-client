@@ -9,7 +9,7 @@ import { Rex, idlFactory } from 'canisters/progenitus/progenitus.did.js'
 // @ts-ignore
 import { Ledger, idlFactory as nnsIdl } from 'canisters/ledger/ledger.did.js'
 // @ts-ignore
-import { principalToAccountIdentifier } from 'util/ext'
+import { principalToAccountIdentifier, buf2hex } from 'util/ext'
 
 type ColorScheme = 'dark' | 'light';
 
@@ -58,6 +58,7 @@ interface Store {
 const isLocal = import.meta.env.PROGENITUS_IS_LOCAL === 'true';
 const host = import.meta.env.PROGENITUS_IC_HOST as string;
 const canisterId = import.meta.env.PROGENITUS_CANISTER_ID as string;
+const nnsCanisterId = import.meta.env.NNS_CANISTER_ID as string;
 
 const rosetta = 'https://rosetta-api.internetcomputer.org';
 const mockAccount = '769b645e881a0f5cf8891c1714b8235130984d07dd0c6ccc2aa13076682fd4bb';
@@ -119,7 +120,7 @@ const useStore = create<Store>((set, get) => ({
             // Create an nns actor
             const nns = Actor.createActor<Ledger>(nnsIdl, {
                 agent,
-                canisterId,
+                canisterId: nnsCanisterId,
             });
 
             // Get account and balance after login
@@ -184,13 +185,18 @@ const useStore = create<Store>((set, get) => ({
 
         const { actor, principal } = get();
 
+        console.log(actor, principal);
         if (!principal || !actor) return;
-
-        const address = principalToAccountIdentifier(principal);
+        
+        const address = Object.values(principalToAccountIdentifier(principal)) as number[];
+        console.log(address);
 
         return actor.transfer({ e8s: BigInt(amount) }, address)
-        .then(() => get().fetchBalance())
-        .catch(e => get().pushMessage(e.toString()));
+        .catch(e => {
+            console.error(e);
+            get().pushMessage({ type: 'error', message: 'Transfer failed!'});
+        })
+        .then(() => void setTimeout(get().fetchBalance, 1000));
     },
 
     async deposit (amount : number) {
@@ -200,13 +206,30 @@ const useStore = create<Store>((set, get) => ({
         if (!address || !wallet) return;
 
         async function transferPlug (amount : number, to : string) {
-            return window.ic?.plug?.requestTransfer({ to, amount }).catch(e => get().pushMessage(e.toString())).then(() => undefined);
+            return window.ic?.plug?.requestTransfer({ to, amount })
+            .catch(e => {
+                console.error(e);
+                get().pushMessage({ type: 'error', message: 'Transfer failed!'});
+            })
+            .then(() => void setTimeout(get().fetchBalance, 1000));
         };
 
         async function transferStoic (amount : number, to : string) {
             const actor = get().ledgerActor;
             if (!actor) return;
-            return actor.transfer({ to: Array.from(hexStringToByteArray(to)), amount: { e8s: BigInt(amount) }, memo: BigInt(0), fee: { e8s: BigInt(10_000) }, from_subaccount: [], created_at_time: [] }).catch(e => get().pushMessage(e.toString())).then(() => undefined);
+            return actor.transfer({
+                to: Array.from(hexStringToByteArray(to)),
+                amount: { e8s: BigInt(amount) },
+                memo: BigInt(0),
+                fee: { e8s: BigInt(10_000) },
+                from_subaccount: [],
+                created_at_time: [],
+            })
+            .catch(e => {
+                console.error(e);
+                get().pushMessage({ type: 'error', message: 'Transfer failed!'});
+            })
+            .then(() => void setTimeout(get().fetchBalance, 1000));
         };
 
         if (wallet === 'stoic') {
@@ -252,13 +275,6 @@ const useStore = create<Store>((set, get) => ({
 }));
 
 export default useStore;
-
-
-function buf2hex(buffer : ArrayBuffer) { // buffer is an ArrayBuffer
-return [...new Uint8Array(buffer)]
-    .map(x => x.toString(16).padStart(2, '0'))
-    .join('');
-}  
 
 function getUserColorScheme () : ColorScheme {
     let scheme : ColorScheme = 'dark';

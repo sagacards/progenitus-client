@@ -78,7 +78,7 @@ export const principalToAccountIdentifier = (p, s) => {
     const padding = Buffer("\x0Aaccount-id");
     const array = new Uint8Array([
         ...padding,
-        ...Principal.fromText(p).toUint8Array(),
+        ...p.toUint8Array(),
         ...getSubAccountArray(s)
     ]);
     const hash = sha224(array);
@@ -87,7 +87,7 @@ export const principalToAccountIdentifier = (p, s) => {
         ...checksum,
         ...hash
     ]);
-    return buf2hex(array2);
+    return array2;
 };
 
 const getSubAccountArray = (s) => {
@@ -116,7 +116,7 @@ export function getCrc32(buf) {
     return (crc ^ -1) >>> 0;
 }
 
-function buf2hex(buffer) { // buffer is an ArrayBuffer
+export function buf2hex(buffer) { // buffer is an ArrayBuffer
   return [...new Uint8Array(buffer)]
       .map(x => x.toString(16).padStart(2, '0'))
       .join('');

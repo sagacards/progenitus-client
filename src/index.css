@@ -102,3 +102,8 @@ h1 {
 h1.page-title {
     margin-top: .62em;
 }
+
+/* Hide stoic's connect iframes. */
+iframe[id*="connect_iframe"] {
+    display: none;
+}
