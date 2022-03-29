@@ -65,7 +65,7 @@
 .foot {
     display: flex;
     justify-content: space-between;
-    color: var(--chrome-3);
+    color: var(--chrome-4);
     font-weight: 500;
     font-size: 12px;
     /* text-transform: uppercase; */
@@ -98,4 +98,14 @@
     .column {
         max-width: 400px;
     }
+}
+
+.root a:not(.no-fancy), a:link:not(.no-fancy), a:visited:not(.no-fancy), a:active:not(.no-fancy), a:hover:not(.no-fancy) {
+    background: none;
+    -webkit-background-clip: none;
+    -webkit-text-fill-color: inherit;
+    
+    color: var(--chrome-4);
+    font-weight: normal;
+    text-decoration: none;
 }

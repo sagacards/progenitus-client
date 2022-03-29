@@ -36,9 +36,9 @@ export default function Navbar (props : Props) {
         <Container>
             <div className={Styles.root}>
                 <div className={Styles.logo}>
-                    {/* <Link className="no-fancy" to="/">
+                    <Link className="no-fancy" to="/">
                         <Logo />
-                    </Link> */}
+                    </Link>
                     <Link className="no-fancy" to="/">
                         <LineText><div className={Styles.wordmark}>Bazaar</div></LineText>
                     </Link>

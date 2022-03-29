@@ -1,12 +1,12 @@
 .root {
-    width: 40px;
-    height: 40px;
+    width: 62px;
+    height: 62px;
 
     display: flex;
     align-items: center;
     justify-content: center;
 
-    background: var(--foreground);
+    /* background: var(--foreground); */
     border-radius: 8px;
     
     color: var(--background);
@@ -19,5 +19,5 @@
     width: 100%;
     height: 100%;
     object-fit: contain;
-    display: none;
+    /* display: none; */
 }

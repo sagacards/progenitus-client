@@ -9,6 +9,5 @@ interface Props {
 export default function Logo (props : Props) {
     return <div className={Styles.root}>
         <img src={Seal} className={Styles.image} />
-        B
     </div>
 }
