@@ -1,16 +1,16 @@
 :root {
-    --chrome-1-dark: #000;
-    --chrome-2-dark: #333;
-    --chrome-3-dark: #666;
-    --chrome-4-dark: #999;
-    --chrome-5-dark: #CCC;
-    --chrome-6-dark: #FFF;
-    --chrome-1-light: #FFF;
-    --chrome-2-light: #CCC;
-    --chrome-3-light: #999;
-    --chrome-4-light: #666;
-    --chrome-5-light: #333;
-    --chrome-6-light: #000;
+    --chrome-1-dark: hsl(12deg, 24%, 4%);
+    --chrome-2-dark: hsl(12deg, 10%, 10%);
+    --chrome-3-dark: hsl(12deg, 10%, 20%);
+    --chrome-4-dark: hsl(12deg, 10%, 40%);
+    --chrome-5-dark: hsl(12deg, 30%, 90%);
+    --chrome-6-dark: hsl(12deg, 50%, 99%);
+    --chrome-1-light: hsl(12deg, 50%, 99%);
+    --chrome-2-light: hsl(12deg, 30%, 90%);
+    --chrome-3-light: hsl(12deg, 10%, 40%);
+    --chrome-4-light: hsl(12deg, 10%, 20%);
+    --chrome-5-light: hsl(12deg, 10%, 10%);
+    --chrome-6-light: hsl(12deg, 24%, 4%);
 
     --chrome-1: var(--chrome-1-dark);
     --chrome-2: var(--chrome-2-dark);
@@ -18,6 +18,9 @@
     --chrome-4: var(--chrome-4-dark);
     --chrome-5: var(--chrome-5-dark);
     --chrome-6: var(--chrome-6-dark);
+
+    --gold-1: rgb(255, 196, 0);
+    --gold-2: rgb(255, 123, 0);
 
     --background: var(--chrome-1-dark);
     --foreground: var(--chrome-6-dark);
@@ -78,7 +81,7 @@ html, body, #root {
 
 a:not(.no-fancy), a:link:not(.no-fancy), a:visited:not(.no-fancy), a:active:not(.no-fancy), a:hover:not(.no-fancy) {
     font-weight: 500;
-    background: linear-gradient(50deg, rgb(88, 136, 238), rgb(222, 55, 255));
+    background: linear-gradient(50deg, rgb(255, 196, 0), rgb(255, 123, 0));
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
 
@@ -86,7 +89,7 @@ a:not(.no-fancy), a:link:not(.no-fancy), a:visited:not(.no-fancy), a:active:not(
 }
 
 a:hover:not(.no-fancy) {
-    filter: brightness(150%);
+    filter: brightness(120%);
 }
 
 a.no-fancy {

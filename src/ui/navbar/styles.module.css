@@ -36,10 +36,11 @@
 }
 
 .wordmark {
-    color: var(--foreground);
-    font-family: 'Space Grotesk', inter, sans-serif;
-    font-size: 24px;
-    font-weight: bold;
+    /* color: var(--foreground); */
+    font-family: 'Uncial Antiqua', inter, sans-serif;
+    font-size: 32px;
+    font-weight: 400;
+    white-space: nowrap;
 
     transition: color 320ms ease-out;
 }

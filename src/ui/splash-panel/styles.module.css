@@ -1,4 +1,6 @@
 .root {
+    position: relative;
+
     width: 100%;
     height: 380px;
 
@@ -7,4 +9,24 @@
     box-shadow: 0 0 0 1px var(--chrome-3) inset;
 
     transition: 320ms ease-out box-shadow, 320ms ease-out background-color;
+    overflow: clip;
+}
+
+.image {
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+
+    opacity: 0;
+
+    transition: 320ms ease-out opacity;
+}
+
+.show {
+    opacity: 1;
 }

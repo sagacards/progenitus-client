@@ -12,9 +12,12 @@
     "rss": "node ./rss.js"
   },
   "dependencies": {
+    "@fontsource/almendra": "^4.5.7",
+    "@fontsource/almendra-sc": "^4.5.5",
     "@fontsource/inter": "^4.5.5",
     "@fontsource/space-grotesk": "^4.5.3",
     "@fontsource/space-mono": "^4.5.3",
+    "@fontsource/uncial-antiqua": "^4.5.6",
     "js-sha256": "^0.9.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",

@@ -10,14 +10,17 @@ export default function DropCardList (props : Props) {
     const drops = [{
         name: 'The High Priestess',
         slug: 'the-high-priestess',
+        art: 'https://i.imgur.com/bwhO0bI.mp4',
     }, {
         name: 'The Empress',
         slug: 'the-empress',
+        art: 'https://i.imgur.com/feyHN2U.mp4',
     }, {
         name: 'The Emperor',
         slug: 'the-emperor',
+        art: 'https://i.imgur.com/8cOXOCE.mp4',
     },]
     return <div className={Styles.list}>
-        {drops.map((drop, i) => <DropCard key={`drop${i}`} name={drop.name} slug={drop.slug} />)}
+        {drops.map((drop, i) => <DropCard key={`drop${i}`} name={drop.name} slug={drop.slug} art={drop.art} />)}
     </div>
 }

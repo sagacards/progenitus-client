@@ -9,6 +9,7 @@ import { Link } from 'react-router-dom'
 import useStore from 'stores/index'
 import Logo from 'ui/logo'
 import Spinner from 'ui/spinner'
+import LineText from 'ui/line-text'
 
 interface Props {
     children?: React.ReactNode;
@@ -35,11 +36,11 @@ export default function Navbar (props : Props) {
         <Container>
             <div className={Styles.root}>
                 <div className={Styles.logo}>
-                    <Link className="no-fancy" to="/">
+                    {/* <Link className="no-fancy" to="/">
                         <Logo />
-                    </Link>
+                    </Link> */}
                     <Link className="no-fancy" to="/">
-                        <div className={Styles.wordmark}>Progenitus</div>
+                        <LineText><div className={Styles.wordmark}>Bazaar</div></LineText>
                     </Link>
                 </div>
                 <div className={[Styles.breakNav, open ? Styles.open : ''].join(' ')}>

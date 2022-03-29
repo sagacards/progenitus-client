@@ -22,7 +22,7 @@ export default function HomePage () {
                 <div className={Styles.splash}>
                     <SplashPanel />
                     <div className={Styles.tagline}>
-                        Project Progenitus is the <span className={Styles.rainbow}>Saga Tarot NFT Drop Hub</span> where we are bringing Open Tarot to life, one Legend mint at a time
+                        <strong>The Bazaar</strong> is the <span className={Styles.rainbow}>Saga Tarot NFT Drop Hub</span> where we are bringing Open Tarot to life, one Legend mint at a time
                     </div>
                 </div>
                 {!connected && <Link className="no-fancy" to="/connect"><Button size="xl">Connect</Button></Link>}

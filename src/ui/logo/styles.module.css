@@ -10,6 +10,14 @@
     border-radius: 8px;
     
     color: var(--background);
+    font-family: 'Almendra SC';
     font-size: 38px;
     font-weight: 1000;
+}
+
+.image {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: none;
 }
