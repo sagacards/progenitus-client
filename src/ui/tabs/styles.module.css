@@ -7,20 +7,22 @@
     justify-content: center;
 
     border-bottom: 1px solid var(--chrome-2);
+    transition: border 320ms ease-out;
 }
 
 .tab {
     padding: 24px 0;
     box-sizing: border-box;
     margin-bottom: -1px;
-
+    
     color: var(--chrome-4);
     font-size: 17px;
     font-weight: 500;
 
     cursor: pointer;
-
+    
     border-bottom: 1px solid var(--chrome-2);
+    transition: border 320ms ease-out;
 }
 
 .tab:hover {

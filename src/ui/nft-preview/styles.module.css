@@ -2,7 +2,7 @@
     border-radius: 10px;
     box-shadow: 0 0 0 1px var(--chrome-2);
     animation: fadein 1s ease-out forwards;
-    transition: transform 160ms ease-out;
+    transition: transform 160ms ease-out, box-shadow 320ms ease-out;
 }
 
 .root:hover {
@@ -60,6 +60,7 @@
     z-index: 10;
 
     border-top: solid 1px var(--chrome-2);
+    transition: border 320ms ease-out;
 
     display: flex;
     flex-direction: column;
@@ -150,6 +151,7 @@
     height: 2px;
     width: 100%;
     background: var(--chrome-2);
+    transition: box-shadow 320ms ease-out, background-color 320ms ease-out;
 }
 
 .price {

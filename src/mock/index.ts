@@ -35,13 +35,14 @@ export function eventFactory () : Event {
 
 export function collectionFactory (index? : number) : Collection {
     const arcana = ['The Fool', 'The Magician', 'The High Priestess', 'The Empress', 'The Emperor', 'The Hierophant', 'The Lovers', 'The Chariot', 'Strength', 'The Hermit', 'Wheel of Fortune', 'Justice', 'The Hanged Man', 'Death', 'Temperance', 'The Devil', 'The Tower', 'The Star', 'The Moon', 'The Sun', 'Judgement', 'The World'];
+    const description = `Darkest prelude sea rather swiftly racket image Alfrid alongside! Ravenhill meddle slumbers strangers carven merely sires abroad. Trolls decision pickle feed foreseen thunder deposit Easterlings? Ordinary eyes smells hardy Haldir. Vagabond undone burn Ithildin murder? Helps returned stones cares guest act Rabble-rousers lid cheese who's spirits? Ends prong flower ordered thousands arrow bags veiled Bolg daggers eve? Shines disappear gone laws Council deadly! There is only one Lord of the Ring.`;
     const i = Math.floor(Math.random() * arcana.length);
     return {
         name: `#${i} ${arcana[i]}`,
         icon: Disk,
         banner: '',
         canister: SagaCanisters[index || Math.floor(SagaCanisters.length * Math.random())],
-        description: '',
+        description,
     };
 };
 
@@ -71,8 +72,8 @@ for (const canister of SagaCanisters) {
 
 function randomDate (hourVariance : number = 4, future : boolean = false) {
     return new Date(new Date().getTime() + Math.random() * 1000 * 60 * hourVariance * (future ? 1 : -1))
-}
+};
 
 export {
     history,
-}
+};

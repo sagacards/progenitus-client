@@ -11,6 +11,7 @@ import Grid from 'ui/grid';
 import NFTPreview from 'ui/nft-preview';
 import More from 'ui/more';
 import Button from 'ui/button';
+import Revealer from 'ui/revealer';
 
 interface Props {};
 
@@ -68,7 +69,7 @@ export default function DropDetailPage (props : Props) {
                         </div>
                     </div>
                 </div>
-                {collection.description && <div className={Styles.description}>{collection.description}</div>}
+                {collection.description && <div className={Styles.description}><Revealer content={collection.description} /></div>}
                 <div className={Styles.mintingStage}>
                     <div className={Styles.stage}>
 
