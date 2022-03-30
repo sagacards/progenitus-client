@@ -27,8 +27,8 @@ export function eventFactory () : Event {
         price: {
             e8s: 4_00_000_000 + Math.floor(Math.random() * 10) * 1_00_000_000,
         },
-        startDate: new Date(),
-        endDate: new Date(),
+        startDate: randomDate(24, Math.random() > .5),
+        endDate: randomDate(72, true),
         collection: collectionFactory(),
     };
 };
@@ -62,12 +62,16 @@ for (const canister of SagaCanisters) {
         l.push({
             token: { index, canister, },
             // listing: { price: Math.random() * 100, id : index, canister },
-            event: { type: 'mint', timestamp: new Date(new Date().getTime() - Math.random() * 1000 * 60 * 4) } as CAPEvent,
+            event: { type: 'mint', timestamp: randomDate(4) } as CAPEvent,
         });
         index++
     };
     history[canister] = l;
 };
+
+function randomDate (hourVariance : number = 4, future : boolean = false) {
+    return new Date(new Date().getTime() + Math.random() * 1000 * 60 * hourVariance * (future ? 1 : -1))
+}
 
 export {
     history,

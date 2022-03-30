@@ -74,6 +74,22 @@
 .timer {
     font-family: 'Space Mono';
     font-size: 12px;
+    white-space: nowrap;
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+}
+
+.sizzle {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    padding: 3px 6px;
+    border: 1px solid var(--chrome-2);
+    /* border: 1px solid var(--gold-1); */
+    border-radius: 8px;
+    /* box-shadow: 0 0 5px var(--gold-2), 0 0 3px var(--gold-2) inset; */
 }
 
 @media (max-width: 1150px) {
