@@ -40,7 +40,6 @@ export default function DropDetailPage (props : Props) {
                     <img className={Styles.collection} src={collection.icon} />
                 </div>
                 <div className={Styles.name}>{collection.name}</div>
-                <div className={Styles.description}>{collection.description}</div>
                 <div className={Styles.stats}>
                     <div className={Styles.stat}>
                         <div className={Styles.statLabel}>Supply</div>
@@ -69,11 +68,15 @@ export default function DropDetailPage (props : Props) {
                         </div>
                     </div>
                 </div>
+                {collection.description && <div className={Styles.description}>{collection.description}</div>}
                 <div className={Styles.mintingStage}>
                     <div className={Styles.stage}>
 
                     </div>
-                    <div className={Styles.button}></div>
+                    <div className={Styles.button}>
+                        <Button size='large'>Mint Now</Button>
+                    </div>
+                    <div className={Styles.message}>Your wallet will be charged</div>
                 </div>
                 <div className={Styles.activity}>
                     <Tabs

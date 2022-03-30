@@ -1,7 +1,7 @@
 .root {
     display: flex;
     flex-direction: column;
-    gap: 16px;
+    gap: 38px;
 }
 
 .top {
@@ -78,4 +78,30 @@
 
 .stat:last-child {
     border: none;
+}
+
+.mintingStage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+.stage {
+    width: 100%;
+    height: 400px;
+    background: var(--chrome-2);
+    border-radius: 20px;
+}
+
+.button {
+    margin-top: -38px;
+    box-shadow: 0 0 0 8px var(--chrome-1);
+    background: var(--chrome-1);
+    border-radius: 28px;
+}
+
+.message {
+    color: var(--chrome-4);
+    font-size: 12px;
 }
