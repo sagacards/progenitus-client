@@ -23,6 +23,7 @@
       "stores/*" : ["src/stores/*"],
       "ui/*" : ["src/ui/*"],
       "util/*" : ["src/util/*"],
+      "mock/*" : ["src/mock/*"],
     }
   },
   "include": ["src"],

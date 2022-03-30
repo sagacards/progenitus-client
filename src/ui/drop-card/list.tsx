@@ -1,5 +1,6 @@
 import React from 'react'
-import DropCard from '.';
+import useStore from 'stores/index'
+import DropCard from '.'
 import Styles from './styles.module.css'
 
 interface Props {
@@ -7,6 +8,7 @@ interface Props {
 }
 
 export default function DropCardList (props : Props) {
+    const { events } = useStore();
     const drops = [{
         name: 'The High Priestess',
         slug: 'the-high-priestess',
@@ -21,6 +23,6 @@ export default function DropCardList (props : Props) {
         art: 'https://i.imgur.com/8cOXOCE.mp4',
     },]
     return <div className={Styles.list}>
-        {drops.map((drop, i) => <DropCard key={`drop${i}`} name={drop.name} slug={drop.slug} art={drop.art} />)}
+        {Object.values(events).map((drop, i) => <DropCard key={`drop${i}`} name={drop.collection.name} id={drop.id} art={''} />)}
     </div>
 }

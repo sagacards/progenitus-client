@@ -10,6 +10,7 @@ import { Rex, idlFactory } from 'canisters/progenitus/progenitus.did.js'
 import { Ledger, idlFactory as nnsIdl } from 'canisters/ledger/ledger.did.js'
 // @ts-ignore
 import { principalToAccountIdentifier, buf2hex } from 'util/ext'
+import makeEvents from 'mock/index'
 
 type ColorScheme = 'dark' | 'light';
 
@@ -19,6 +20,28 @@ export interface Message {
     type    : 'error' | 'info';
     message : string;
     read?   : boolean;
+};
+
+export interface Event {
+    id          : number;
+    supply      : number;
+    price       : ICP8s;
+    access      : 'private' | 'public';
+    startDate   : Date;
+    endDate     : Date;
+    collection  : Collection;
+}
+
+export interface Collection {
+    canister    : Principal;
+    banner      : string;
+    icon        : string;
+    name        : string;
+    description : string;
+};
+
+interface ICP8s {
+    e8s : number;
 };
 
 interface Store {
@@ -53,6 +76,12 @@ interface Store {
     pushMessage: (m : Message) => void;
     readMessage: (i : number) => void;
 
+    events      : { [key : number] : Event };
+    getEvent    : (id : number) => Event | undefined;
+    fetchEvents : () => void;
+
+    collections : { [key : string] : Collection };
+    getCollection: (c : Principal) => Collection | undefined;
 };
 
 const isLocal = import.meta.env.PROGENITUS_IS_LOCAL === 'true';
@@ -279,6 +308,7 @@ const useStore = create<Store>((set, get) => ({
 
     init () {
         get().fetchBalance();
+        get().fetchEvents();
     },
 
     // Generic UI messages
@@ -291,6 +321,26 @@ const useStore = create<Store>((set, get) => ({
 
     readMessage (i) {
         set(state => ({ messages: { ...state.messages, [i]: { ...state.messages[i], read: true } }}))
+    },
+
+    // Events
+
+    events : {},
+
+    getEvent (id) {
+        return get().events[id];
+    },
+
+    fetchEvents () {
+        set({ events: makeEvents() });
+    },
+
+    // Collections
+
+    collections : {},
+
+    getCollection (canister) {
+        return get().collections[canister.toString()];
     },
 
 }));

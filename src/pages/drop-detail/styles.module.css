@@ -30,7 +30,7 @@
 }
 
 .name {
-    font-size: 24px;
+    font-size: 28px;
     font-weight: 600;
     text-align: center;
 }
@@ -39,7 +39,7 @@
     display: flex;
     align-self: center;
 
-    height: 100px;
+    /* height: 100px; */
 
     border-radius: 20px;
     box-shadow: 0 0 0 1px var(--chrome-2);
@@ -48,12 +48,30 @@
 }
 
 .stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+
     height: 100%;
-    width: 150px;
+    width: 110px;
+    padding: 10px;
 
     border-right: 1px solid var(--chrome-2);
 
     transition: border 320ms ease-out;
+
+    text-transform: capitalize;
+}
+
+.statLabel {
+    color: var(--chrome-4);
+    font-size: 13px;
+}
+
+.statValue {
+    font-weight: 500;
+    font-size: 17px;
 }
 
 .stat:last-child {

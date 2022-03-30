@@ -8,7 +8,7 @@ import Disk from 'assets/disk/8.png'
 interface Props {
     children?: React.ReactNode;
     name: string;
-    slug: string;
+    id: number;
     art: string;
 }
 
@@ -25,7 +25,7 @@ export default function DropCard (props : Props) {
             <div className={Styles.name}>{props.name}</div>
             <div className={Styles.timer}>Starts 00:00:00:00</div>
         </div>
-        <Link className="no-fancy" to={`/drops/${props.slug}`}>
+        <Link className="no-fancy" to={`/drops/${props.id}`}>
             <Button>Drop Details</Button>
         </Link>
     </div>

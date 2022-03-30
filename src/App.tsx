@@ -10,15 +10,17 @@ import CollectionsPage from 'pages/collections';
 import ProfilePage from 'pages/profile';
 import DropDetailPage from 'pages/drop-detail';
 import Messages from 'ui/messages';
+import useStore from './stores';
 
 function App() {
-    // const { isLocal } = useStore();
+    const { init } = useStore();
+    React.useEffect(init, []);
     return <>
         <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/connect" element={<ConnectPage />} />
             <Route path="/account" element={<AccountPage />} />
-            <Route path="/drops/:slug" element={<DropDetailPage />} />
+            <Route path="/drops/:id" element={<DropDetailPage />} />
             <Route path="/drops" element={<DropsPage />} />
             <Route path="/collections" element={<CollectionsPage />} />
             <Route path="/profile" element={<ProfilePage />} />
