@@ -29,4 +29,10 @@
 
 .show {
     opacity: 1;
+    animation: fadein 320ms ease-out;
+}
+
+@keyframes fadein {
+    from { opacity: 0 }
+    to { opacity: 1 }
 }
