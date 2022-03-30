@@ -1,0 +1,34 @@
+.root {}
+
+.tabs {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    justify-content: center;
+
+    border-bottom: 1px solid var(--chrome-2);
+}
+
+.tab {
+    padding: 24px 0;
+    box-sizing: border-box;
+    margin-bottom: -1px;
+
+    color: var(--chrome-4);
+    font-size: 17px;
+    font-weight: 500;
+
+    cursor: pointer;
+
+    border-bottom: 1px solid var(--chrome-2);
+}
+
+.tab:hover {
+    color: var(--chrome-5);
+}
+
+.active {
+    color: var(--chrome-6);
+
+    border-bottom-color: var(--chrome-4);
+}

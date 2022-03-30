@@ -1,6 +1,6 @@
 import create from 'zustand'
 import { StoicIdentity } from "ic-stoic-identity";
-import { Actor, ActorSubclass, HttpAgent } from '@dfinity/agent'
+import { Actor, ActorSubclass, Agent, HttpAgent } from '@dfinity/agent'
 import { IDL } from '@dfinity/candid'
 import { Principal } from '@dfinity/principal';
 import axios from 'axios';
@@ -9,8 +9,11 @@ import { Rex, idlFactory } from 'canisters/progenitus/progenitus.did.js'
 // @ts-ignore
 import { Ledger, idlFactory as nnsIdl } from 'canisters/ledger/ledger.did.js'
 // @ts-ignore
+import CyclesDID from 'canisters/cycles/cycles.did.js';
+// @ts-ignore
 import { principalToAccountIdentifier, buf2hex } from 'util/ext'
-import makeEvents from 'mock/index'
+import makeEvents, { history, makeCollections } from 'mock/index'
+import { Id } from 'react-toastify';
 
 type ColorScheme = 'dark' | 'light';
 
@@ -33,18 +36,40 @@ export interface Event {
 }
 
 export interface Collection {
-    canister    : Principal;
+    canister    : CanisterId;
     banner      : string;
     icon        : string;
     name        : string;
     description : string;
 };
 
-interface ICP8s {
+export interface CAPEvent {
+    timestamp : Date;
+    type: 'mint' | 'transfer' | 'sale';
+};
+
+export interface Token {
+    canister: string;
+    index   : number;
+};
+
+export interface ICP8s {
     e8s : number;
 };
 
+export interface _Token {
+    token : Token;
+    listing?: Listing;
+    event?: CAPEvent;
+};
+
+type CanisterId = string;
+type TokenIndex = number;
+
 interface Store {
+
+    defaultAgent?   : Agent;
+    icpToUSD?: number;
 
     actor?          : ActorSubclass<Rex>;
     principal?      : Principal;
@@ -80,8 +105,16 @@ interface Store {
     getEvent    : (id : number) => Event | undefined;
     fetchEvents : () => void;
 
-    collections : { [key : string] : Collection };
-    getCollection: (c : Principal) => Collection | undefined;
+    collections     : { [key : string] : Collection };
+    getCollection   : (c : Principal) => Collection | undefined;
+    fetchCollections: () => void;
+
+    // TODO: replace with CAP implementation
+    history     : { [key : string] : _Token[] };
+
+    likes   : [CanisterId, TokenIndex][];
+    like    : (token : [CanisterId, TokenIndex]) => void;
+    unlike  : (token : [CanisterId, TokenIndex]) => void;
 };
 
 const isLocal = import.meta.env.PROGENITUS_IS_LOCAL === 'true';
@@ -104,7 +137,12 @@ function rosettaData (account : string) {
     };
 }
 
+// Create some fake mint history.
+export interface Listing { id : number; canister : string; price : number; }
+
 const useStore = create<Store>((set, get) => ({
+
+    history,
 
     // Wallets
 
@@ -306,9 +344,24 @@ const useStore = create<Store>((set, get) => ({
 
     // Store init
 
-    init () {
+    async init () {
         get().fetchBalance();
         get().fetchEvents();
+        // get().fetchCollections();
+
+        // Create a default agent
+        const defaultAgent = new HttpAgent({ host: 'https://boundary.ic0.app/' });
+
+        // Get ICP to USD exchange rate
+        const cycles : any = await Actor.createActor(CyclesDID, {
+            agent: defaultAgent,
+            canisterId: 'rkp4c-7iaaa-aaaaa-aaaca-cai',
+        }).get_icp_xdr_conversion_rate();
+        const xdr = await fetch("https://free.currconv.com/api/v7/convert?q=XDR_USD&compact=ultra&apiKey=df6440fc0578491bb13eb2088c4f60c7").then(r => r.json());
+
+        const icpToUSD = Number(cycles.data.xdr_permyriad_per_icp) / 10000 * (xdr.hasOwnProperty("XDR_USD") ? xdr.XDR_USD : 1.4023);
+
+        set({ defaultAgent, icpToUSD });
     },
 
     // Generic UI messages
@@ -341,6 +394,25 @@ const useStore = create<Store>((set, get) => ({
 
     getCollection (canister) {
         return get().collections[canister.toString()];
+    },
+
+    fetchCollections () {
+        set({ collections : makeCollections() });
+    },
+
+    // Tokens liked by the user
+    likes: [],
+
+    like (token) {
+        set(state => ({
+            likes: [...state.likes, token],
+        }));
+    },
+
+    unlike (token) {
+        set(state => ({
+            likes: state.likes.filter(x => !(token[0] === x[0]) && !(token[1] === x[1])),
+        }));
     },
 
 }));

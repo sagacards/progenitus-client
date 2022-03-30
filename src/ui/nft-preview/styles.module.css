@@ -1,0 +1,175 @@
+.root {
+    border-radius: 10px;
+    box-shadow: 0 0 0 1px var(--chrome-2);
+    animation: fadein 1s ease-out forwards;
+    transition: transform 160ms ease-out;
+}
+
+.root:hover {
+    transform: scale(1.05);
+}
+
+.stage, .static, .animated {
+    width: 300px;
+    height: 300px;
+}
+
+.stage {
+    position: relative;
+}
+
+.static, .animated {
+    position: absolute;
+    z-index: 2;
+}
+
+.static {
+    animation: fadein 500ms linear;
+}
+
+.animated {
+    z-index: 3;
+    opacity: 0;
+    transition: opacity 250ms linear;
+}
+
+.animatedPlay {
+    opacity: 1;
+}
+
+.loader {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.loaderHover {
+    z-index: 4;
+    width: 50px;
+    height: 50px;
+    top: 0;
+    right: 0;
+    transform: scale(.5);
+}
+
+.meta {
+    position: relative;
+    z-index: 10;
+
+    border-top: solid 1px var(--chrome-2);
+
+    display: flex;
+    flex-direction: column;
+    gap: .5em;
+    padding: .5em;
+}
+
+.details {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: .5em;
+}
+
+.like {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    justify-content: center;
+}
+
+.likeCount {
+    font-size: 14px;
+    line-height: 1;
+    color: var(--chrome-4);
+    font-weight: 800;
+}
+
+.likeIcon {
+    height: 24px;
+    width: 24px;
+    font-size: 24px;
+    stroke-width: 2px;
+    color: var(--chrome-3);
+    transition: 320ms color cubic-bezier(0.34, 1.56, 0.64, 1), 320ms transform cubic-bezier(0.34, 6, 0.64, 1);
+    cursor: pointer;
+}
+
+.likeIcon.active {
+    color: var(--chrome-4);
+    transform: scale(1.1);
+}
+
+.likeIcon:not(.active):hover {
+    color: var(--chrome-4);
+}
+
+.ico {
+    width: 40px;
+    height: 40px;
+}
+
+.title {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: .5em;
+}
+
+.mint {
+    font-size: 1.2em;
+}
+
+.collection {
+    color: var(--chrome-4);
+    font-size: .75em;
+    text-transform: uppercase;
+    text-align: center;
+}
+
+.actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: .5em;
+}
+
+.stat {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    font-size: 12px;
+    text-transform: uppercase;
+    color: var(--chrome-4);
+}
+
+.divider {
+    height: 2px;
+    width: 100%;
+    background: var(--chrome-2);
+}
+
+.price {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: .5em;
+}
+
+.priceLabel {
+    color: var(--chrome-4);
+    font-size: .8em;
+}
+
+.usd {
+    color: var(--chrome-4);
+    font-size: .8em;
+}
+
+@keyframes fadein {
+    from    { opacity: 0; }
+    to      { opacity: 1; }
+}

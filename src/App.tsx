@@ -13,14 +13,24 @@ import Messages from 'ui/messages';
 import useStore from './stores';
 
 function App() {
-    const { init } = useStore();
-    React.useEffect(init, []);
+    const { init, pushMessage } = useStore();
+    React.useEffect(() => {
+        init()
+        pushMessage({
+            type: 'info',
+            message: 'Alpha notice! There will be bugs!',
+        })
+    }, []);
     return <>
         <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/connect" element={<ConnectPage />} />
             <Route path="/account" element={<AccountPage />} />
-            <Route path="/drops/:id" element={<DropDetailPage />} />
+            <Route path="/drops/:id">
+                <Route index element={<DropDetailPage />} />
+                <Route path="mints" element={<DropDetailPage />} />
+                <Route path="transfers" element={<DropDetailPage />} />
+            </Route>
             <Route path="/drops" element={<DropsPage />} />
             <Route path="/collections" element={<CollectionsPage />} />
             <Route path="/profile" element={<ProfilePage />} />

@@ -7,7 +7,8 @@ interface Props {
     flush?: boolean;
     size?: Size;
     alt?: boolean;
-    icon?: React.ReactNode;
+    icon?: React.ReactNode; 
+    full?: boolean;
 }
 
 type Size = 'tiny' | 'small' | 'medium' | 'large' | 'xl';
@@ -27,10 +28,11 @@ export default function Button ({
     size = 'medium',
     alt = false,
     icon,
+    full = false,
 } : Props) {
     const w = sizeMap[size], height = w, p = w/2;
     return <div
-        className={[Styles.root, flush ? Styles.flush : '', Styles[size], alt ? Styles.alt : ''].join(' ')}
+        className={[Styles.root, flush ? Styles.flush : '', full ? Styles.full : '', Styles[size], alt ? Styles.alt : ''].join(' ')}
         onClick={onClick}
         style={{ height, minWidth: w }}
     >

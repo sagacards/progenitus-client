@@ -100,7 +100,7 @@
     }
 }
 
-.root a:not(.no-fancy), a:link:not(.no-fancy), a:visited:not(.no-fancy), a:active:not(.no-fancy), a:hover:not(.no-fancy) {
+.root a:not(.no-fancy), .root a:link:not(.no-fancy), .root a:visited:not(.no-fancy), .root a:active:not(.no-fancy), .root a:hover:not(.no-fancy) {
     background: none;
     -webkit-background-clip: none;
     -webkit-text-fill-color: inherit;
