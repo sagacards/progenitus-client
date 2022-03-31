@@ -24,7 +24,7 @@ interface Transaction {
 
 export default function AccountPage(props: Props) {
 
-    const { balance, fetchBalance, disconnect, connected, address, principal, } = useStore();
+    const { balance, balanceDisplay, fetchBalance, disconnect, connected, address, principal, } = useStore();
     React.useEffect(() => {
         fetchBalance();
     }, []);
@@ -145,7 +145,7 @@ export default function AccountPage(props: Props) {
                                 <div className={Styles.asideLabel}>Balance</div>
                                 <div className={Styles.asideRow}>
                                     <div>
-                                        {balance?.toFixed(2)} <span>ICP</span>
+                                        {balanceDisplay()?.toFixed(2)} <span>ICP</span>
                                     </div>
                                 </div>
                             </div>
