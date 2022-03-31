@@ -13,7 +13,7 @@ import CyclesDID from 'canisters/cycles/cycles.did.js';
 // @ts-ignore
 import { principalToAccountIdentifier, buf2hex } from 'util/ext'
 import makeEvents, { history, makeCollections } from 'mock/index'
-import { Id } from 'react-toastify';
+import { MintingEvent } from 'src/logic/minting';
 
 type ColorScheme = 'dark' | 'light';
 
@@ -24,16 +24,6 @@ export interface Message {
     message : string;
     read?   : boolean;
 };
-
-export interface Event {
-    id          : number;
-    supply      : number;
-    price       : ICP8s;
-    access      : 'private' | 'public';
-    startDate   : Date;
-    endDate     : Date;
-    collection  : Collection;
-}
 
 export interface Collection {
     canister    : CanisterId;
@@ -83,10 +73,11 @@ interface Store {
     
     ledgerActor?    : ActorSubclass<Ledger>;
     address?        : string;
-    balance?        : number;
+    balance?        : ICP8s;
     fetchBalance    : () => void;
     deposit         : (a : number) => Promise<void>;
     withdraw        : (a : number) => Promise<void>;
+    balanceDisplay  : () => number | undefined;
 
     colorScheme: ColorScheme;
     setColorScheme: (c : ColorScheme) => void;
@@ -101,8 +92,8 @@ interface Store {
     pushMessage: (m : Message) => void;
     readMessage: (i : number) => void;
 
-    events      : { [key : number] : Event };
-    getEvent    : (id : number) => Event | undefined;
+    events      : { [key : number] : MintingEvent };
+    getEvent    : (id : number) => MintingEvent | undefined;
     fetchEvents : () => void;
 
     collections     : { [key : string] : Collection };
@@ -244,8 +235,17 @@ const useStore = create<Store>((set, get) => ({
         if (!address) return;
         axios.post(`${rosetta}/account/balance`, rosettaData(address))
             .then(r => {
-                set({ balance : parseInt(r.data.balances[0].value) / 10**8 })
+                set({ balance : { e8s : parseInt(r.data.balances[0].value) } })
             })
+    },
+
+    balanceDisplay () {
+        const { balance } = get();
+        if (balance) {
+            return balance.e8s / 10**8;
+        } else {
+            return undefined;
+        }
     },
 
     async withdraw (amount : number) {
@@ -348,6 +348,10 @@ const useStore = create<Store>((set, get) => ({
         get().fetchBalance();
         get().fetchEvents();
         // get().fetchCollections();
+
+        window.alert = (message : string) => {
+            get().pushMessage({type: 'info', message})
+        }
 
         // Create a default agent
         const defaultAgent = new HttpAgent({ host: 'https://boundary.ic0.app/' });

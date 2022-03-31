@@ -16,7 +16,7 @@ interface Props {
 }
 
 export default function Navbar (props : Props) {
-    const { connected, balance } = useStore();
+    const { connected, balanceDisplay } = useStore();
     const nav : {name: string; path: string}[] = [
         // {
         //     name: 'Drops',
@@ -51,10 +51,10 @@ export default function Navbar (props : Props) {
                             </div>
                         </Link>)}
                     </div>
-                    {connected && <div className={Styles.balance}>{balance !== undefined ? balance.toFixed(2) : <Spinner size='small' />} <span className={Styles.icp}>ICP</span> <img className={Styles.icpImg} src={ICP} /></div>}
+                    {connected && <div className={Styles.balance}>{balanceDisplay() !== undefined ? balanceDisplay()?.toFixed(2) : <Spinner size='small' />} <span className={Styles.icp}>ICP</span> <img className={Styles.icpImg} src={ICP} /></div>}
                     {connected
                         ? <Link to="/account" className="no-fancy"><Button>Account</Button></Link>
-                        : <Link to="/connect" className="no-fancy"><Button>Connect</Button></Link>
+                        : <Link to="/connect" state={{ referrer : window.location.pathname }} className="no-fancy"><Button>Connect</Button></Link>
                     }
                 </div>
                 <div className={Styles.aside}>

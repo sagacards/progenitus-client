@@ -97,6 +97,7 @@
 
 .stage {
     width: 100%;
+    max-width: 500px;
     height: 400px;
     background: var(--chrome-2);
     transition: box-shadow 320ms ease-out, background-color 320ms ease-out;
@@ -112,6 +113,8 @@
 }
 
 .message {
+    display: flex;
+    gap: 4px;
     color: var(--chrome-4);
     font-size: 12px;
 }

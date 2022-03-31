@@ -4,6 +4,7 @@
     font-family: 'almendra sc';
     font-weight: bold;
     font-size: 40px;
+    letter-spacing: 1px;
 }
 
 .fore {
@@ -12,16 +13,14 @@
     z-index: 2;
 
     background:
-        linear-gradient(45deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0)),
-        linear-gradient(45deg, hsla(42deg, 100%, 70%, 1), hsla(25deg, 73%, 60%, 1)),
-        url(/src/assets/graphics/noise.webp) repeat;
+        linear-gradient(225deg, hsla(42deg, 100%, 70%, 1), hsla(25deg, 73%, 60%, 1));
     background-size: 150%;
     background-blend-mode: color;
 
     background-blend-mode: color;
     -webkit-background-clip: text;
         
-    color: hsla(25deg, 73%, 60%, 1);
+    color: var(--gold-1);
     font-weight: normal;
     text-shadow: none;
     
@@ -37,8 +36,8 @@
     width: 100%;
     backdrop-filter: blur(5px) opacity(100%) ;
     
-    -webkit-text-stroke-width: 2px;
-    -webkit-text-stroke-color: var(--gold-1);
+    /* -webkit-text-stroke-width: 1px; */
+    -webkit-text-stroke-color: rgb(255, 173, 42);
     -webkit-text-fill-color: transparent;
     text-shadow: 0 0 5px var(--gold-1);
 }
@@ -50,6 +49,7 @@
     z-index: 0;
 
     width: 100%;
+    opacity: .125;
 
     background: linear-gradient(50deg, var(--gold-1), var(--gold-1), var(--gold-2), var(--gold-2), var(--gold-2));
     -webkit-background-clip: text;

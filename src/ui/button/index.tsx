@@ -9,6 +9,7 @@ interface Props {
     alt?: boolean;
     icon?: React.ReactNode; 
     full?: boolean;
+    disabled?: boolean;
 }
 
 type Size = 'tiny' | 'small' | 'medium' | 'large' | 'xl';
@@ -29,11 +30,20 @@ export default function Button ({
     alt = false,
     icon,
     full = false,
+    disabled = false,
 } : Props) {
     const w = sizeMap[size], height = w, p = w/2;
     return <div
-        className={[Styles.root, flush ? Styles.flush : '', full ? Styles.full : '', Styles[size], alt ? Styles.alt : ''].join(' ')}
-        onClick={onClick}
+        aria-disabled={disabled}
+        className={[
+            Styles.root,
+            flush ? Styles.flush : '',
+            full ? Styles.full : '',
+            Styles[size],
+            alt ? Styles.alt : '',
+            disabled ? Styles.disabled : '',
+        ].join(' ')}
+        onClick={e => !disabled && onClick && onClick(e)}
         style={{ height, minWidth: w }}
     >
         <div className={Styles.frame} style={{ borderRadius: p }} />

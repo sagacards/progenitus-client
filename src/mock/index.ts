@@ -1,8 +1,9 @@
-import { Event, Collection, CAPEvent, _Token } from 'stores/index'
+import { Collection, CAPEvent, _Token } from 'stores/index'
 import Disk from 'assets/disk/8.png'
+import { MintingEvent } from 'src/logic/minting';
 
-export default function makeEvents (count : number = 3) : { [ key : Event['id']] : Event } {
-    let events : { [ key : Event['id']] : Event } = {};
+export default function makeEvents (count : number = 3) : { [ key : MintingEvent['id']] : MintingEvent } {
+    let events : { [ key : MintingEvent['id']] : MintingEvent } = {};
     while (Object.values(events).length < count) {
         const event = eventFactory();
         events[event.id] = event;
@@ -19,7 +20,7 @@ export function makeCollections (count : number = 3) : { [ key : string ] : Coll
     return collections;
 };
 
-export function eventFactory () : Event {
+export function eventFactory () : MintingEvent {
     return {
         id : Math.floor(Math.random() * 1_000_000_000),
         supply: 100 + (50 - Math.floor(100 * Math.random())),
@@ -27,7 +28,7 @@ export function eventFactory () : Event {
         price: {
             e8s: 4_00_000_000 + Math.floor(Math.random() * 10) * 1_00_000_000,
         },
-        startDate: randomDate(24, Math.random() > .5),
+        startDate: new Date(Date.now() + 1000 * 30),// randomDate(24, Math.random() > .5),
         endDate: randomDate(72, true),
         collection: collectionFactory(),
     };

@@ -1,0 +1,4 @@
+- Minting pregame
+    - Mint button unlocks
+- Ongoing mint
+    - 

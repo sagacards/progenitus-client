@@ -6,7 +6,7 @@
 }
 
 .root:hover {
-    transform: scale(1.05);
+    transform: scale(1.02);
 }
 
 .stage, .static, .animated {
@@ -100,7 +100,7 @@
 }
 
 .likeIcon.active {
-    color: var(--chrome-4);
+    color: var(--gold-1);
     transform: scale(1.1);
 }
 

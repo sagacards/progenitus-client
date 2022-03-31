@@ -9,6 +9,10 @@
     flex-shrink: 0;
 }
 
+.root.disabled {
+    cursor: not-allowed;
+}
+
 /* Provides a fluid visual frame unbounded by the box model */
 .frame {
     position: absolute;
@@ -23,16 +27,20 @@
     transition: 160ms box-shadow ease-out, 160ms transform ease-out, 320ms background-color ease-out;
 }
 
+.root.disabled .body {
+    box-shadow: 0 0 0 1px var(--chrome-2);
+}
+
 .alt .frame {
     background-color: var(--chrome-3);
 }
 
-.root:hover .frame {
+.root:hover:not(.disabled) .frame {
     box-shadow: 0 0 0 1px var(--chrome-4);
     transform: scale(1.05);
 }
 
-.root:active .frame {
+.root:active:not(.disabled) .frame {
     transform: scale(.95);
 }
 
@@ -54,6 +62,10 @@
 
     color: var(--foreground);
     font-weight: 500;
+}
+
+.root.disabled .body {
+    color: var(--chrome-4);
 }
 
 .icon {

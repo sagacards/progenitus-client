@@ -3,14 +3,15 @@ import React from 'react';
 import Button from 'ui/button';
 import useStore from 'stores/index';
 import Spinner from 'ui/spinner';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 import WalletIcon from 'ui/wallet-icon';
 
 interface Props {};
 
 export default function ConnectPage (props : Props) {
     const { stoicConnect, plugConnect, connecting, connected } = useStore();
-    if (connected) return <Navigate to="/" />
+    const { state } = useLocation();
+    if (connected) return <Navigate to={(state as any)?.referrer || "/"} />
     return <div className={Styles.root}>
         <div className={Styles.art}></div>
         <div className={Styles.content}>
