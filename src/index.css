@@ -111,6 +111,7 @@ iframe[id*="connect_iframe"] {
     display: none;
 }
 
+.Toastify__progress-bar-theme--light,
 .Toastify__progress-bar-theme--dark {
     background: var(--gold-1) !important;
 }
