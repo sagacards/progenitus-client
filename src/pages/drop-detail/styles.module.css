@@ -15,6 +15,7 @@
     
     border-radius: 20px;
     background-color: var(--chrome-2);
+    object-fit: cover;
 }
 
 .collection {
@@ -96,15 +97,21 @@
 }
 
 .stage {
+    overflow: clip;
     width: 100%;
     max-width: 500px;
     height: 400px;
-    background: var(--chrome-2);
+    /* background: url(/src/assets/backdrop/bgc-midnight.jpg);
+    background-size: 200%;
+    background-position: center bottom -1px; */
+    background: linear-gradient(#202059, #1C367C);
     transition: box-shadow 320ms ease-out, background-color 320ms ease-out;
     border-radius: 20px;
 }
 
 .button {
+    position: relative;
+    z-index: 10;
     margin-top: -38px;
     box-shadow: 0 0 0 8px var(--chrome-1);
     background: var(--chrome-1);

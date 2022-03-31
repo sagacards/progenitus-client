@@ -15,6 +15,9 @@ import Revealer from 'ui/revealer';
 import { eventIsMintable } from 'src/logic/minting';
 import Spinner from 'ui/spinner';
 import Timer from 'ui/timer';
+import MintScene from 'src/three/mint-scene';
+
+import Banner from 'assets/banner.jpg'
 
 interface Props {};
 
@@ -82,7 +85,7 @@ export default function DropDetailPage (props : Props) {
         <Container>
             <div className={Styles.root}>
                 <div className={Styles.top}>
-                    <img className={Styles.banner} src={collection.banner} />
+                    <img className={Styles.banner} src={Banner} />
                     <img className={Styles.collection} src={collection.icon} />
                 </div>
                 <div className={Styles.name}>{collection.name}</div>
@@ -119,7 +122,7 @@ export default function DropDetailPage (props : Props) {
                 {collection.description && <div className={Styles.description}><Revealer content={collection.description} /></div>}
                 <div className={Styles.mintingStage}>
                     <div className={Styles.stage}>
-
+                        <MintScene />
                     </div>
                     <div className={Styles.button}>
                         <Button size='large' disabled={mintable !== 'mintable'}>Mint {mintable === 'mintable' ? 'Now' : 'Unavailable'}</Button>
