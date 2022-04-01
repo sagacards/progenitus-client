@@ -17,7 +17,7 @@ import Spinner from 'ui/spinner';
 import Timer from 'ui/timer';
 import MintScene from 'src/three/mint-scene';
 
-import Banner from 'assets/banner.jpg'
+import Banner from 'assets/events/0/banner.jpg'
 
 interface Props {};
 

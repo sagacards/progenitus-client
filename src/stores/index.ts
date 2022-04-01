@@ -59,7 +59,7 @@ type TokenIndex = number;
 interface Store {
 
     defaultAgent?   : Agent;
-    icpToUSD?: number;
+    icpToUSD?       : number;
 
     actor?          : ActorSubclass<Rex>;
     principal?      : Principal;
