@@ -4,8 +4,9 @@
     border-bottom: 1px solid var(--chrome-2);
 }
 
-.creator, .collection, .minter, .owner {
+.item {
     position: relative;
+    transition: 240ms ease-out transform;
 }
 
 .disk {
@@ -16,10 +17,12 @@
     border-radius: 50%;
     margin-right: -20px;
 
-    background: var(--chrome-2);
-    box-shadow: 0 0 0 1px var(--chrome-3);
+    overflow: clip;
 
-    transition: 240ms ease-out transform;
+    background: var(--chrome-2);
+    box-shadow: 0 0 0 1px var(--chrome-1);
+
+    transition: 240ms ease-out transform, 320ms ease-out box-shadow;
 
     cursor: pointer;
 }
@@ -27,12 +30,18 @@
 .disk:hover {
     z-index: 10;
     transform: scale(1.2);
+    box-shadow: 0 0 0 3px var(--chrome-1);
 }
 
-.creator:hover .tip,
-.collection:hover .tip,
-.minter:hover .tip,
-.owner:hover .tip {
+.item:hover ~ .item {
+    /* transform: translateX(2px); */
+}
+
+.item:hover + .item {
+    z-index: 5;
+}
+
+.item:hover .tip {
     transform: translateY(-24px);
     opacity: 1;
 }
