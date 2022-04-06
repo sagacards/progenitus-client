@@ -1,6 +1,6 @@
 import React from 'react'
 import Styles from './styles.module.css'
-import Seal from 'assets/logo.png'
+import Seal from 'assets/seal.png'
 
 interface Props {
     children?: React.ReactNode;
