@@ -6,6 +6,7 @@ import Styles from './styles.module.css'
 import { FaHeart } from 'react-icons/fa'
 import dayjs from 'dayjs'
 import relativetime from 'dayjs/plugin/relativeTime'
+import { Principal } from '@dfinity/principal'
 
 dayjs.extend(relativetime);
 
@@ -20,13 +21,17 @@ interface Props {
 export default function NFTPreview (props : Props) {
 
     // App store.
-    const { icpToUSD, collections } = useStore();
+    const { icpToUSD, collections, like, unlike, likes, doesLike, principal, likeCount } = useStore();
 
     // Component state
     const [play, setPlay] = React.useState<boolean>(false);
     const [readyStatic, setReadyStatic] = React.useState<boolean>(false);
     const [animated, setAnimated] = React.useState<string>();
-    const [liked, setLiked] = React.useState(false);
+    const [count, setCount] = React.useState<number>();
+
+    const liked = React.useMemo(() => doesLike(props.token), [likes]);
+
+    React.useEffect(() => void likeCount(props.token).then(r => setCount(r)), [liked])
     
     // Lazy load static thumbnails.
     React.useEffect(() => {
@@ -49,6 +54,24 @@ export default function NFTPreview (props : Props) {
         }));
     };
 
+    const handleLike = React.useMemo(() => function () {
+        if (!principal) return;
+        const update = !liked;
+        if (update) {
+            like({
+                canister: Principal.fromText(props.token.canister),
+                index: props.token.index,
+                user: principal,
+            })
+        } else {
+            unlike({
+                canister: Principal.fromText(props.token.canister),
+                index: props.token.index,
+                user: principal,
+            })
+        };
+    }, [likes, principal]);
+
     const collection = collections[props.token.canister];
 
     return <div className={Styles.root} onMouseEnter={() => { setPlay(true); fetchAnimated(); }} onMouseLeave={() => setPlay(false)}>
@@ -67,8 +90,8 @@ export default function NFTPreview (props : Props) {
                     <div className={Styles.mint}>#{props.token.index}</div>
                 </div>
                 <div className={Styles.like}>
-                    <div className={Styles.likeCount}>0</div>
-                    <div className={[Styles.likeIcon, liked ? Styles.active : ''].join(' ')} onClick={() => setLiked(!liked)}><FaHeart /></div>
+                    <div className={Styles.likeCount}>{count}</div>
+                    <div className={[Styles.likeIcon, liked ? Styles.active : ''].join(' ')} onClick={() => handleLike()}><FaHeart /></div>
                 </div>
             </div>
             <div className={Styles.divider} />

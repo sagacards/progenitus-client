@@ -1,5 +1,4 @@
 import React from 'react'
-import ReactHashAvatar from 'react-hash-avatar'
 import Hashatar from 'ui/hashatar';
 import Styles from './styles.module.css'
 

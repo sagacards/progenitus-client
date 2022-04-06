@@ -16,6 +16,9 @@ import CyclesDID from 'canisters/cycles/cycles.did.js';
 import { principalToAccountIdentifier, buf2hex } from 'util/ext'
 import makeEvents, { history, makeCollections } from 'mock/index'
 import { mapEvent, MintingEvent } from 'src/logic/minting';
+// @ts-ignore
+import { Likes, idlFactory as likesIdl } from 'canisters/likes/likes.did';
+import { Like, mapLike } from 'src/logic/likes';
 
 type ColorScheme = 'dark' | 'light';
 
@@ -117,9 +120,13 @@ interface Store {
     // TODO: replace with CAP implementation
     history     : { [key : string] : _Token[] };
 
-    likes   : [CanisterId, TokenIndex][];
-    like    : (token : [CanisterId, TokenIndex]) => void;
-    unlike  : (token : [CanisterId, TokenIndex]) => void;
+    likes       : Like[];
+    like        : (token : Like) => void;
+    unlike      : (token : Like) => void;
+    likesActor? : ActorSubclass<Likes>,
+    fetchLikes  : () => void;
+    doesLike    : (t : Token) => boolean;
+    likeCount   : (t : Token) => Promise<number>;
 
     isMinting       : boolean;
     setIsMinting    : (m : boolean) => void;
@@ -131,6 +138,8 @@ const isLocal = import.meta.env.PROGENITUS_IS_LOCAL === 'true';
 const host = import.meta.env.PROGENITUS_IC_HOST as string;
 const canisterId = import.meta.env.PROGENITUS_CANISTER_ID as string;
 const nnsCanisterId = import.meta.env.PROGENITUS_NNS_CANISTER_ID as string;
+const likesCanisterId = import.meta.env.PROGENITUS_LIKES_CANISTER_ID as string;
+const whitelist = [canisterId, likesCanisterId];
 
 const rosetta = 'https://rosetta-api.internetcomputer.org';
 const mockAccount = '769b645e881a0f5cf8891c1714b8235130984d07dd0c6ccc2aa13076682fd4bb';
@@ -225,10 +234,15 @@ const useStore = create<Store>((set, get) => ({
                 canisterId: nnsCanisterId,
             });
 
+            const likesActor = Actor.createActor<Likes>(likesIdl, {
+                agent,
+                canisterId: likesCanisterId,
+            });
+
             get().postconnect();
 
             complete();
-            set(() => ({ connected: true, principal: identity.getPrincipal(), actor, wallet: 'stoic', ledgerActor: nns }));
+            set(() => ({ connected: true, principal: identity.getPrincipal(), actor, wallet: 'stoic', ledgerActor: nns, likesActor }));
         });
     },
 
@@ -243,7 +257,7 @@ const useStore = create<Store>((set, get) => ({
             return;
         }
         
-        await window.ic.plug.requestConnect({ whitelist: [canisterId], host }).catch(complete);
+        await window.ic.plug.requestConnect({ whitelist, host }).catch(complete);
 
         const agent = await window.ic.plug.agent;
         // isLocal && agent.fetchRootKey();
@@ -254,8 +268,13 @@ const useStore = create<Store>((set, get) => ({
             interfaceFactory: idlFactory,
         });
 
+        const likesActor = await window?.ic?.plug?.createActor<Likes>({
+            canisterId: likesCanisterId,
+            interfaceFactory: likesIdl,
+        });
+
         complete();
-        set(() => ({ connected: true, principal, actor, wallet: 'plug' }));
+        set(() => ({ connected: true, principal, actor, wallet: 'plug', likesActor }));
 
         get().postconnect();
     },
@@ -274,8 +293,13 @@ const useStore = create<Store>((set, get) => ({
                 canisterId,
                 interfaceFactory: idlFactory,
             });
+            
+            const likesActor = await window?.ic?.plug?.createActor<Likes>({
+                canisterId: likesCanisterId,
+                interfaceFactory: likesIdl,
+            });
 
-            set(() => ({ connected: true, principal, actor, wallet: 'plug' }));
+            set(() => ({ connected: true, principal, actor, wallet: 'plug', likesActor }));
 
             get().postconnect();
         }
@@ -286,13 +310,15 @@ const useStore = create<Store>((set, get) => ({
     disconnect () {
         StoicIdentity.disconnect();
         window.ic?.plug?.deleteAgent();
-        set({ connected: false, principal: undefined, address: undefined, actor: undefined, balance: undefined, wallet: undefined, ledgerActor: undefined });
+        set({ connected: false, principal: undefined, address: undefined, actor: undefined, balance: undefined, wallet: undefined, ledgerActor: undefined, likesActor: undefined });
     },
 
     postconnect () {
         get().actor?.getPersonalAccount()
         .then(r => set({ address: buf2hex(new Uint8Array(r)) }))
         .then(() => get().fetchBalance());
+
+        get().fetchLikes();
     },
 
     // Account
@@ -502,16 +528,38 @@ const useStore = create<Store>((set, get) => ({
 
     likes: [],
 
+    doesLike (token) {
+        console.log(get().likes)
+        return get().likes.findIndex(x => x.canister.toText() === token.canister && x.index === token.index) > -1;
+    },
+
     like (token) {
+        get().likesActor?.like(token.canister, BigInt(token.index))
+        .then(get().fetchLikes);
+
         set(state => ({
             likes: [...state.likes, token],
         }));
     },
 
     unlike (token) {
+        get().likesActor?.unlike(token.canister, BigInt(token.index))
+        .then(get().fetchLikes);
+
         set(state => ({
-            likes: state.likes.filter(x => !(token[0] === x[0]) && !(token[1] === x[1])),
+            likes: state.likes.filter(x => !(token.canister === x.canister) && !(token.index === x.index)),
         }));
+    },
+
+    fetchLikes () {
+        get().likesActor?.get([])
+        .then(r => {
+            set({ likes : r[0] ? r[0].map(mapLike) : [] })
+        })
+    },
+
+    async likeCount (token) {
+        return Number(await get().likesActor?.count(Principal.fromText(token.canister), BigInt(token.index)))
     },
 
     // Minting
