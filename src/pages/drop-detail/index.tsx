@@ -120,7 +120,7 @@ export default function DropDetailPage (props : Props) {
                         <div className={Styles.statValue}>{event.supply}</div>
                     </div>
                     <div className={Styles.stat}>
-                        <div className={Styles.statLabel}>Remaining</div>
+                        <div className={Styles.statLabel}>For Sale</div>
                         <div className={Styles.statValue}>{supplyRemaining}</div>
                     </div>
                     <div className={Styles.stat}>

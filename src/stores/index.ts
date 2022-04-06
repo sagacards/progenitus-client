@@ -76,6 +76,9 @@ interface Store {
     plugConnect     : () => void;
     disconnect      : () => void;
     wallet?         : Wallet;
+    postconnect     : () => void;
+    plugReconnect   : () => void;
+    stoicReconnect  : () => void;
     
     ledgerActor?    : ActorSubclass<Ledger>;
     address?        : string;
@@ -208,7 +211,7 @@ const useStore = create<Store>((set, get) => ({
                 host,
             });
 
-            isLocal && agent.fetchRootKey();
+            // isLocal && agent.fetchRootKey();
 
             // Create a progenitus actor
             const actor = Actor.createActor<Rex>(idlFactory, {
@@ -222,10 +225,7 @@ const useStore = create<Store>((set, get) => ({
                 canisterId: nnsCanisterId,
             });
 
-            // Get account and balance after login
-            actor.getPersonalAccount()
-            .then(r => set({ address: buf2hex(new Uint8Array(r)) }))
-            .then(() => get().fetchBalance());
+            get().postconnect();
 
             complete();
             set(() => ({ connected: true, principal: identity.getPrincipal(), actor, wallet: 'stoic', ledgerActor: nns }));
@@ -234,7 +234,7 @@ const useStore = create<Store>((set, get) => ({
 
     async plugConnect () {
 
-        const complete = get().idempotentConnect()
+        const complete = get().idempotentConnect();
         if (complete === null) return;
 
         // If the user doesn't have plug, send them to get it!
@@ -246,7 +246,7 @@ const useStore = create<Store>((set, get) => ({
         await window.ic.plug.requestConnect({ whitelist: [canisterId], host }).catch(complete);
 
         const agent = await window.ic.plug.agent;
-        isLocal && agent.fetchRootKey();
+        // isLocal && agent.fetchRootKey();
         const principal = await agent.getPrincipal();
 
         const actor = await window?.ic?.plug?.createActor<Rex>({
@@ -254,19 +254,45 @@ const useStore = create<Store>((set, get) => ({
             interfaceFactory: idlFactory,
         });
 
-        // Get account and balance after login
-        actor.getPersonalAccount()
-        .then(r => set({ address: buf2hex(new Uint8Array(r)) }))
-        .then(() => get().fetchBalance());
-
         complete();
         set(() => ({ connected: true, principal, actor, wallet: 'plug' }));
+
+        get().postconnect();
     },
+
+    async plugReconnect () {
+        if (await window?.ic?.plug?.isConnected()) {
+            const agent = await window?.ic?.plug?.agent;
+            // isLocal && agent.fetchRootKey();
+            if (!agent) {
+                console.warn('Failed to reconnect plug. Why, Plug? 😭');
+                return;
+            }
+            const principal = await agent.getPrincipal();
+
+            const actor = await window?.ic?.plug?.createActor<Rex>({
+                canisterId,
+                interfaceFactory: idlFactory,
+            });
+
+            set(() => ({ connected: true, principal, actor, wallet: 'plug' }));
+
+            get().postconnect();
+        }
+    },
+
+    async stoicReconnect () {},
 
     disconnect () {
         StoicIdentity.disconnect();
         window.ic?.plug?.deleteAgent();
         set({ connected: false, principal: undefined, address: undefined, actor: undefined, balance: undefined, wallet: undefined, ledgerActor: undefined });
+    },
+
+    postconnect () {
+        get().actor?.getPersonalAccount()
+        .then(r => set({ address: buf2hex(new Uint8Array(r)) }))
+        .then(() => get().fetchBalance());
     },
 
     // Account
@@ -386,6 +412,7 @@ const useStore = create<Store>((set, get) => ({
     // Store init
 
     async init () {
+        get().plugReconnect();
         get().fetchBalance();
         get().fetchEvents();
         // get().fetchCollections();
