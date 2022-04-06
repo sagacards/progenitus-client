@@ -82,6 +82,24 @@
     border: none;
 }
 
+.timer {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+
+    align-self: center;
+    margin-top: -43px;
+    padding: 1px 5px;
+
+    background: var(--chrome-1);
+    border-radius: 5px;
+    box-shadow: 0 0 0 1px var(--chrome-2);
+
+    font-family: 'Space Mono';
+    font-size: 12px;
+    white-space: nowrap;
+}
+
 .description {
     margin: 0 auto;
     max-width: 40em;
@@ -97,16 +115,42 @@
 }
 
 .stage {
+    position: relative;
     overflow: clip;
+    padding: 3px;
     width: 100%;
     max-width: 500px;
     height: 400px;
-    /* background: url(/src/assets/backdrop/bgc-midnight.jpg);
-    background-size: 200%;
-    background-position: center bottom -1px; */
+    transition: box-shadow 320ms ease-out, background-color 320ms ease-out;
+    border-radius: 23px;
+}
+
+.stage > * {
+    z-index: 1;
     background: linear-gradient(#202059, #1C367C);
     transition: box-shadow 320ms ease-out, background-color 320ms ease-out;
     border-radius: 20px;
+}
+
+.stage:after {
+    content: '';
+    position: absolute;
+    z-index: 0;
+    top: -50%; right: -50%; bottom: -50%; left: -50%;
+    background: conic-gradient(var(--gold-1), var(--gold-2), var(--background), var(--background), var(--background), var(--background), var(--background), var(--background), var(--background), var(--background), var(--background), var(--gold-2), var(--gold-1));
+    background-position: 0 50%;
+    opacity: 0;
+    transition: 320ms opacity ease-out;
+}
+
+.stage.minting:after {
+    opacity: 1;
+    animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+    from { transform: rotate(0); }
+    to { transform: rotate(360deg); }
 }
 
 .button {

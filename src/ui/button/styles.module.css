@@ -106,3 +106,30 @@
 .full {
     width: 100%;
 }
+
+.error .frame {
+    animation: shake 1s ease-out;
+}
+
+@keyframes shake {
+    0%, 100% {
+        box-shadow: 0 0 0 1px var(--chrome-3);
+    }
+
+    10%, 90% {
+        transform: translate3d(-1px, 0, 0);
+    }
+    
+    20%, 80% {
+        transform: translate3d(2px, 0, 0);
+        box-shadow: 0 0 0 1px rgb(121, 48, 57);
+    }
+  
+    30%, 50%, 70% {
+        transform: translate3d(-4px, 0, 0);
+    }
+  
+    40%, 60% {
+        transform: translate3d(4px, 0, 0);
+    }
+}

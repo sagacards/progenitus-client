@@ -10,6 +10,7 @@ interface Props {
     icon?: React.ReactNode; 
     full?: boolean;
     disabled?: boolean;
+    error?: string;
 }
 
 type Size = 'tiny' | 'small' | 'medium' | 'large' | 'xl';
@@ -31,6 +32,7 @@ export default function Button ({
     icon,
     full = false,
     disabled = false,
+    error,
 } : Props) {
     const w = sizeMap[size], height = w, p = w/2;
     return <div
@@ -42,6 +44,7 @@ export default function Button ({
             Styles[size],
             alt ? Styles.alt : '',
             disabled ? Styles.disabled : '',
+            error ? Styles.error : '',
         ].join(' ')}
         onClick={e => !disabled && onClick && onClick(e)}
         style={{ height, minWidth: w }}

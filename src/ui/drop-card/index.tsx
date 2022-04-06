@@ -9,6 +9,7 @@ import Timer from 'ui/timer';
 interface Props {
     children?: React.ReactNode;
     name: string;
+    canister: string;
     id: number;
     art: string;
     start: Date;
@@ -36,7 +37,7 @@ export default function DropCard (props : Props) {
                 </div>
             </div>
         </div>
-        <Link className="no-fancy" to={`/drops/${props.id}`}>
+        <Link className="no-fancy" to={`/drops/${props.canister}/${props.id}`}>
             <Button>Drop Details</Button>
         </Link>
     </div>

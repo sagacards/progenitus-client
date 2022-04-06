@@ -19,7 +19,7 @@ export interface Data {
   'endsAt' : Time,
 }
 export type EventName = string;
-export type Events = Array<[Principal, Data]>;
+export type Events = Array<[Principal, Data, bigint]>;
 export interface Rex {
   'addAdmin' : (arg_0: Principal) => Promise<undefined>,
   'balance' : () => Promise<Tokens>,

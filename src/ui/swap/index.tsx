@@ -13,11 +13,13 @@ interface Props {
 
 export default function Swap (props : Props) {
 
-    const { principal, pushMessage, deposit, withdraw } = useStore()
+    const { principal, pushMessage, deposit, withdraw, icpToUSD } = useStore()
 
     const [active, setActive] = React.useState<'deposit' | 'withdraw'>('deposit');
     const [amount, setAmount] = React.useState<string>('0');
     const [loading, setLoading] = React.useState<boolean>(false);
+
+    const usd = React.useMemo(() => icpToUSD ? (icpToUSD * Number(amount)).toFixed(2) : 0, [amount, icpToUSD])
 
     return <div className={[Styles.root, Styles[active]].join(' ')}>
         <div className={Styles.top}>
@@ -35,7 +37,7 @@ export default function Swap (props : Props) {
         </div>
         <div className={Styles.inputGroup}>
             <input className={Styles.input} type="text" value={amount} onChange={v => setAmount(v.currentTarget.value)} />
-            <div className={Styles.conversion}>~$0.00</div>
+            <div className={Styles.conversion}>~${usd} USD</div>
             <div className={Styles.currencyContainer}>
                 <div className={Styles.currency}>ICP</div>
             </div>

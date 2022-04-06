@@ -22,7 +22,7 @@ export const idlFactory = ({ IDL }) => {
     'price' : Tokens,
     'endsAt' : Time,
   });
-  const Events = IDL.Vec(IDL.Tuple(IDL.Principal, Data));
+  const Events = IDL.Vec(IDL.Tuple(IDL.Principal, Data, IDL.Nat));
   const AccountIdentifier = IDL.Vec(IDL.Nat8);
   const BlockIndex = IDL.Nat64;
   const TransferError = IDL.Variant({

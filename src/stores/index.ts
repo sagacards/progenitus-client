@@ -9,11 +9,13 @@ import { Rex, idlFactory } from 'canisters/progenitus/progenitus.did.js'
 // @ts-ignore
 import { Ledger, idlFactory as nnsIdl } from 'canisters/ledger/ledger.did.js'
 // @ts-ignore
+import { MockNFT, idlFactory as nftIdl } from 'canisters/nft/mock_nft.did.js'
+// @ts-ignore
 import CyclesDID from 'canisters/cycles/cycles.did.js';
 // @ts-ignore
 import { principalToAccountIdentifier, buf2hex } from 'util/ext'
 import makeEvents, { history, makeCollections } from 'mock/index'
-import { MintingEvent } from 'src/logic/minting';
+import { mapEvent, MintingEvent } from 'src/logic/minting';
 
 type ColorScheme = 'dark' | 'light';
 
@@ -53,6 +55,8 @@ export interface _Token {
     event?: CAPEvent;
 };
 
+interface EventsMap { [key : string] :  { [key : number] : MintingEvent } };
+
 type CanisterId = string;
 type TokenIndex = number;
 
@@ -60,6 +64,8 @@ interface Store {
 
     defaultAgent?   : Agent;
     icpToUSD?       : number;
+
+    defaultActor    : ActorSubclass<Rex>;
 
     actor?          : ActorSubclass<Rex>;
     principal?      : Principal;
@@ -92,9 +98,14 @@ interface Store {
     pushMessage: (m : Message) => void;
     readMessage: (i : number) => void;
 
-    events      : { [key : number] : MintingEvent };
-    getEvent    : (id : number) => MintingEvent | undefined;
+    getNftActor : (c : string) => ActorSubclass<MockNFT>;
+
+    events      : EventsMap;
+    getEvent    : (c : string, i : number) => MintingEvent | undefined;
     fetchEvents : () => void;
+
+    eventSupply : { [key : string] : { [key : number] : number } };
+    fetchSupply : (c : string, i : number) => void;
 
     collections     : { [key : string] : Collection };
     getCollection   : (c : Principal) => Collection | undefined;
@@ -106,6 +117,11 @@ interface Store {
     likes   : [CanisterId, TokenIndex][];
     like    : (token : [CanisterId, TokenIndex]) => void;
     unlike  : (token : [CanisterId, TokenIndex]) => void;
+
+    isMinting       : boolean;
+    setIsMinting    : (m : boolean) => void;
+    mintResult?     : number;
+    setMintResult   : (m : number | undefined) => void;
 };
 
 const isLocal = import.meta.env.PROGENITUS_IS_LOCAL === 'true';
@@ -115,6 +131,21 @@ const nnsCanisterId = import.meta.env.PROGENITUS_NNS_CANISTER_ID as string;
 
 const rosetta = 'https://rosetta-api.internetcomputer.org';
 const mockAccount = '769b645e881a0f5cf8891c1714b8235130984d07dd0c6ccc2aa13076682fd4bb';
+
+const NftActors : { [key : string] : ActorSubclass<MockNFT> } = {};
+
+function getNftActor (canisterId : string) : ActorSubclass<MockNFT> {
+    if (NftActors[canisterId]) {
+        return NftActors[canisterId];
+    } else {
+        const actor = Actor.createActor<MockNFT>(nftIdl, {
+            agent: defaultAgent,
+            canisterId,
+        });
+        NftActors[canisterId] = actor;
+        return actor;
+    };
+}
 
 function rosettaData (account : string) {
     return {
@@ -131,7 +162,17 @@ function rosettaData (account : string) {
 // Create some fake mint history.
 export interface Listing { id : number; canister : string; price : number; }
 
+// Create a default agent
+const defaultAgent = new HttpAgent({ host: 'https://boundary.ic0.app/' });
+
+const defaultActor = Actor.createActor<Rex>(idlFactory, {
+    agent: defaultAgent,
+    canisterId,
+});
+
 const useStore = create<Store>((set, get) => ({
+
+    defaultActor,
 
     history,
 
@@ -169,7 +210,7 @@ const useStore = create<Store>((set, get) => ({
 
             isLocal && agent.fetchRootKey();
 
-            // Create a projenitus actor
+            // Create a progenitus actor
             const actor = Actor.createActor<Rex>(idlFactory, {
                 agent,
                 canisterId,
@@ -353,9 +394,6 @@ const useStore = create<Store>((set, get) => ({
             get().pushMessage({type: 'info', message})
         }
 
-        // Create a default agent
-        const defaultAgent = new HttpAgent({ host: 'https://boundary.ic0.app/' });
-
         // Get ICP to USD exchange rate
         const cycles : any = await Actor.createActor(CyclesDID, {
             agent: defaultAgent,
@@ -380,16 +418,45 @@ const useStore = create<Store>((set, get) => ({
         set(state => ({ messages: { ...state.messages, [i]: { ...state.messages[i], read: true } }}))
     },
 
+    // NFT Actors
+
+    getNftActor,
+
     // Events
 
     events : {},
 
-    getEvent (id) {
-        return get().events[id];
+    getEvent (canister, index) {
+        const { events } = get();
+        return events?.[canister]?.[index];
     },
 
     fetchEvents () {
-        set({ events: makeEvents() });
+        // Mock Events
+        // set({ events: makeEvents() });
+
+        // Real Events
+        defaultActor.getAllEvents()
+        .then(events => {
+            set({ events: events.map(([p, e, i]) => mapEvent(p, e, i)).reduce((agg, e) => ({ ...agg, [e.collection.canister] : { ...agg[e.collection.canister], [e.id] : e } }), {} as EventsMap) });
+        })
+    },
+
+    // Event Supply
+
+    eventSupply: {},
+
+    fetchSupply (canister, index) {
+        const { eventSupply } = get();
+        let n = { ...eventSupply };
+        n?.[canister]?.[index]
+        getNftActor(canister)
+        .launchpadTotalAvailable(BigInt(index))
+        .then(s => {
+            n[canister] = n[canister] || {};
+            n[canister][index] = Number(s);
+            set({ eventSupply: n });
+        });
     },
 
     // Collections
@@ -405,6 +472,7 @@ const useStore = create<Store>((set, get) => ({
     },
 
     // Tokens liked by the user
+
     likes: [],
 
     like (token) {
@@ -418,6 +486,13 @@ const useStore = create<Store>((set, get) => ({
             likes: state.likes.filter(x => !(token[0] === x[0]) && !(token[1] === x[1])),
         }));
     },
+
+    // Minting
+
+    isMinting: false,
+    setIsMinting (isMinting) { set({ isMinting }) },
+    mintResult: undefined,
+    setMintResult (mintResult) { set({ mintResult }) },
 
 }));
 

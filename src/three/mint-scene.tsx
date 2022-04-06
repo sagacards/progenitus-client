@@ -5,58 +5,64 @@ import { OrbitControls } from '@react-three/drei/core'
 import { animated, useSpring, useSpringRef } from '@react-spring/three'
 import Threads from 'assets/textures/threads.png'
 import { useControls } from 'leva';
+import useStore from 'stores/index';
+import { cardMovementSpringConf, cardSpringConf } from './springs';
 
 const center = new THREE.Vector3(0, 0, 0);
 
 function Scene () {
+    const { isMinting, mintResult } = useStore();
     const { camera } = useThree();
-    const [open, setOpen] = React.useState(false);
-    const [minting, setMinting] = React.useState(false);
-    const [hidden, setHidden] = React.useState(false);
 
     React.useEffect(() => {
         camera.position.set(0, 5, 5);
         camera.lookAt(center);
     }, []);
 
+    function lightPos () {
+        return mintResult !== undefined
+            ? [0, 4, 0]
+            : [0, 4, 5];
+    };
+
+    function lightInt () {
+        return mintResult !== undefined
+            ? .5
+            : .125;
+    };
+
+    const lightSpring = useSpring({
+        position: lightPos(),
+        intensity: lightInt(),
+        config: cardSpringConf,
+    });
+
     return <>
         <group
-            onClick={e => {
-                if (!open && !minting) {
-                    setMinting(true)
-                } else if (minting) {
-                    setOpen(true);
-                    setMinting(false);
-                } else if (!hidden) {
-                    setHidden(true);
-                } else {
-                    setHidden(false);
-                    setOpen(false);
-                }
-            }}
             position={[0, 2, 2]}
             rotation={[-Math.PI * .24, 0, 0]}
         >
-            <LegendBox open={open} minting={minting} hidden={hidden} />
+            <LegendBox open={mintResult !== undefined} minting={isMinting} />
         </group>
         {/* <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]}>
             <planeGeometry args={[25, 10]} />
             <meshStandardMaterial color={'#444'} />
         </mesh> */}
         {/* <ambientLight intensity={1} /> */}
-        <directionalLight intensity={.125} position={[0, 4, 5]} />
+        {/* @ts-ignore */}
+        <animated.directionalLight {...lightSpring} />
         <directionalLight intensity={.125} position={[0, .5, 5]} />
         <hemisphereLight args={['#202059', '#1C367C']} intensity={.5} />
         {/* <OrbitControls /> */}
-        {minting && <Sprites />}
+        {isMinting && <Sprites />}
     </>
 };
 
-function LegendBox ({ open, minting, hidden } : { open : boolean, minting : boolean, hidden : boolean, }) {
+function LegendBox ({ open, minting } : { open : boolean, minting : boolean }) {
     const thickness = .05;
 
-    const rootPos = React.useMemo(() => () => ([hidden ? 0 : open ? 0 : -1.5, hidden ? -6 : open ? .3 : 0, 0] as [number, number, number]), [open, hidden]);
-    const rootRot = React.useMemo(() => () => ([open ? -Math.PI * .1 : 0, 0, 0] as [number, number, number]), [open]);
+    const rootPos = React.useMemo(() => () => ([open ? 0 : -1.5, open ? -3.5 : 0, open ? -3 : 0] as [number, number, number]), [open]);
+    const rootRot = React.useMemo(() => () => ([open ? -Math.PI * .5 : 0, 0, 0] as [number, number, number]), [open]);
     // const rootRot = React.useMemo(() => () => ([0, 0, 0] as [number, number, number]), [open]);
     const doorRot = React.useMemo(() => () => ([0, open ? -Math.PI : 0, 0] as [number, number, number]), [open]);
 
@@ -65,10 +71,12 @@ function LegendBox ({ open, minting, hidden } : { open : boolean, minting : bool
         ref: spring,
         position: rootPos(),
         rotation: rootRot(),
+        config: cardSpringConf,
     });
 
     const doorSpring = useSpring({
         rotation: doorRot(),
+        config: cardMovementSpringConf,
     });
 
     useFrame(state => {
@@ -77,6 +85,7 @@ function LegendBox ({ open, minting, hidden } : { open : boolean, minting : bool
         spring.start({
             position: [pos[0] + (minting ? .3 : .1) * Math.cos(t * (minting ? 2 : 1)), pos[1] + .1 * Math.sin(t * (minting ? 2 : 1)), pos[2]],
             rotation: rootRot(),
+            config: cardSpringConf,
         })
     })
 

@@ -11,6 +11,7 @@ import ProfilePage from 'pages/profile';
 import DropDetailPage from 'pages/drop-detail';
 import Messages from 'ui/messages';
 import useStore from './stores';
+import ScrollToTop from 'ui/scroll-to-top';
 
 function App() {
     const { init, pushMessage } = useStore();
@@ -26,7 +27,7 @@ function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/connect" element={<ConnectPage />} />
             <Route path="/account" element={<AccountPage />} />
-            <Route path="/drops/:id">
+            <Route path="/drops/:canister/:index">
                 <Route index element={<DropDetailPage />} />
                 <Route path="mints" element={<DropDetailPage />} />
                 <Route path="transfers" element={<DropDetailPage />} />
@@ -37,6 +38,7 @@ function App() {
         </Routes>
         <Leva hidden={true} collapsed />
         <Messages />
+        <ScrollToTop />
     </>
 }
 
