@@ -6,6 +6,8 @@
 }
 
 .art {
+    position: relative;
+    overflow: clip;
     width: 38%;
     height: 100%;
     background-color: var(--chrome-2);
@@ -36,6 +38,26 @@
 
 .spinner {
     transform: scale(.7);
+}
+
+.image {
+    position: absolute;
+    top: 0;
+    left: 0;
+
+    width: 200%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+
+    opacity: 0;
+
+    transition: 320ms ease-out opacity;
+}
+
+.show {
+    opacity: 1;
+    animation: fadein 320ms ease-out;
 }
 
 @media (max-width: 679px) {

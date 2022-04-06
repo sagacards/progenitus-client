@@ -5,15 +5,20 @@ import useStore from 'stores/index';
 import Spinner from 'ui/spinner';
 import { Navigate, useLocation } from 'react-router-dom';
 import WalletIcon from 'ui/wallet-icon';
+import Midday from 'assets/backdrop/bgc-midday.jpg'
+import Midnight from 'assets/backdrop/bgc-midnight.jpg'
 
 interface Props {};
 
 export default function ConnectPage (props : Props) {
-    const { stoicConnect, plugConnect, connecting, connected } = useStore();
+    const { colorScheme, stoicConnect, plugConnect, connecting, connected } = useStore();
     const { state } = useLocation();
     if (connected) return <Navigate to={(state as any)?.referrer || "/"} />
     return <div className={Styles.root}>
-        <div className={Styles.art}></div>
+        <div className={Styles.art}>
+            <img className={[Styles.image, colorScheme === 'dark' ? Styles.show : ''].join(' ')} src={Midnight} />
+            <img className={[Styles.image, colorScheme === 'light' ? Styles.show : ''].join(' ')} src={Midday} />
+        </div>
         <div className={Styles.content}>
             <h1>Connect</h1>
             <div className={Styles.wallets}>

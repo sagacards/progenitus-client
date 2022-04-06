@@ -31,7 +31,7 @@ export default function NFTPreview (props : Props) {
 
     const liked = React.useMemo(() => doesLike(props.token), [likes]);
 
-    React.useEffect(() => void likeCount(props.token).then(r => setCount(r)), [liked])
+    React.useEffect(() => void likeCount(props.token).then(r => setCount(r)), [likes])
     
     // Lazy load static thumbnails.
     React.useEffect(() => {
