@@ -18,7 +18,7 @@ export default function Hashatar ({
             <defs>
             <linearGradient x1="0%" y1="0%" x2="100%" y2="100%" id={`g${hue}`}>
                 <stop stopColor={`hsl(${hue}deg, 95%, 90%)`} offset="0%"></stop>
-                <stop stopColor={`hsl(${hue + 72}deg, 95%, 90%)`} offset="100%"></stop>
+                <stop stopColor={`hsl(${hue + 72}deg, 95%, 70%)`} offset="100%"></stop>
             </linearGradient>
             </defs>
             <g id="Page-1" stroke="none" strokeWidth="1" fill="none">
