@@ -1,4 +1,3 @@
-import { Principal } from '@dfinity/principal';
 import { sha224 as jsSha224 } from 'js-sha256';
 
 const lookUpTable = new Uint32Array([

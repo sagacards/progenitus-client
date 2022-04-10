@@ -32,6 +32,7 @@ export const idlFactory = ({ IDL }) => {
     'TxCreatedInFuture' : IDL.Null,
     'InsufficientFunds' : IDL.Record({ 'balance' : Tokens }),
   });
+  const Result = IDL.Variant({ 'ok' : IDL.Nat, 'err' : TransferError });
   const TransferResult = IDL.Variant({
     'Ok' : BlockIndex,
     'Err' : TransferError,
@@ -52,10 +53,8 @@ export const idlFactory = ({ IDL }) => {
     'getEventsOfToken' : IDL.Func([IDL.Principal], [IDL.Vec(Data)], ['query']),
     'getOwnEvents' : IDL.Func([], [IDL.Vec(Data)], ['query']),
     'getPersonalAccount' : IDL.Func([], [AccountIdentifier], ['query']),
-    'getPrice' : IDL.Func([], [Tokens], ['query']),
-    'mint' : IDL.Func([IDL.Principal, IDL.Nat], [IDL.Nat], []),
+    'mint' : IDL.Func([IDL.Principal, IDL.Nat], [Result], []),
     'removeAdmin' : IDL.Func([IDL.Principal], [], ['oneway']),
-    'setPrice' : IDL.Func([Tokens], [], ['oneway']),
     'transfer' : IDL.Func([Tokens, AccountIdentifier], [TransferResult], []),
     'updateEvent' : IDL.Func([IDL.Nat, Data], [], []),
   });

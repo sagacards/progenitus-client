@@ -20,6 +20,8 @@ export interface Data {
 }
 export type EventName = string;
 export type Events = Array<[Principal, Data, bigint]>;
+export type Result = { 'ok' : bigint } |
+  { 'err' : TransferError };
 export interface Rex {
   'addAdmin' : (arg_0: Principal) => Promise<undefined>,
   'balance' : () => Promise<Tokens>,
@@ -34,10 +36,8 @@ export interface Rex {
   'getEventsOfToken' : (arg_0: Principal) => Promise<Array<Data>>,
   'getOwnEvents' : () => Promise<Array<Data>>,
   'getPersonalAccount' : () => Promise<AccountIdentifier>,
-  'getPrice' : () => Promise<Tokens>,
-  'mint' : (arg_0: Principal, arg_1: bigint) => Promise<bigint>,
+  'mint' : (arg_0: Principal, arg_1: bigint) => Promise<Result>,
   'removeAdmin' : (arg_0: Principal) => Promise<undefined>,
-  'setPrice' : (arg_0: Tokens) => Promise<undefined>,
   'transfer' : (arg_0: Tokens, arg_1: AccountIdentifier) => Promise<
       TransferResult
     >,

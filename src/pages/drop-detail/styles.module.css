@@ -95,6 +95,8 @@
     border-radius: 5px;
     box-shadow: 0 0 0 1px var(--chrome-2);
 
+    transition: box-shadow 320ms ease-out, background-color 320ms ease-out;
+
     font-family: 'Space Mono';
     font-size: 12px;
     white-space: nowrap;

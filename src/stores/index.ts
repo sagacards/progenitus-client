@@ -529,7 +529,6 @@ const useStore = create<Store>((set, get) => ({
     likes: [],
 
     doesLike (token) {
-        console.log(get().likes)
         return get().likes.findIndex(x => x.canister.toText() === token.canister && x.index === token.index) > -1;
     },
 

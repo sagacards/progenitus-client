@@ -27,11 +27,25 @@ export const idlFactory = ({ IDL }) => {
     'TryCatchTrap' : IDL.Null,
   });
   const Result = IDL.Variant({ 'ok' : IDL.Nat, 'err' : MintError });
+  const AccountIdentifier = IDL.Vec(IDL.Nat8);
+  const BlockIndex = IDL.Nat64;
+  const TransferError = IDL.Variant({
+    'TxTooOld' : IDL.Record({ 'allowed_window_nanos' : IDL.Nat64 }),
+    'BadFee' : IDL.Record({ 'expected_fee' : Tokens }),
+    'TxDuplicate' : IDL.Record({ 'duplicate_of' : BlockIndex }),
+    'TxCreatedInFuture' : IDL.Null,
+    'InsufficientFunds' : IDL.Record({ 'balance' : Tokens }),
+  });
+  const TransferResult = IDL.Variant({
+    'Ok' : BlockIndex,
+    'Err' : TransferError,
+  });
   const MockNFT = IDL.Service({
     'launchpadEventCreate' : IDL.Func([Data], [IDL.Nat], []),
     'launchpadEventUpdate' : IDL.Func([IDL.Nat, Data], [], []),
     'launchpadMint' : IDL.Func([IDL.Principal], [Result], []),
     'launchpadTotalAvailable' : IDL.Func([IDL.Nat], [IDL.Nat], ['query']),
+    'withdrawAll' : IDL.Func([AccountIdentifier], [TransferResult], []),
   });
   return MockNFT;
 };
