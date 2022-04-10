@@ -89,8 +89,15 @@ export default function DropDetailPage (props : Props) {
         setMintResult(undefined);
         mint(event, supplyRemaining, connected, balance, allowlistSpots, actor, Number(index))
         ?.then(r => {
-            console.log(r);
-            alert('Mint success!');
+            // @ts-ignore: result types...
+            if (r?.ok) {
+                // @ts-ignore: result types...
+                setMintResult(Number(r.ok));
+                alert('Mint success!');
+            } else {
+                setError('Mint failure!');
+                alert('Mint failure!');
+            }
         })
         .catch(r => {
             console.error(r);
