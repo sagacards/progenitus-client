@@ -135,14 +135,18 @@ interface Store {
 };
 
 const isLocal = import.meta.env.PROGENITUS_IS_LOCAL === 'true';
-const host = import.meta.env.PROGENITUS_IC_HOST as string;
-const canisterId = import.meta.env.PROGENITUS_CANISTER_ID as string;
-const nnsCanisterId = import.meta.env.PROGENITUS_NNS_CANISTER_ID as string;
-const likesCanisterId = import.meta.env.PROGENITUS_LIKES_CANISTER_ID as string;
-const whitelist = [canisterId, likesCanisterId];
+
+export const ic = {
+    protocol: import.meta.env.PROGENITUS_IC_PROTOCOL as string,
+    host: import.meta.env.PROGENITUS_IC_HOST as string,
+    canisters: {
+        progenitus: import.meta.env.PROGENITUS_CANISTER_ID as string,
+        nns: import.meta.env.PROGENITUS_NNS_CANISTER_ID as string,
+        likes: import.meta.env.PROGENITUS_LIKES_CANISTER_ID as string,
+    },
+};
 
 const rosetta = 'https://rosetta-api.internetcomputer.org';
-const mockAccount = '769b645e881a0f5cf8891c1714b8235130984d07dd0c6ccc2aa13076682fd4bb';
 
 const NftActors : { [key : string] : ActorSubclass<MockNFT> } = {};
 
@@ -179,7 +183,7 @@ const defaultAgent = new HttpAgent({ host: 'https://boundary.ic0.app/' });
 
 const defaultActor = Actor.createActor<Rex>(idlFactory, {
     agent: defaultAgent,
-    canisterId,
+    canisterId: ic.canisters.progenitus,
 });
 
 const useStore = create<Store>((set, get) => ({
@@ -217,7 +221,7 @@ const useStore = create<Store>((set, get) => ({
 
             const agent = new HttpAgent({
                 identity,
-                host,
+                host: `${ic.protocol}://${ic.host}`,
             });
 
             // isLocal && agent.fetchRootKey();
@@ -225,18 +229,18 @@ const useStore = create<Store>((set, get) => ({
             // Create a progenitus actor
             const actor = Actor.createActor<Rex>(idlFactory, {
                 agent,
-                canisterId,
+                canisterId: ic.canisters.progenitus,
             });
 
             // Create an nns actor
             const nns = Actor.createActor<Ledger>(nnsIdl, {
                 agent,
-                canisterId: nnsCanisterId,
+                canisterId: ic.canisters.nns,
             });
 
             const likesActor = Actor.createActor<Likes>(likesIdl, {
                 agent,
-                canisterId: likesCanisterId,
+                canisterId: ic.canisters.likes,
             });
 
             get().postconnect();
@@ -257,19 +261,19 @@ const useStore = create<Store>((set, get) => ({
             return;
         }
         
-        await window.ic.plug.requestConnect({ whitelist, host }).catch(complete);
+        await window.ic.plug.requestConnect({ whitelist: [ic.canisters.progenitus, ic.canisters.likes], host: `${ic.protocol}://${ic.host}` }).catch(complete);
 
         const agent = await window.ic.plug.agent;
         // isLocal && agent.fetchRootKey();
         const principal = await agent.getPrincipal();
 
         const actor = await window?.ic?.plug?.createActor<Rex>({
-            canisterId,
+            canisterId: ic.canisters.progenitus,
             interfaceFactory: idlFactory,
         });
 
         const likesActor = await window?.ic?.plug?.createActor<Likes>({
-            canisterId: likesCanisterId,
+            canisterId: ic.canisters.likes,
             interfaceFactory: likesIdl,
         });
 
@@ -290,12 +294,12 @@ const useStore = create<Store>((set, get) => ({
             const principal = await agent.getPrincipal();
 
             const actor = await window?.ic?.plug?.createActor<Rex>({
-                canisterId,
+                canisterId: ic.canisters.progenitus,
                 interfaceFactory: idlFactory,
             });
             
             const likesActor = await window?.ic?.plug?.createActor<Likes>({
-                canisterId: likesCanisterId,
+                canisterId: ic.canisters.likes,
                 interfaceFactory: likesIdl,
             });
 
