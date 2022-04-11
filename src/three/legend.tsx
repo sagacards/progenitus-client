@@ -8,7 +8,11 @@ import CardInk from './ink';
 import { useLoader } from '@react-three/fiber';
 import { useCardGeometry } from './geometry';
 
-export function Legend () {
+export function Legend ({ colors, ...props } : { back : string, border : string, face : string, colors : { base : string; specular : string; emissive: string;} }) {
+
+    const border = useLoader(THREE.TextureLoader, props.border);
+    const back = useLoader(THREE.TextureLoader, props.back);
+    const face = useLoader(THREE.TextureLoader, props.face);
 
     // Store
 
@@ -16,28 +20,17 @@ export function Legend () {
 
     // Constants
 
-    const colors = React.useMemo(() => [
-        new THREE.Color('#0C0C0C').convertSRGBToLinear(),
-        new THREE.Color('#0C0C0C').convertSRGBToLinear(),
-        new THREE.Color('#0C0C0C').convertSRGBToLinear(),
+    const stock = React.useMemo(() => [
+        new THREE.Color('#121212').convertSRGBToLinear(),
+        new THREE.Color('#121212').convertSRGBToLinear(),
+        new THREE.Color('#121212').convertSRGBToLinear(),
     ], []);
 
-    // Textures
-
-    const [textures, setTextures] = React.useState<LegendManifest>();
-
-    React.useEffect(() => {
-        if (!mintResult) {
-            setTextures(undefined);
-            return;
-        };
-        void fetchLegendManifest('cwu5z-wyaaa-aaaaj-qaoaq-cai', mintResult)
-        .then(setTextures)
-        .catch(console.error);
-    }, [mintResult]);
-
-    const border = textures?.border ? useLoader(THREE.TextureLoader, `${ic.protocol}://cwu5z-wyaaa-aaaaj-qaoaq-cai.raw.${ic.host}${textures.maps.border}`) : undefined;
-    const back = textures?.back ? useLoader(THREE.TextureLoader, `${ic.protocol}://cwu5z-wyaaa-aaaaj-qaoaq-cai.raw.${ic.host}${textures.maps.back}`) : undefined;
+    const ink = React.useMemo(() => [
+        new THREE.Color(colors.base).convertSRGBToLinear(),
+        new THREE.Color(colors.emissive).convertSRGBToLinear(),
+        new THREE.Color(colors.specular).convertSRGBToLinear(),
+    ], []);
 
     // State
 
@@ -53,52 +46,52 @@ export function Legend () {
 
     // @ts-ignore
     return <animated.group {...springProps} onClick={() => setFlip(!flip)}>
-        <mesh rotation={[0, Math.PI, 0]} geometry={useCardGeometry()}>
-            <meshStandardMaterial attach="material" color={"green"} />
-                {/* <meshPhongMaterial
-                    attachArray="material"
-                    color={colors[0]}
-                    emissive={colors[1]}
-                    specular={colors[2]}
-                    emissiveIntensity={0.125}
-                    shininess={200}
-                    normalMap={textures?.normal}
-                    // @ts-ignore
-                    normalScale={[0.03, 0.03]}
-                /> */}
-                <meshStandardMaterial
-                    blending={THREE.NormalBlending}
-                    attachArray="material"
-                    // map={textures?.layers[0]}
-                    color={'yellow'}
-                />
+        <mesh rotation={[0, 0, 0]} geometry={useCardGeometry()}>
+            <meshPhongMaterial
+                attach="material-0"
+                color={stock[0]}
+                emissive={stock[1]}
+                specular={stock[2]}
+            />
+            <meshPhongMaterial
+                attach="material-1"
+                color={stock[0]}
+                emissive={stock[1]}
+                specular={stock[2]}
+            />
+            <meshStandardMaterial
+                attach="material-2"
+                map={face}
+                roughness={100}
+                metalness={1.2}
+            />
         </mesh>
+        {/* Cover */}
         {/* <mesh position={[0, 0, 0.026]}>
             <planeGeometry args={[2.75, 4.75]} />
             <meshPhongMaterial
                 // alphaMap={cover}
                 transparent={true}
-                color={'#121212'}
+                color={stock[0]}
                 // @ts-ignore
-                specular={'#121212'}
+                specular={stock[1]}
                 // @ts-ignore
-                emissive={'#121212'}
+                emissive={stock[2]}
                 emissiveIntensity={0.125}
                 shininess={100}
             />
         </mesh> */}
         <CardInk
-            color={'red'}
-            emissive={'red'}
-            specular={'red'}
+            color={ink[0]}
+            emissive={ink[1]}
+            specular={ink[2]}
             side={THREE.FrontSide}
             alpha={border}
-            shininess={200}
         />
         <CardInk
-            color={'blue'}
-            emissive={'blue'}
-            specular={'blue'}
+            color={ink[0]}
+            emissive={ink[1]}
+            specular={ink[2]}
             side={THREE.BackSide}
             alpha={back}
         />

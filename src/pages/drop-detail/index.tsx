@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, Navigate, useParams } from 'react-router-dom';
-import useStore from 'stores/index';
+import useStore, { ic } from 'stores/index';
 import { eventIsMintable, mint } from 'src/logic/minting';
 import Navbar from 'ui/navbar';
 import Footer from 'ui/footer';
@@ -16,6 +16,7 @@ import Timer from 'ui/timer';
 import MintScene from 'src/three/mint-scene';
 import Styles from './styles.module.css'
 import Banner from 'assets/events/0/banner.jpg'
+import { FiExternalLink } from 'react-icons/fi';
 
 interface Props {};
 
@@ -154,8 +155,13 @@ export default function DropDetailPage (props : Props) {
                 {new Date().getTime() < event.startDate.getTime() && <div className={Styles.timer}>Starts <Timer time={event.startDate} /></div>}
                 {new Date().getTime() <= event.endDate.getTime() && supplyRemaining !== 0 && <div className={Styles.timer}>Ends <Timer time={event.endDate} /></div>}
                 {collection.description && <div className={Styles.description}><Revealer content={collection.description} /></div>}
-                <div className={Styles.mintingStage}>
+                <div className={[Styles.mintingStage, mintResult ? Styles.minted : ''].join(' ')}>
                     <div className={[Styles.stage, isMinting ? Styles.minting : ''].join(' ')}>
+                        <a href={`${ic.protocol}://${canister}.raw.${ic.host}/${mintResult}`} target="_blank" className={Styles.externalLink}>
+                            <Button>
+                                <FiExternalLink />
+                            </Button>
+                        </a>
                         <MintScene />
                     </div>
                     <div className={Styles.button}>

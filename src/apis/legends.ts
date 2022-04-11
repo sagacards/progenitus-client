@@ -33,7 +33,7 @@ export function fetchLegendTextures (
         back        : fetchTexture(canister, manifest.maps.back),
         border      : fetchTexture(canister, manifest.maps.border),
         normal      : fetchTexture(canister, manifest.maps.normal),
-        layers      : manifest.maps.layers.map(layer => fetchTexture(canister, layer)),
+        face        : fetchTexture(canister, manifest.views.flat),
     };
 }
 

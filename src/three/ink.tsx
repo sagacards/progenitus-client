@@ -35,7 +35,7 @@ export default function CardInk({
                     shininess={shininess || 200}
                     normalMap={normal}
                     // @ts-ignore
-                    normalScale={[0.05, 0.05]}
+                    // normalScale={[0.05, 0.05]}
                     side={side || THREE.FrontSide}
                 />
             </mesh>

@@ -4,10 +4,10 @@ import { useThree, Canvas, useFrame, useLoader } from '@react-three/fiber'
 import { animated, useSpring, useSpringRef } from '@react-spring/three'
 import Threads from 'assets/textures/threads.png'
 import { useControls } from 'leva';
-import useStore from 'stores/index';
+import useStore, { ic } from 'stores/index';
 import { cardMovementSpringConf, cardSpringConf } from './springs';
 import { Legend } from './legend';
-import { fetchLegend, LegendTextures } from 'src/apis/legends';
+import { fetchLegendManifest, LegendManifest } from 'src/apis/legends';
 
 const center = new THREE.Vector3(0, 0, 0);
 
@@ -22,13 +22,13 @@ function Scene () {
 
     function lightPos () {
         return mintResult !== undefined
-            ? [0, 4, 0]
+            ? [0, 6.5, 2]
             : [0, 4, 5];
     };
 
     function lightInt () {
         return mintResult !== undefined
-            ? .5
+            ? 2
             : .125;
     };
 
@@ -38,18 +38,38 @@ function Scene () {
         config: cardSpringConf,
     });
 
+    // Textures
+
+    const [textures, setTextures] = React.useState<LegendManifest>();
+
+    React.useEffect(() => {
+        if (!mintResult) {
+            setTextures(undefined);
+            return;
+        };
+        fetchLegendManifest('cwu5z-wyaaa-aaaaj-qaoaq-cai', mintResult)
+        .then(setTextures)
+        .catch(console.error);
+    }, [mintResult]);
+
+    const border = textures?.maps?.border ? `${ic.protocol}://cwu5z-wyaaa-aaaaj-qaoaq-cai.raw.${ic.host}${textures.maps.border}` : undefined;
+    const back = textures?.maps?.back ? `${ic.protocol}://cwu5z-wyaaa-aaaaj-qaoaq-cai.raw.${ic.host}${textures.maps.back}` : undefined;
+    const face = textures?.views?.flat ? `${ic.protocol}://cwu5z-wyaaa-aaaaj-qaoaq-cai.raw.${ic.host}${textures.views.flat}` : undefined;
+
     return <>
         <group
             position={[0, 2, 2]}
             rotation={[-Math.PI * .24, 0, 0]}
         >
-            {mintResult && <React.Suspense fallback={<Loader />}><Legend /></React.Suspense>}
+            {mintResult && back && border && face && textures?.colors && <React.Suspense fallback={<Loader />}><Legend back={back} border={border} face={face} colors={textures?.colors} /></React.Suspense>}
             <LegendBox open={mintResult !== undefined} minting={isMinting} />
         </group>
         {/* @ts-ignore */}
         <animated.directionalLight {...lightSpring} />
-        <directionalLight intensity={.125} position={[0, .5, 5]} />
-        <hemisphereLight args={['#202059', '#1C367C']} intensity={.5} />
+        <directionalLight position={[0, 2, 10]} intensity={1} />
+        {/* <directionalLight intensity={2} position={[0, -5, 5]} /> */}
+        {/* <hemisphereLight args={['#202059', '#1C367C']} intensity={.5} /> */}
+        {/* <ambientLight /> */}
         {isMinting && <Sprites />}
     </>
 };

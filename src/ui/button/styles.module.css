@@ -25,6 +25,7 @@
     height: 100%;
 
     /* border-radius: 20px; */
+    background-color: var(--background);
     box-shadow: 0 0 0 1px var(--chrome-3);
     transition: 160ms box-shadow ease-out, 160ms transform ease-out, 320ms background-color ease-out;
 }
