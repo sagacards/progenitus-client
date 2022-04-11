@@ -110,6 +110,7 @@
 }
 
 .mintingStage {
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -127,7 +128,23 @@
     border-radius: 23px;
 }
 
-.stage > * {
+.minted .externalLink {
+    opacity: 1;
+}
+
+.externalLink {
+    position: absolute;
+    top: 16px; right: 16px;
+    z-index: 10;
+    color: white !important;
+    fill: white;
+
+    opacity: 0;
+
+    transition: opacity 240ms ease-out;
+}
+
+.stage > *:not(.externalLink) {
     z-index: 1;
     background: linear-gradient(#202059, #1C367C);
     transition: box-shadow 320ms ease-out, background-color 320ms ease-out;

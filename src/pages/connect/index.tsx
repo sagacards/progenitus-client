@@ -7,6 +7,7 @@ import { Navigate, useLocation } from 'react-router-dom';
 import WalletIcon from 'ui/wallet-icon';
 import Midday from 'assets/backdrop/bgc-midday.jpg'
 import Midnight from 'assets/backdrop/bgc-midnight.jpg'
+import Logo from 'ui/logo';
 
 interface Props {};
 
@@ -15,6 +16,9 @@ export default function ConnectPage (props : Props) {
     const { state } = useLocation();
     if (connected) return <Navigate to={(state as any)?.referrer || "/"} />
     return <div className={Styles.root}>
+        <div className={Styles.logo}>
+            <Logo />
+        </div>
         <div className={Styles.art}>
             <img className={[Styles.image, colorScheme === 'dark' ? Styles.show : ''].join(' ')} src={Midnight} />
             <img className={[Styles.image, colorScheme === 'light' ? Styles.show : ''].join(' ')} src={Midday} />

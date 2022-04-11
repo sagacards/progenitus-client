@@ -1,12 +1,13 @@
 import React from 'react';
 import * as THREE from 'three';
-import { useThree, Canvas, useFrame, PerspectiveCameraProps, Camera, ThreeEvent, useLoader } from '@react-three/fiber'
-import { OrbitControls } from '@react-three/drei/core'
+import { useThree, Canvas, useFrame, useLoader } from '@react-three/fiber'
 import { animated, useSpring, useSpringRef } from '@react-spring/three'
 import Threads from 'assets/textures/threads.png'
 import { useControls } from 'leva';
-import useStore from 'stores/index';
+import useStore, { ic } from 'stores/index';
 import { cardMovementSpringConf, cardSpringConf } from './springs';
+import { Legend } from './legend';
+import { fetchLegendManifest, LegendManifest } from 'src/apis/legends';
 
 const center = new THREE.Vector3(0, 0, 0);
 
@@ -21,13 +22,13 @@ function Scene () {
 
     function lightPos () {
         return mintResult !== undefined
-            ? [0, 4, 0]
+            ? [0, 6.5, 2]
             : [0, 4, 5];
     };
 
     function lightInt () {
         return mintResult !== undefined
-            ? .5
+            ? 2
             : .125;
     };
 
@@ -37,23 +38,38 @@ function Scene () {
         config: cardSpringConf,
     });
 
+    // Textures
+
+    const [textures, setTextures] = React.useState<LegendManifest>();
+
+    React.useEffect(() => {
+        if (!mintResult) {
+            setTextures(undefined);
+            return;
+        };
+        fetchLegendManifest('cwu5z-wyaaa-aaaaj-qaoaq-cai', mintResult)
+        .then(setTextures)
+        .catch(console.error);
+    }, [mintResult]);
+
+    const border = textures?.maps?.border ? `${ic.protocol}://cwu5z-wyaaa-aaaaj-qaoaq-cai.raw.${ic.host}${textures.maps.border}` : undefined;
+    const back = textures?.maps?.back ? `${ic.protocol}://cwu5z-wyaaa-aaaaj-qaoaq-cai.raw.${ic.host}${textures.maps.back}` : undefined;
+    const face = textures?.views?.flat ? `${ic.protocol}://cwu5z-wyaaa-aaaaj-qaoaq-cai.raw.${ic.host}${textures.views.flat}` : undefined;
+
     return <>
         <group
             position={[0, 2, 2]}
             rotation={[-Math.PI * .24, 0, 0]}
         >
+            {mintResult && back && border && face && textures?.colors && <React.Suspense fallback={<Loader />}><Legend back={back} border={border} face={face} colors={textures?.colors} /></React.Suspense>}
             <LegendBox open={mintResult !== undefined} minting={isMinting} />
         </group>
-        {/* <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, 0, 0]}>
-            <planeGeometry args={[25, 10]} />
-            <meshStandardMaterial color={'#444'} />
-        </mesh> */}
-        {/* <ambientLight intensity={1} /> */}
         {/* @ts-ignore */}
         <animated.directionalLight {...lightSpring} />
-        <directionalLight intensity={.125} position={[0, .5, 5]} />
-        <hemisphereLight args={['#202059', '#1C367C']} intensity={.5} />
-        {/* <OrbitControls /> */}
+        <directionalLight position={[0, 2, 10]} intensity={1} />
+        {/* <directionalLight intensity={2} position={[0, -5, 5]} /> */}
+        {/* <hemisphereLight args={['#202059', '#1C367C']} intensity={.5} /> */}
+        {/* <ambientLight /> */}
         {isMinting && <Sprites />}
     </>
 };
@@ -63,7 +79,6 @@ function LegendBox ({ open, minting } : { open : boolean, minting : boolean }) {
 
     const rootPos = React.useMemo(() => () => ([open ? 0 : -1.5, open ? -3.5 : 0, open ? -3 : 0] as [number, number, number]), [open]);
     const rootRot = React.useMemo(() => () => ([open ? -Math.PI * .5 : 0, 0, 0] as [number, number, number]), [open]);
-    // const rootRot = React.useMemo(() => () => ([0, 0, 0] as [number, number, number]), [open]);
     const doorRot = React.useMemo(() => () => ([0, open ? -Math.PI : 0, 0] as [number, number, number]), [open]);
 
     const spring = useSpringRef();
@@ -289,3 +304,21 @@ export default function MintScene () {
         </Canvas>
     </>
 };
+
+export function Loader () {
+    const mesh = React.useRef<THREE.Mesh>(null);
+
+    useFrame(state => {
+        if (!mesh.current) return;
+        const t = state.clock.getElapsedTime();
+        const s = 3;
+        const f = .25;
+        mesh.current.position.x = 2 * Math.sin(t * s) * f;
+        mesh.current.position.y = 2 * Math.cos(t * s) * Math.sin(t * s) * f;
+    });
+
+    return <mesh ref={mesh}>
+        <sphereGeometry args={[.125, 10, 10]} />
+        <meshStandardMaterial color="white" />
+    </mesh>
+}
