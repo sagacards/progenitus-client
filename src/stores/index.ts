@@ -106,9 +106,10 @@ interface Store {
 
     getNftActor : (c : string) => ActorSubclass<MockNFT>;
 
-    events      : EventsMap;
-    getEvent    : (c : string, i : number) => MintingEvent | undefined;
-    fetchEvents : () => void;
+    events          : EventsMap;
+    getEvent        : (c : string, i : number) => MintingEvent | undefined;
+    fetchEvents     : () => void;
+    eventsLastFetch?: Date;
 
     eventSupply : { [key : string] : { [key : number] : number } };
     fetchSupply : (c : string, i : number) => void;
@@ -494,8 +495,15 @@ const useStore = create<Store>((set, get) => ({
 
         // Real Events
         defaultActor.getAllEvents()
-        .then(events => {
-            set({ events: events.map(([p, e, i]) => mapEvent(p, e, i)).reduce((agg, e) => ({ ...agg, [e.collection.canister] : { ...agg[e.collection.canister], [e.id] : e } }), {} as EventsMap) });
+        .then(r => {
+            const events = r
+            .map(([p, e, i]) => mapEvent(p, e, i))
+            .reduce((agg, e) => ({ ...agg, [e.collection.canister] : { ...agg[e.collection.canister], [e.id] : e } }), {} as EventsMap)
+
+            set({
+                events,
+                eventsLastFetch: new Date(),
+            });
         })
     },
 

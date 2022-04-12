@@ -22,8 +22,10 @@ interface Props {};
 
 export default function DropDetailPage (props : Props) {
     const { canister, index } = useParams();
-    const { actor, connecting, connected, history, getEvent, pushMessage, balance, fetchSupply, eventSupply, isMinting, setIsMinting, setMintResult, mintResult } = useStore();
-    const event = React.useMemo(() => (canister && index) ? getEvent(canister, Number(index)) : undefined, []);
+    const { actor, connecting, connected, history, getEvent, eventsLastFetch, fetchEvents, pushMessage, balance, fetchSupply, eventSupply, isMinting, setIsMinting, setMintResult, mintResult } = useStore();
+    const eventsAreFresh = React.useMemo(() => new Date().getTime() - (eventsLastFetch?.getTime() || 0) < 60_000, [eventsLastFetch])
+    const event = React.useMemo(() => (canister && index) ? getEvent(canister, Number(index)) : undefined, [eventsAreFresh]);
+    const fetching = React.useMemo(() => !event && !eventsAreFresh, [event, eventsAreFresh]);
     const allowlistSpots = undefined;
     const [timerSentinel, setTimerSentinel] = React.useState(0);
     const [error, setError] = React.useState<string>();
@@ -69,15 +71,18 @@ export default function DropDetailPage (props : Props) {
         }
     }, [mintable]);
     
-    // Push a not found message if event isn't found.
+    // Attempt to retrieve the relevant event
     React.useEffect(() => {
-        if (!event || !canister || !index) {
+        if (!eventsAreFresh) {
+            fetchEvents();
+        } else if (!event) {
+            // Push a not found message if event isn't found.
             pushMessage({
                 type: 'error',
                 message: 'Could not find that event.'
             });
-        }
-    }, [event]);
+        };
+    }, [event, eventsAreFresh]);
 
     React.useEffect(() => {
         if (!canister || !index) return;
@@ -108,24 +113,26 @@ export default function DropDetailPage (props : Props) {
         .finally(() => setIsMinting(false));
     }, [event, supplyRemaining, connected, balance, allowlistSpots, actor, index]);
 
-    // Redirect home if event not found.
-    if (!event || !canister || !index) return <Navigate to="/" />;
+    // if (!canister || !index) return <Navigate to="/" />;
 
-    const collection = event.collection;
+    // Redirect home if event not found.
+    if (!event && eventsAreFresh) return <Navigate to="/" />;
+
+    const collection = event?.collection;
     
     return <>
         <Navbar />
         <Container>
-            <div className={Styles.root}>
+            <div className={[Styles.root, fetching ? Styles.fetching : ''].join(' ')}>
                 <div className={Styles.top}>
                     <img className={Styles.banner} src={Banner} />
-                    <img className={Styles.collection} src={collection.icon} />
+                    <img className={Styles.collection} src={collection?.icon} />
                 </div>
-                <div className={Styles.name}>{collection.name}</div>
+                <div className={Styles.name}>{collection?.name}</div>
                 <div className={Styles.stats}>
                     <div className={Styles.stat}>
                         <div className={Styles.statLabel}>Supply</div>
-                        <div className={Styles.statValue}>{event.supply}</div>
+                        <div className={Styles.statValue}>{event?.supply}</div>
                     </div>
                     <div className={Styles.stat}>
                         <div className={Styles.statLabel}>For Sale</div>
@@ -133,11 +140,11 @@ export default function DropDetailPage (props : Props) {
                     </div>
                     <div className={Styles.stat}>
                         <div className={Styles.statLabel}>Price</div>
-                        <div className={Styles.statValue}>{event.price.e8s / 10 ** 8} ICP</div>
+                        <div className={Styles.statValue}>{event && event.price.e8s / 10 ** 8} ICP</div>
                     </div>
                     <div className={Styles.stat}>
                         <div className={Styles.statLabel}>Access</div>
-                        <div className={Styles.statValue}>{event.access}</div>
+                        <div className={Styles.statValue}>{event?.access}</div>
                     </div>
                     <div className={Styles.stat}>
                         <div className={Styles.statLabel}>Allowlist</div>
@@ -152,9 +159,9 @@ export default function DropDetailPage (props : Props) {
                         </div>
                     </div>
                 </div>
-                {new Date().getTime() < event.startDate.getTime() && <div className={Styles.timer}>Starts <Timer time={event.startDate} /></div>}
-                {new Date().getTime() <= event.endDate.getTime() && supplyRemaining !== 0 && <div className={Styles.timer}>Ends <Timer time={event.endDate} /></div>}
-                {collection.description && <div className={Styles.description}><Revealer content={collection.description} /></div>}
+                {event && new Date().getTime() < event.startDate.getTime() && <div className={Styles.timer}>Starts <Timer time={event.startDate} /></div>}
+                {event && new Date().getTime() <= event.endDate.getTime() && supplyRemaining !== 0 && <div className={Styles.timer}>Ends <Timer time={event.endDate} /></div>}
+                {collection?.description && <div className={Styles.description}><Revealer content={collection.description} /></div>}
                 <div className={[Styles.mintingStage, mintResult ? Styles.minted : ''].join(' ')}>
                     <div className={[Styles.stage, isMinting ? Styles.minting : ''].join(' ')}>
                         <a href={`${ic.protocol}://${canister}.raw.${ic.host}/${mintResult}`} target="_blank" className={Styles.externalLink}>
@@ -173,7 +180,7 @@ export default function DropDetailPage (props : Props) {
                             error={error}
                         />
                     </div>
-                    <div className={Styles.message}><MintableMessage time={event.startDate} end={event.endDate} /></div>
+                    <div className={Styles.message}>{event && <MintableMessage time={event.startDate} end={event.endDate} />}</div>
                 </div>
                 <div className={Styles.activity}>
                     <Tabs
