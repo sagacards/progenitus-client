@@ -244,10 +244,9 @@ const useStore = create<Store>((set, get) => ({
                 canisterId: ic.canisters.likes,
             });
 
-            get().postconnect();
-
             complete();
             set(() => ({ connected: true, principal: identity.getPrincipal(), actor, wallet: 'stoic', ledgerActor: nns, likesActor }));
+            get().postconnect();
         });
     },
 
@@ -280,7 +279,6 @@ const useStore = create<Store>((set, get) => ({
 
         complete();
         set(() => ({ connected: true, principal, actor, wallet: 'plug', likesActor }));
-
         get().postconnect();
     },
 
