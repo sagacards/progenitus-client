@@ -15,8 +15,8 @@ import Spinner from 'ui/spinner';
 import Timer from 'ui/timer';
 import MintScene from 'src/three/mint-scene';
 import Styles from './styles.module.css'
-import Banner from 'assets/events/0/banner.jpg'
 import { FiExternalLink } from 'react-icons/fi';
+import ReactMarkdown from 'react-markdown';
 
 interface Props {};
 
@@ -29,6 +29,15 @@ export default function DropDetailPage (props : Props) {
     const allowlistSpots = undefined;
     const [timerSentinel, setTimerSentinel] = React.useState(0);
     const [error, setError] = React.useState<string>();
+    const [description, setDescription] = React.useState<string>();
+
+    // Fetch description markdown
+    React.useEffect(() => {
+        if (!event || !event.collection.description) return;
+        fetch(event.collection.description)
+        .then(r => r.text())
+        .then(setDescription);
+    }, [event]);
 
     const supplyRemaining = React.useMemo(() => {
         if (!canister || !index) return;
@@ -125,7 +134,7 @@ export default function DropDetailPage (props : Props) {
         <Container>
             <div className={[Styles.root, fetching ? Styles.fetching : ''].join(' ')}>
                 <div className={Styles.top}>
-                    <img className={Styles.banner} src={Banner} />
+                    <img className={Styles.banner} src={collection?.banner} />
                     <img className={Styles.collection} src={collection?.icon} />
                 </div>
                 <div className={Styles.name}>{collection?.name}</div>
@@ -161,7 +170,7 @@ export default function DropDetailPage (props : Props) {
                 </div>
                 {event && new Date().getTime() < event.startDate.getTime() && <div className={Styles.timer}>Starts <Timer time={event.startDate} /></div>}
                 {event && new Date().getTime() <= event.endDate.getTime() && supplyRemaining !== 0 && <div className={Styles.timer}>Ends <Timer time={event.endDate} /></div>}
-                {collection?.description && <div className={Styles.description}><Revealer content={collection.description} /></div>}
+                {description && <div className={Styles.description}><Revealer content={description} /></div>}
                 <div className={[Styles.mintingStage, mintResult ? Styles.minted : ''].join(' ')}>
                     <div className={[Styles.stage, isMinting ? Styles.minting : ''].join(' ')}>
                         <a href={`${ic.protocol}://${canister}.raw.${ic.host}/${mintResult}`} target="_blank" className={Styles.externalLink}>

@@ -111,6 +111,14 @@
     color: var(--chrome-4);
 }
 
+.description h1 {
+    font-size: 24px;
+}
+
+.description h2 {
+    font-size: 20px;
+}
+
 .mintingStage {
     position: relative;
     display: flex;

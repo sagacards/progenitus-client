@@ -1,17 +1,25 @@
 import React from 'react'
+import ReactMarkdown from 'react-markdown';
 import Styles from './styles.module.css'
 
 interface Props {
-    content: string;
+    content?: string;
 }
 
 export default function Revealer ({ content } : Props) {
     const [show, setShow] = React.useState(false);
+    console.log(content)
     return <div className={Styles.root}>
-        {
-            show
-            ? <>{content} <br /><br /> <a href="#" onClick={() => setShow(false)}>Read Less</a></>
-            : <>{content.split(' ').slice(0, 30).join(' ')} ... <a href="#" onClick={() => setShow(true)}>Read More</a></>
-        }
+        {content && content != '' && <>
+            <ReactMarkdown skipHtml allowedElements={['p', 'ul', 'li', 'a', 'h1', 'h2']}>
+                {
+                    show
+                    ? content
+                    : content.split(' ').slice(0, 12).join(' ') + '...'
+                }
+            </ReactMarkdown>
+            <a href="#" onClick={() => setShow(!show)}>Read {show ? 'Less' : 'More'}</a>
+        </>}
+        
     </div>
 }
