@@ -23,8 +23,8 @@ export default function DropCardList (props : Props) {
         name: 'The Emperor',
         slug: 'the-emperor',
         art: 'https://i.imgur.com/8cOXOCE.mp4',
-    },]
+    }]
     return <div className={Styles.list}>
-        {Object.values(e).map((drop, i) => <DropCard key={`drop${i}`} name={drop.collection.name} canister={drop.collection.canister} id={drop.id} art={drops[i].art} start={drop.startDate} end={drop.endDate} />)}
+        {Object.values(e).slice(0, 3).map((drop, i) => <DropCard key={`drop${i}`} name={drop.collection.name} canister={drop.collection.canister} id={drop.id} art={drops[i].art} start={drop.startDate} end={drop.endDate} />)}
     </div>
 }
