@@ -12,13 +12,12 @@ import { Ledger, idlFactory as nnsIdl } from 'canisters/ledger/ledger.did.js'
 import { MockNFT, idlFactory as nftIdl } from 'canisters/nft/mock_nft.did.js'
 // @ts-ignore
 import CyclesDID from 'canisters/cycles/cycles.did.js';
-// @ts-ignore
-import { principalToAccountIdentifier, buf2hex } from 'util/ext'
 import makeEvents, { history, makeCollections } from 'mock/index'
 import { mapEvent, MintingEvent } from 'src/logic/minting';
 // @ts-ignore
 import { Likes, idlFactory as likesIdl } from 'canisters/likes/likes.did';
 import { Like, mapLike } from 'src/logic/likes';
+import { Address } from 'util/address';
 
 type ColorScheme = 'dark' | 'light';
 
@@ -318,7 +317,7 @@ const useStore = create<Store>((set, get) => ({
 
     postconnect () {
         get().actor?.getPersonalAccount()
-        .then(r => set({ address: buf2hex(new Uint8Array(r)) }))
+        .then(r => set({ address: Address.toHex(r) }))
         .then(() => get().fetchBalance());
 
         get().fetchLikes();
@@ -350,7 +349,7 @@ const useStore = create<Store>((set, get) => ({
 
         if (!principal || !actor) return;
         
-        const address = Object.values(principalToAccountIdentifier(principal)) as number[];
+        const address = Object.values(Address.fromPrincipal(principal, 0)) as number[];
 
         return actor.transfer({ e8s: BigInt(amount.toFixed()) }, address)
         .catch(e => {
