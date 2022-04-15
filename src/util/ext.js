@@ -89,6 +89,16 @@ export const principalToAccountIdentifier = (p, s) => {
     return array2;
 };
 
+export const tokenIdentifier = (principal, index) => {
+    const padding = Buffer.from("\x0Atid");
+    const array = new Uint8Array([
+        ...padding,
+        ...Principal.fromText(principal).toUint8Array(),
+        ...to32bits(index),
+    ]);
+    return Principal.fromUint8Array(array).toText();
+};
+
 const getSubAccountArray = (s) => {
     if (Array.isArray(s)) {
         return s.concat(Array(32 - s.length).fill(0));
