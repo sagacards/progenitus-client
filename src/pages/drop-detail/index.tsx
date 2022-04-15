@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, Navigate, useParams } from 'react-router-dom';
-import useStore, { ic } from 'stores/index';
+import useStore, { CAPEvent, ic } from 'stores/index';
 import { eventIsMintable, mint } from 'src/logic/minting';
 import Navbar from 'ui/navbar';
 import Footer from 'ui/footer';
@@ -17,12 +17,14 @@ import MintScene from 'src/three/mint-scene';
 import Styles from './styles.module.css'
 import { FiExternalLink } from 'react-icons/fi';
 import ReactMarkdown from 'react-markdown';
+import { useTokenStore } from 'stores/tokens';
+import { Principal } from '@dfinity/principal';
 
 interface Props {};
 
 export default function DropDetailPage (props : Props) {
     const { canister, index } = useParams();
-    const { actor, connecting, connected, history, getEvent, eventsLastFetch, fetchEvents, pushMessage, balance, fetchSupply, eventSupply, isMinting, setIsMinting, setMintResult, mintResult } = useStore();
+    const { actor, connecting, connected, getEvent, eventsLastFetch, fetchEvents, pushMessage, balance, fetchSupply, eventSupply, isMinting, setIsMinting, setMintResult, mintResult } = useStore();
     const eventsAreFresh = React.useMemo(() => new Date().getTime() - (eventsLastFetch?.getTime() || 0) < 60_000, [eventsLastFetch])
     const event = React.useMemo(() => (canister && index) ? getEvent(canister, Number(index)) : undefined, [eventsAreFresh]);
     const fetching = React.useMemo(() => !event && !eventsAreFresh, [event, eventsAreFresh]);
@@ -68,7 +70,7 @@ export default function DropDetailPage (props : Props) {
             if (timer === undefined) {
                 setTimer(setInterval(() => {
                     setTimerSentinel(prev => prev + 1);
-                }, 1000));
+                }, 1000) as unknown as number);
             }
         } else if (timer !== undefined) {
             clearInterval(timer);
@@ -122,7 +124,12 @@ export default function DropDetailPage (props : Props) {
         .finally(() => setIsMinting(false));
     }, [event, supplyRemaining, connected, balance, allowlistSpots, actor, index]);
 
-    // if (!canister || !index) return <Navigate to="/" />;
+    const { cap : { [canister as string] : transactions }, capPoll, filtersSet, capRoots } = useTokenStore();
+    React.useEffect(() => {
+        if (!canister) return;
+        filtersSet([Principal.fromText(canister)]);
+        capPoll(canister);
+    }, [canister, capRoots]);
 
     // Redirect home if event not found.
     if (!event && eventsAreFresh) return <Navigate to="/" />;
@@ -168,8 +175,7 @@ export default function DropDetailPage (props : Props) {
                         </div>
                     </div>
                 </div>
-                {event && new Date().getTime() < event.startDate.getTime() && <div className={Styles.timer}>Starts <Timer time={event.startDate} /></div>}
-                {event && new Date().getTime() <= event.endDate.getTime() && supplyRemaining !== 0 && <div className={Styles.timer}>Ends <Timer time={event.endDate} /></div>}
+                {event && new Date().getTime() < event.startDate.getTime() ? <div className={Styles.timer}>Starts <Timer time={event.startDate} /></div> : event && new Date().getTime() <= event.endDate.getTime() && supplyRemaining !== 0 && <div className={Styles.timer}>Ends <Timer time={event.endDate} /></div>}
                 {description && <div className={Styles.description}><Revealer content={description} /></div>}
                 <div className={[Styles.mintingStage, mintResult ? Styles.minted : ''].join(' ')}>
                     <div className={[Styles.stage, isMinting ? Styles.minting : ''].join(' ')}>
@@ -195,9 +201,24 @@ export default function DropDetailPage (props : Props) {
                     <Tabs
                         tabs={[
                             ['Mints', <>
-                                <div style={{ display: 'flex', gap: '10px', padding: '10px'}}><Button size='small'>All</Button> <Button size='small'>Mine</Button></div>
+                                <div style={{ display: 'flex', gap: '10px', padding: '10px'}}>
+                                    <Button size='small'>All</Button>
+                                    <Button size='small'>Mine</Button>
+                                </div>
                                 <Grid>
-                                    <More>{Object.values(history)[0].map(x => <NFTPreview key={`preview${x.token.canister}${x.token.index}`} token={x.token} listing={x.listing} event={x.event} />)}</More>
+                                    {transactions ? <More>
+                                        {transactions.map(x => <NFTPreview
+                                            key={`preview${x.token}`}
+                                            token={{
+                                                index: 0,
+                                                canister: '',
+                                            }}
+                                            event={{
+                                                type: x.operation as CAPEvent['type'],
+                                                timestamp: x.time
+                                            }}
+                                        />)}
+                                    </More> : <>None yet!</>}
                                 </Grid>
                             </>],
                             ['Transfers', <>Transfers...</>],

@@ -16,6 +16,6 @@ export default function More ({ children } : Props) {
     }, [children, visible, total]);
     return <>
         {visibleNodes}
-        <Button full size='large' onClick={() => setVisible(visible + interval)}>More</Button>
+        {children && <Button full size='large' onClick={() => setVisible(visible + interval)}>More</Button>}
     </>
 } 

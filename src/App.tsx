@@ -12,10 +12,13 @@ import DropDetailPage from 'pages/drop-detail';
 import Messages from 'ui/messages';
 import useStore from './stores';
 import ScrollToTop from 'ui/scroll-to-top';
+import { useTokenStore } from 'stores/tokens';
 
 function App() {
     const { init, pushMessage } = useStore();
+    const { capFetchRoots } = useTokenStore();
     React.useEffect(() => {
+        capFetchRoots();
         init()
         pushMessage({
             type: 'info',

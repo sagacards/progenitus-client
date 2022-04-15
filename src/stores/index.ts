@@ -12,7 +12,7 @@ import { Ledger, idlFactory as nnsIdl } from 'canisters/ledger/ledger.did.js'
 import { MockNFT, idlFactory as nftIdl } from 'canisters/nft/mock_nft.did.js'
 // @ts-ignore
 import CyclesDID from 'canisters/cycles/cycles.did.js';
-import makeEvents, { history, makeCollections } from 'mock/index'
+import { makeCollections } from 'mock/index'
 import { mapEvent, MintingEvent } from 'src/logic/minting';
 // @ts-ignore
 import { Likes, idlFactory as likesIdl } from 'canisters/likes/likes.did';
@@ -51,16 +51,9 @@ export interface ICP8s {
     e8s : number;
 };
 
-export interface _Token {
-    token : Token;
-    listing?: Listing;
-    event?: CAPEvent;
-};
-
 interface EventsMap { [key : string] :  { [key : number] : MintingEvent } };
 
 type CanisterId = string;
-type TokenIndex = number;
 
 interface Store {
 
@@ -117,9 +110,6 @@ interface Store {
     getCollection   : (c : Principal) => Collection | undefined;
     fetchCollections: () => void;
 
-    // TODO: replace with CAP implementation
-    history     : { [key : string] : _Token[] };
-
     likes       : Like[];
     like        : (token : Like) => void;
     unlike      : (token : Like) => void;
@@ -175,9 +165,6 @@ function rosettaData (account : string) {
     };
 }
 
-// Create some fake mint history.
-export interface Listing { id : number; canister : string; price : number; }
-
 // Create a default agent
 const defaultAgent = new HttpAgent({ host: 'https://boundary.ic0.app/' });
 
@@ -189,8 +176,6 @@ const defaultActor = Actor.createActor<Rex>(idlFactory, {
 const useStore = create<Store>((set, get) => ({
 
     defaultActor,
-
-    history,
 
     // Wallets
 
