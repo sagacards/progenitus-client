@@ -67,6 +67,7 @@ function Scene () {
         {/* @ts-ignore */}
         <animated.directionalLight {...lightSpring} />
         <directionalLight position={[0, 2, 10]} intensity={1} />
+        <ambientLight intensity={0.03} />
         {/* <directionalLight intensity={2} position={[0, -5, 5]} /> */}
         {/* <hemisphereLight args={['#202059', '#1C367C']} intensity={.5} /> */}
         {/* <ambientLight /> */}
