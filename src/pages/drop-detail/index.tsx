@@ -111,6 +111,8 @@ export default function DropDetailPage (props : Props) {
                 setMintResult(Number(r.ok));
                 alert('Mint success!');
             } else {
+                // @ts-ignore: result types...
+                console.error(r.err)
                 setError('Mint failure!');
                 alert('Mint failure!');
             }

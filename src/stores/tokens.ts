@@ -16,6 +16,14 @@ const collections = {
         principal_id: Principal.fromText('dklxm-nyaaa-aaaaj-qajza-cai'),
         standard: 'ext',
     },
+    "zzk67-giaaa-aaaaj-qaujq-cai": {
+        icon: Icon,
+        name: 'The High Priestess',
+        description: '',
+        // @ts-ignore: different versions of @dfinity/principal in this package, @psychedelic/cap-js and @psychedelic/dab-js...
+        principal_id: Principal.fromText('zzk67-giaaa-aaaaj-qaujq-cai'),
+        standard: 'ext',
+    },
 };
 
 const DAB_UPDATE_INTERVAL = 1000 * 60 * 10;

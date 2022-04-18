@@ -8,7 +8,6 @@ interface Props {
 
 export default function Revealer ({ content } : Props) {
     const [show, setShow] = React.useState(false);
-    console.log(content)
     return <div className={Styles.root}>
         {content && content != '' && <>
             <ReactMarkdown skipHtml allowedElements={['p', 'ul', 'li', 'a', 'h1', 'h2']}>

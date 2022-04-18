@@ -99,12 +99,16 @@
     cursor: pointer;
 }
 
-.likeIcon.active {
+.likeIcon.disabled {
+    cursor: default;
+}
+
+.likeIcon.active:not(.disabled) {
     color: var(--gold-1);
     transform: scale(1.1);
 }
 
-.likeIcon:not(.active):hover {
+.likeIcon:not(.active):hover:not(.disabled) {
     color: var(--chrome-4);
 }
 
