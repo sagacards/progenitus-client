@@ -16,7 +16,6 @@ import Timer from 'ui/timer';
 import MintScene from 'src/three/mint-scene';
 import Styles from './styles.module.css'
 import { FiExternalLink } from 'react-icons/fi';
-import ReactMarkdown from 'react-markdown';
 import { useTokenStore } from 'stores/tokens';
 import { Principal } from '@dfinity/principal';
 
@@ -132,7 +131,7 @@ export default function DropDetailPage (props : Props) {
     }, [canister, capRoots]);
 
     // Redirect home if event not found.
-    if (!event && eventsAreFresh) return <Navigate to="/" />;
+    if (!event && eventsAreFresh || !canister) return <Navigate to="/" />;
 
     const collection = event?.collection;
     
@@ -184,7 +183,7 @@ export default function DropDetailPage (props : Props) {
                                 <FiExternalLink />
                             </Button>
                         </a>
-                        <MintScene />
+                        <MintScene canister={canister} />
                     </div>
                     <div className={Styles.button}>
                         <Button

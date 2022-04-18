@@ -11,7 +11,7 @@ import { fetchLegendManifest, LegendManifest } from 'src/apis/legends';
 
 const center = new THREE.Vector3(0, 0, 0);
 
-function Scene () {
+function Scene ({ canister } : { canister : string }) {
     const { isMinting, mintResult } = useStore();
     const { camera } = useThree();
 
@@ -47,14 +47,14 @@ function Scene () {
             setTextures(undefined);
             return;
         };
-        fetchLegendManifest('cwu5z-wyaaa-aaaaj-qaoaq-cai', mintResult)
+        fetchLegendManifest(canister, mintResult)
         .then(setTextures)
         .catch(console.error);
     }, [mintResult]);
 
-    const border = textures?.maps?.border ? `${ic.protocol}://cwu5z-wyaaa-aaaaj-qaoaq-cai.raw.${ic.host}${textures.maps.border}` : undefined;
-    const back = textures?.maps?.back ? `${ic.protocol}://cwu5z-wyaaa-aaaaj-qaoaq-cai.raw.${ic.host}${textures.maps.back}` : undefined;
-    const face = textures?.views?.flat ? `${ic.protocol}://cwu5z-wyaaa-aaaaj-qaoaq-cai.raw.${ic.host}${textures.views.flat}` : undefined;
+    const border = textures?.maps?.border ? `${ic.protocol}://${canister}.raw.${ic.host}${textures.maps.border}` : undefined;
+    const back = textures?.maps?.back ? `${ic.protocol}://${canister}.raw.${ic.host}${textures.maps.back}` : undefined;
+    const face = textures?.views?.flat ? `${ic.protocol}://${canister}.raw.${ic.host}${textures.views.flat}` : undefined;
 
     return <>
         <group
@@ -295,11 +295,11 @@ function Sprites () {
     </>
 };
 
-export default function MintScene () {
+export default function MintScene ({ canister } : { canister : string }) {
     return <>
         <Canvas>
             <React.Suspense fallback={<></>}>
-                <Scene />
+                <Scene canister={canister} />
                 {/* <camera position={[0, 5, 5]} /> */}
             </React.Suspense>
         </Canvas>
