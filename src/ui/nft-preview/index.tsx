@@ -7,13 +7,16 @@ import { FaHeart } from 'react-icons/fa'
 import dayjs from 'dayjs'
 import relativetime from 'dayjs/plugin/relativeTime'
 import { Principal } from '@dfinity/principal'
+import { useTokenStore } from 'stores/tokens'
+import { decodeTokenIdentifier } from 'ictool'
 
 dayjs.extend(relativetime);
 
 
 // TODO: Create an arbitrary metadata structure so that you can pass whatever you want?
 interface Props {
-    token : Token;
+    minter: string;
+    tokenid: string;
     listing?: Listing;
     event?  : CAPEvent;
 }
@@ -21,7 +24,7 @@ interface Props {
 export default function NFTPreview (props : Props) {
 
     // App store.
-    const { icpToUSD, collections, like, unlike, likes, doesLike, principal, likeCount } = useStore();
+    const { icpToUSD, like, unlike, likes, doesLike, principal, likeCount, connected } = useStore();
 
     // Component state
     const [play, setPlay] = React.useState<boolean>(false);
@@ -29,13 +32,14 @@ export default function NFTPreview (props : Props) {
     const [animated, setAnimated] = React.useState<string>();
     const [count, setCount] = React.useState<number>();
 
-    const liked = React.useMemo(() => doesLike(props.token), [likes]);
+    const token = React.useMemo(() => decodeTokenIdentifier(props.tokenid), []);
+    const liked = React.useMemo(() => doesLike(token), [likes]);
 
-    React.useEffect(() => void likeCount(props.token).then(r => setCount(r)), [likes])
+    React.useEffect(() => void likeCount(token).then(r => setCount(r)), [likes])
     
     // Lazy load static thumbnails.
     React.useEffect(() => {
-        const url = `https://${props.token.canister}.raw.ic0.app/${props.token.index}.webp`;
+        const url = `https://${token.canister}.raw.ic0.app/${token.index}.webp`;
         const img = new Image();
         img.onload = () => setReadyStatic(true);
         img.src = url;
@@ -44,7 +48,7 @@ export default function NFTPreview (props : Props) {
     // Prefetch animated previews.
     function fetchAnimated () {
         if (animated) return;
-        const url = `https://${props.token.canister}.raw.ic0.app/${props.token.index}.webm`;
+        const url = `https://${token.canister}.raw.ic0.app/${token.index}.webm`;
         fetch(url).then(r => r.blob().then(b => {
             var reader = new FileReader();
             reader.readAsDataURL(b); 
@@ -59,25 +63,27 @@ export default function NFTPreview (props : Props) {
         const update = !liked;
         if (update) {
             like({
-                canister: Principal.fromText(props.token.canister),
-                index: props.token.index,
+                canister: Principal.fromText(token.canister),
+                index: token.index,
                 user: principal,
             })
         } else {
             unlike({
-                canister: Principal.fromText(props.token.canister),
-                index: props.token.index,
+                canister: Principal.fromText(token.canister),
+                index: token.index,
                 user: principal,
             })
         };
     }, [likes, principal]);
 
-    const collection = collections[props.token.canister];
+    const { dab } = useTokenStore();
+
+    const collection = dab[token.canister];
 
     return <div className={Styles.root} onMouseEnter={() => { setPlay(true); fetchAnimated(); }} onMouseLeave={() => setPlay(false)}>
-        <Lineage />
+        <Lineage minter={props.minter} collection={collection} />
         <div className={Styles.stage}>
-            {readyStatic && <img className={Styles.static} src={`https://${props.token.canister}.raw.ic0.app/${props.token.index}.webp`} />}
+            {readyStatic && <img className={Styles.static} src={`https://${token.canister}.raw.ic0.app/${token.index}.webp`} />}
             {animated && <video className={[Styles.animated, play && animated ? Styles.animatedPlay : ''].join(' ')} loop autoPlay muted>
                 <source src={`${animated}`} type="video/webm" />
             </video>}
@@ -87,11 +93,11 @@ export default function NFTPreview (props : Props) {
             <div className={Styles.details}>
                 <div className={Styles.title}>
                     <div className={Styles.collection}>{collection?.name}</div>
-                    <div className={Styles.mint}>#{props.token.index}</div>
+                    <div className={Styles.mint}>#{token.index}</div>
                 </div>
                 <div className={Styles.like}>
                     <div className={Styles.likeCount}>{count}</div>
-                    <div className={[Styles.likeIcon, liked ? Styles.active : ''].join(' ')} onClick={() => handleLike()}><FaHeart /></div>
+                    <div className={[Styles.likeIcon, liked ? Styles.active : '', !connected ? Styles.disabled : ''].join(' ')} onClick={() => handleLike()}><FaHeart /></div>
                 </div>
             </div>
             <div className={Styles.divider} />

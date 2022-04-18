@@ -209,11 +209,9 @@ export default function DropDetailPage (props : Props) {
                                 <Grid>
                                     {transactions ? <More>
                                         {transactions.map(x => <NFTPreview
+                                            tokenid={x.token}
+                                            minter={x.to}
                                             key={`preview${x.token}`}
-                                            token={{
-                                                index: 0,
-                                                canister: '',
-                                            }}
                                             event={{
                                                 type: x.operation as CAPEvent['type'],
                                                 timestamp: x.time
