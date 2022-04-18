@@ -9,7 +9,7 @@ Might be worth including this in the cap-js lib because it's so useful.
 import { Event as TransactionEvent, } from '@psychedelic/cap-js';
 import { prettifyCapTransactions } from '@psychedelic/cap-js'
 import { Principal } from '@dfinity/principal';
-import { TokenIdentifier } from 'util/ext';
+import { decodeTokenIdentifier } from 'ictool';
 
 export default {};
 
@@ -98,7 +98,7 @@ export const parseGetTransactionsResponse = ({
 
         if (!tokenIdText) throw Error('Oops! Token field not found');
 
-        const { index } = TokenIdentifier.decode(tokenIdText);
+        const { index } = decodeTokenIdentifier(tokenIdText);
         tokenIndex = index;
 
         if (!tokenIndex) throw Error('Oops! Not a valid tokenIndex');
