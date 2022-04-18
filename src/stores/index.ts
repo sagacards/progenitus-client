@@ -23,6 +23,14 @@ type ColorScheme = 'dark' | 'light';
 
 export type Wallet = 'plug' | 'stoic' | 'earth' | 'ii';
 
+export interface Listing { id : number; canister : string; price : number; }
+
+export interface _Token {
+    token : Token;
+    listing?: Listing;
+    event?: CAPEvent;
+};
+
 export interface Message {
     type    : 'error' | 'info';
     message : string;
