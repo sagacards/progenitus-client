@@ -181,6 +181,11 @@ const defaultActor = Actor.createActor<Rex>(idlFactory, {
     canisterId: ic.canisters.progenitus,
 });
 
+const defaultLikesActor = Actor.createActor<Likes>(likesIdl, {
+    agent: defaultAgent,
+    canisterId: ic.canisters.likes,
+});
+
 const useStore = create<Store>((set, get) => ({
 
     defaultActor,
@@ -564,7 +569,7 @@ const useStore = create<Store>((set, get) => ({
     },
 
     async likeCount (token) {
-        return Number(await get().likesActor?.count(Principal.fromText(token.canister), BigInt(token.index)))
+        return Number(await defaultLikesActor.count(Principal.fromText(token.canister), BigInt(token.index)))
     },
 
     // Minting
