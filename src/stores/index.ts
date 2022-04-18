@@ -144,6 +144,8 @@ export const ic = {
     },
 };
 
+const whitelist = [ic.canisters.progenitus, ic.canisters.likes];
+
 const rosetta = 'https://rosetta-api.internetcomputer.org';
 
 const NftActors : { [key : string] : ActorSubclass<MockNFT> } = {};
@@ -258,7 +260,7 @@ const useStore = create<Store>((set, get) => ({
             return;
         }
         
-        await window.ic.plug.requestConnect({ whitelist: [ic.canisters.progenitus, ic.canisters.likes], host: `${ic.protocol}://${ic.host}` }).catch(complete);
+        await window.ic.plug.requestConnect({ whitelist, host: `${ic.protocol}://${ic.host}` }).catch(complete);
 
         const agent = await window.ic.plug.agent;
         // isLocal && agent.fetchRootKey();
@@ -280,21 +282,24 @@ const useStore = create<Store>((set, get) => ({
     },
 
     async plugReconnect () {
-        if (await window?.ic?.plug?.isConnected()) {
-            const agent = await window?.ic?.plug?.agent;
-            // isLocal && agent.fetchRootKey();
-            if (!agent) {
-                console.warn('Failed to reconnect plug. Why, Plug? 😭');
-                return;
-            }
-            const principal = await agent.getPrincipal();
+        const plug = window?.ic?.plug;
+        if (await plug?.isConnected()) {
+            const agent = await plug?.agent;
 
-            const actor = await window?.ic?.plug?.createActor<Rex>({
+            // isLocal && agent.fetchRootKey();
+
+            if (!agent) {
+                await plug?.createAgent({ host: `${ic.protocol}://${ic.host}`, whitelist });
+            }
+
+            const principal = await agent?.getPrincipal();
+
+            const actor = await plug?.createActor<Rex>({
                 canisterId: ic.canisters.progenitus,
                 interfaceFactory: idlFactory,
             });
             
-            const likesActor = await window?.ic?.plug?.createActor<Likes>({
+            const likesActor = await plug?.createActor<Likes>({
                 canisterId: ic.canisters.likes,
                 interfaceFactory: likesIdl,
             });
