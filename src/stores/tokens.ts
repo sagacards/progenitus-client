@@ -23,8 +23,6 @@ const TRANSACTION_LIMIT = 100;
 
 const TimeFormatter = new Intl.RelativeTimeFormat('en', { style: 'long' });
 
-const CAP = await CapRouter.init({});
-
 type CanisterId = string;
 
 interface Store {
@@ -122,7 +120,7 @@ export const useTokenStore = create<Store>(
                         // @ts-ignore: different versions of @dfinity/principal in this package, @psychedelic/cap-js and @psychedelic/dab-js...
                         x.principal_id
                     ))
-                    .map(x => CAP.get_token_contract_root_bucket({
+                    .map(async (x) => (await CapRouter.init({})).get_token_contract_root_bucket({
                         // @ts-ignore: different versions of @dfinity/principal in this package, @psychedelic/cap-js and @psychedelic/dab-js...
                         tokenId: x.principal_id,
                         witness,
