@@ -10,6 +10,10 @@ import { Legend } from './legend';
 import { fetchLegendManifest, LegendManifest } from 'src/apis/legends';
 
 const center = new THREE.Vector3(0, 0, 0);
+const centerVec = new THREE.Object3D();
+centerVec.position.x = 0;
+centerVec.position.y = 0;
+centerVec.position.z = 0;
 
 function Scene ({ canister } : { canister : string }) {
     const { isMinting, mintResult } = useStore();
@@ -28,7 +32,7 @@ function Scene ({ canister } : { canister : string }) {
 
     function lightInt () {
         return mintResult !== undefined
-            ? 2
+            ? .5
             : .125;
     };
 
@@ -40,37 +44,29 @@ function Scene ({ canister } : { canister : string }) {
 
     // Textures
 
-    const [textures, setTextures] = React.useState<LegendManifest>();
+    const [manifest, setManifest] = React.useState<LegendManifest>();
 
     React.useEffect(() => {
         if (!mintResult) {
-            setTextures(undefined);
+            setManifest(undefined);
             return;
         };
         fetchLegendManifest(canister, mintResult)
-        .then(setTextures)
+        .then(setManifest)
         .catch(console.error);
     }, [mintResult]);
-
-    const border = textures?.maps?.border ? `${ic.protocol}://${canister}.raw.${ic.host}${textures.maps.border}` : undefined;
-    const back = textures?.maps?.back ? `${ic.protocol}://${canister}.raw.${ic.host}${textures.maps.back}` : undefined;
-    const face = textures?.views?.flat ? `${ic.protocol}://${canister}.raw.${ic.host}${textures.views.flat}` : undefined;
 
     return <>
         <group
             position={[0, 2, 2]}
             rotation={[-Math.PI * .24, 0, 0]}
         >
-            {mintResult && back && border && face && textures?.colors && <React.Suspense fallback={<Loader />}><Legend back={back} border={border} face={face} colors={textures?.colors} /></React.Suspense>}
+            {mintResult && manifest && <React.Suspense fallback={<Loader />}><Legend canister={canister} manifest={manifest} /></React.Suspense>}
             <LegendBox open={mintResult !== undefined} minting={isMinting} />
         </group>
         {/* @ts-ignore */}
-        <animated.directionalLight {...lightSpring} />
-        <directionalLight position={[0, 2, 10]} intensity={1} />
-        <ambientLight intensity={0.03} />
-        {/* <directionalLight intensity={2} position={[0, -5, 5]} /> */}
-        {/* <hemisphereLight args={['#202059', '#1C367C']} intensity={.5} /> */}
-        {/* <ambientLight /> */}
+        <animated.directionalLight {...lightSpring} target={centerVec} />
+        <group position={[0, 1, 4]}><Light i={mintResult ? 1.5 : 1} /></group>
         {isMinting && <Sprites />}
     </>
 };
@@ -284,7 +280,7 @@ function Sprites () {
     });
 
     return <>
-        <directionalLight ref={light} position={[0, 1, 4.5]} intensity={.5} />
+        <directionalLight ref={light} position={[0, 1, 4.5]} intensity={0} />
 
         <group ref={group}>
             <instancedMesh ref={mesh} args={[,,count]}>
@@ -322,4 +318,44 @@ export function Loader () {
         <sphereGeometry args={[.125, 10, 10]} />
         <meshStandardMaterial color="white" />
     </mesh>
+}
+
+function Light({ i } : { i : number}) {
+    return <>
+        <directionalLight
+            intensity={.5 * i}
+            position={[0, 0.5, 2]}
+            target={centerVec}
+        />
+        <directionalLight
+            intensity={.25 * i}
+            position={[20, -1, 3]}
+            target={centerVec}
+        />
+        <directionalLight
+            intensity={.25 * i}
+            position={[-20, -1, 3]}
+            target={centerVec}
+        />
+        <directionalLight
+            intensity={.125 * i}
+            position={[4, 8, 2]}
+            target={centerVec}
+        />
+        <directionalLight
+            intensity={.125 * i}
+            position={[-4, 8, 2]}
+            target={centerVec}
+        />
+        <directionalLight
+            intensity={.25 * i}
+            position={[3, 0, 2]}
+            target={centerVec}
+        />
+        <directionalLight
+            intensity={.25 * i}
+            position={[-3, 0, 2]}
+            target={centerVec}
+        />
+    </>
 }

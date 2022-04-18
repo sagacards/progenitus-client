@@ -5,8 +5,8 @@ import * as THREE from 'three';
 interface Props {
     alpha?: THREE.Texture;
     color: THREE.Color;
-    emissive: THREE.Color;
-    specular: THREE.Color;
+    emissive?: THREE.Color;
+    specular?: THREE.Color;
     side?: THREE.Side;
     normal?: THREE.Texture;
     shininess?: number;
@@ -35,7 +35,7 @@ export default function CardInk({
                     shininess={shininess || 200}
                     normalMap={normal}
                     // @ts-ignore
-                    // normalScale={[0.05, 0.05]}
+                    normalScale={[0.05, 0.05]}
                     side={side || THREE.FrontSide}
                 />
             </mesh>

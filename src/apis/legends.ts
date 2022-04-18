@@ -38,26 +38,34 @@ export function fetchLegendTextures (
 }
 
 export interface LegendManifest {
-    back    : string;
-    border  : string;
-    ink     : string;
-    maps    : {
-        normal      : string;
-        layers      : [string];
-        back        : string;
-        border      : string;
+    back: string;
+    border: string;
+    ink: string;
+    maps: {
+        normal: string;
+        layers: [string];
+        back: string;
+        border: string;
+        background: string;
+        mask?: string;
     };
-    colors  : {
-        base        : string;
-        specular    : string;
-        emissive    : string;
+    colors: {
+        base: string;
+        specular: string;
+        emissive: string;
+        background: string;
     };
-    views   : {
-        flat        : string;
-        sideBySide  : string;
-        animated    : string;
-        interactive : string;
-    }
+    stock: {
+        base: string;
+        specular: string;
+        emissive: string;
+    };
+    views: {
+        flat: string;
+        sideBySide: string;
+        animated: string;
+        interactive: string;
+    };
 };
 
 export interface LegendTextures {
