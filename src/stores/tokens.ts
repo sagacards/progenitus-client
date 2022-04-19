@@ -171,8 +171,11 @@ export const useTokenStore = create<Store>(
                     const { filters } = get();
 
                     // Query the history canister.
-                    const response = await root.get_transactions({ witness: false });
-                    const transactions = parseGetTransactionsResponse(response) as Transaction[];
+                    const response = await Promise.all([
+                        root.get_transactions({ witness: false }),
+                        root.get_transactions({ witness: false, page: 2 }),
+                    ]);
+                    const transactions = parseGetTransactionsResponse(response.reduce((agg, i) => ({ data: [...agg.data, ...i.data]}), {data : [] as TransitionEvent[]}) ) as Transaction[];
 
                     set(state => ({ cap: {
                         ...state.cap,
