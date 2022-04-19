@@ -34,16 +34,15 @@ function CardArt(props: { textures: THREE.Texture[] }) {
 export function Legend ({ manifest, canister } : { canister: string, manifest : LegendManifest }) {
 
     // Legends traits
-    const { layers, colorBase, colorSpecular, colorEmissive, colorBackground, stockBase, stockSpecular, stockEmissive, face, normal, mask, back, border } = React.useMemo(() => {
+    const { layers, colorBase, colorSpecular, colorEmissive, colorBackground, stockBase, stockSpecular, stockEmissive, normal, mask, back, border } = React.useMemo(() => {
         const [colorBase, colorSpecular, colorEmissive, colorBackground] = useLegendColors(canister, manifest);
         const [stockBase, stockSpecular, stockEmissive] = useLegendStock(canister, manifest);
-        const face = useLegendFlat(canister, manifest);
         const normal = useLegendNormal(canister, manifest);
         const mask = useLegendMask(canister, manifest);
         const back = useLegendBack(canister, manifest);
         const border = useLegendBorder(canister, manifest);
         const layers = useLegendLayers(canister, manifest);
-        return { layers, colorBase, colorSpecular, colorEmissive, colorBackground, stockBase, stockSpecular, stockEmissive, face, normal, mask, back, border };
+        return { layers, colorBase, colorSpecular, colorEmissive, colorBackground, stockBase, stockSpecular, stockEmissive, normal, mask, back, border };
     }, [manifest]);
 
     // Refs
