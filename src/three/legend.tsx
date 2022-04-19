@@ -250,9 +250,7 @@ function Card({
 
 
 function host (canister : string) {
-    return window.location.host.includes('localhost')
-        ? `https://${canister}.raw.ic0.app`
-        : `https://${window.location.host}`;
+    return `https://${canister}.raw.ic0.app`;
 };
 
 function suspend<T>(promise: Promise<T>) {
