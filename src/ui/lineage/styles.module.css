@@ -1,7 +1,7 @@
 .root {
     display: flex;
     padding: 6px 4px;
-    border-bottom: 1px solid var(--chrome-2);
+    border-bottom: 1px solid var(--chrome);
 }
 
 .item {
@@ -17,7 +17,7 @@
     border-radius: 50%;
     margin-right: -20px;
 
-    overflow: clip;
+    overflow: hidden;
 
     background: var(--chrome-2);
     box-shadow: 0 0 0 1px var(--chrome-1);

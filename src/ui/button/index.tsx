@@ -11,6 +11,7 @@ interface Props {
     full?: boolean;
     disabled?: boolean;
     error?: string;
+    active?: boolean;
 }
 
 type Size = 'tiny' | 'small' | 'medium' | 'large' | 'xl';
@@ -33,6 +34,7 @@ export default function Button ({
     full = false,
     disabled = false,
     error,
+    active,
 } : Props) {
     const w = sizeMap[size], height = w, p = w/2;
     return <div
@@ -45,12 +47,13 @@ export default function Button ({
             alt ? Styles.alt : '',
             disabled ? Styles.disabled : '',
             error ? Styles.error : '',
+            active ? Styles.active : '',
         ].join(' ')}
         onClick={e => !disabled && onClick && onClick(e)}
         style={{ height, minWidth: w }}
     >
         <div className={Styles.frame} style={{ borderRadius: p }} />
-        <div className={Styles.body} style={{ borderRadius: p, padding: flush ? '' : `0 ${p}px` }}>
+        <div className={[Styles.body, icon ? Styles.hasIcon : '',].join(' ')} style={{ borderRadius: p, padding: flush ? '' : `0 ${p}px` }}>
             {icon && <div className={Styles.icon} children={icon} />}
             {children}
         </div>

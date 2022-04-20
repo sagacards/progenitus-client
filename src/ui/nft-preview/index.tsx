@@ -8,7 +8,7 @@ import dayjs from 'dayjs'
 import relativetime from 'dayjs/plugin/relativeTime'
 import { Principal } from '@dfinity/principal'
 import { useTokenStore } from 'stores/tokens'
-import { decodeTokenIdentifier } from 'ictool'
+import { decodeTokenIdentifier, principalToAddress } from 'ictool'
 
 dayjs.extend(relativetime);
 
@@ -34,6 +34,9 @@ export default function NFTPreview (props : Props) {
 
     const token = React.useMemo(() => decodeTokenIdentifier(props.tokenid), []);
     const liked = React.useMemo(() => doesLike(token), [likes]);
+
+    // @ts-ignore principal lib mistmatch
+    const mine = React.useMemo(() => principal && principalToAddress(principal) === props.minter, [principal]);
 
     React.useEffect(() => void likeCount(token).then(r => setCount(r)), [likes])
     
@@ -80,7 +83,7 @@ export default function NFTPreview (props : Props) {
 
     const collection = dab[token.canister];
 
-    return <div className={Styles.root} onMouseEnter={() => { setPlay(true); fetchAnimated(); }} onMouseLeave={() => setPlay(false)}>
+    return <div className={[Styles.root, mine ? Styles.mine : ''].join(' ')} onMouseEnter={() => { setPlay(true); fetchAnimated(); }} onMouseLeave={() => setPlay(false)}>
         <Lineage minter={props.minter} collection={collection} />
         <div className={Styles.stage}>
             {readyStatic && <img className={Styles.static} src={`https://${token.canister}.raw.ic0.app/${token.index}.webp`} />}

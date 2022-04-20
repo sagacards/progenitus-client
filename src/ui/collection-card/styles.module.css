@@ -1,6 +1,6 @@
 .list {
     width: 100%;
-    /* overflow: clip; */
+    /* overflow: hidden; */
     display: flex;
     gap: 24px;
 }

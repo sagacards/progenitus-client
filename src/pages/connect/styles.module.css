@@ -13,7 +13,7 @@
 
 .art {
     position: relative;
-    overflow: clip;
+    overflow: hidden;
     width: 38%;
     height: 100%;
     background-color: var(--chrome-2);

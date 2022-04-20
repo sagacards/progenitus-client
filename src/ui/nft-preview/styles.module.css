@@ -1,8 +1,14 @@
 .root {
+    --chrome: var(--chrome-2);
+
     border-radius: 10px;
-    box-shadow: 0 0 0 1px var(--chrome-2);
+    box-shadow: 0 0 0 1px var(--chrome);
     animation: fadein 1s ease-out forwards;
     transition: transform 160ms ease-out, box-shadow 320ms ease-out;
+}
+
+.root.mine {
+    --chrome: var(--chrome-3);
 }
 
 .root:hover {
@@ -59,7 +65,7 @@
     position: relative;
     z-index: 10;
 
-    border-top: solid 1px var(--chrome-2);
+    border-top: solid 1px var(--chrome);
     transition: border 320ms ease-out;
 
     display: flex;
@@ -154,7 +160,7 @@
 .divider {
     height: 2px;
     width: 100%;
-    background: var(--chrome-2);
+    background: var(--chrome);
     transition: box-shadow 320ms ease-out, background-color 320ms ease-out;
 }
 

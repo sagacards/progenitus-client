@@ -1,6 +1,6 @@
 .list {
     width: 100%;
-    /* overflow: clip; */
+    /* overflow: hidden; */
     display: flex;
     gap: 24px;
     justify-content: center; /* Temporary until we have a scrolling container. */
@@ -31,7 +31,7 @@
     border-radius: 8px;
 
     /* transition: box-shadow 320ms ease-out; */
-    overflow: clip;
+    overflow: hidden;
 }
 
 .art {

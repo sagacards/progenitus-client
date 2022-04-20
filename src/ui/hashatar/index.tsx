@@ -13,8 +13,8 @@ export default function Hashatar ({
     size = '100%',
 } : Props) {
     const hue = React.useMemo(() => hash(name) % 360, [name]);
-    return <div className={Styles.root}>
-        <svg width={size} height={size} viewBox="0 0 80 80">
+    return <div className={Styles.root} style={{width: size, height: size,}}>
+        <svg width={size} height={size} viewBox="0 0 100 100">
             <defs>
             <linearGradient x1="0%" y1="0%" x2="100%" y2="100%" id={`g${hue}`}>
                 <stop stopColor={`hsl(${hue}deg, 95%, 90%)`} offset="0%"></stop>
@@ -22,7 +22,7 @@ export default function Hashatar ({
             </linearGradient>
             </defs>
             <g id="Page-1" stroke="none" strokeWidth="1" fill="none">
-            <rect id="Rectangle" fill={`url(#g${hue})`} x="0" y="0" width="80" height="80"/>
+            <rect id="Rectangle" fill={`url(#g${hue})`} x="0" y="0" width="100" height="100"/>
             </g>
         </svg>
     </div>

@@ -49,7 +49,7 @@
     box-shadow: 0 0 0 1px var(--chrome-2);
     transition: box-shadow 320ms ease-out, background-color 320ms ease-out;
 
-    overflow: clip;
+    overflow: hidden;
 }
 
 .stat {
@@ -129,7 +129,7 @@
 
 .stage {
     position: relative;
-    overflow: clip;
+    overflow: hidden;
     padding: 3px;
     width: 100%;
     max-width: 500px;

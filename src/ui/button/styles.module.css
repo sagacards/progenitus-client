@@ -30,6 +30,10 @@
     transition: 160ms box-shadow ease-out, 160ms transform ease-out, 320ms background-color ease-out;
 }
 
+.active .frame {
+    box-shadow: 0 0 0 1px var(--chrome-4);
+};
+
 .root.disabled .body {
     box-shadow: 0 0 0 1px var(--chrome-2);
 }
@@ -58,9 +62,10 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    gap: 10px;
 
     /* border-radius: 20px; */
-    overflow: clip;
+    overflow: hidden;
     transition: color 320ms ease-out;
 
     color: var(--foreground);
@@ -78,6 +83,10 @@
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+.body.hasIcon {
+    padding-left: 40px !important;
 }
 
 .icon > * {

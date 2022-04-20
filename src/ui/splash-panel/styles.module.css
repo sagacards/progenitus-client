@@ -9,7 +9,7 @@
     box-shadow: 0 0 0 1px var(--chrome-3) inset;
 
     transition: 320ms ease-out box-shadow, 320ms ease-out background-color;
-    overflow: clip;
+    overflow: hidden;
 }
 
 .image {

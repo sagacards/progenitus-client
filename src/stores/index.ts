@@ -289,10 +289,12 @@ const useStore = create<Store>((set, get) => ({
             // isLocal && agent.fetchRootKey();
 
             if (!agent) {
+                console.info(`Reconnecting agent...`);
                 await plug?.createAgent({ host: `${ic.protocol}://${ic.host}`, whitelist });
             }
 
             const principal = await agent?.getPrincipal();
+            console.info(`Reinstating principal... ${principal?.toText()}`);
 
             const actor = await plug?.createActor<Rex>({
                 canisterId: ic.canisters.progenitus,

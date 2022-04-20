@@ -1,1 +1,10 @@
-.root {}
+.root {
+    
+    border-radius: 50%;
+    
+    overflow: hidden;
+}
+
+.small {
+    
+}

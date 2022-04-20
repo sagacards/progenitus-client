@@ -75,7 +75,7 @@
     height: 160px;
     box-shadow: 0 0 0 1px var(--chrome-2);
     border-radius: 20px;
-    overflow: clip;
+    overflow: hidden;
 }
 
 .articleCard img {

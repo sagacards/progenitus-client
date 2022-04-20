@@ -10,13 +10,15 @@ import useStore from 'stores/index'
 import Logo from 'ui/logo'
 import Spinner from 'ui/spinner'
 import LineText from 'ui/line-text'
+import Hashatar from 'ui/hashatar'
+import { principalToAddress } from 'ictool'
 
 interface Props {
     children?: React.ReactNode;
 }
 
 export default function Navbar (props : Props) {
-    const { connected, balanceDisplay } = useStore();
+    const { connected, balanceDisplay, principal } = useStore();
     const nav : {name: string; path: string}[] = [
         // {
         //     name: 'Drops',
@@ -53,7 +55,14 @@ export default function Navbar (props : Props) {
                     </div>
                     {connected && <div className={Styles.balance}>{balanceDisplay() !== undefined ? balanceDisplay()?.toFixed(2) : <Spinner size='small' />} <span className={Styles.icp}>ICP</span> <img className={Styles.icpImg} src={ICP} /></div>}
                     {connected
-                        ? <Link to="/account" className="no-fancy"><Button>Account</Button></Link>
+                        ? <Link to="/account" className="no-fancy">
+                            <Button icon={principal && <Hashatar size={'24px'} name={principalToAddress(
+                                // @ts-ignore principal mismatch
+                                principal
+                            )} />}>
+                                Account
+                            </Button>
+                        </Link>
                         : <Link to="/connect" state={{ referrer : window.location.pathname }} className="no-fancy"><Button>Connect</Button></Link>
                     }
                 </div>

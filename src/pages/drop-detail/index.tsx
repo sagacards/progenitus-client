@@ -18,12 +18,13 @@ import Styles from './styles.module.css'
 import { FiExternalLink } from 'react-icons/fi';
 import { useTokenStore } from 'stores/tokens';
 import { Principal } from '@dfinity/principal';
+import { principalToAddress } from 'ictool';
 
 interface Props {};
 
 export default function DropDetailPage (props : Props) {
     const { canister, index } = useParams();
-    const { actor, connecting, connected, getEvent, eventsLastFetch, fetchEvents, pushMessage, balance, fetchSupply, eventSupply, isMinting, setIsMinting, setMintResult, mintResult } = useStore();
+    const { actor, principal, connecting, connected, getEvent, eventsLastFetch, fetchEvents, pushMessage, balance, fetchSupply, eventSupply, isMinting, setIsMinting, setMintResult, mintResult } = useStore();
     const { cap : { [canister as string] : transactions }, capPoll, filtersSet, capRoots } = useTokenStore();
     const eventsAreFresh = React.useMemo(() => new Date().getTime() - (eventsLastFetch?.getTime() || 0) < 60_000, [eventsLastFetch])
     const event = React.useMemo(() => (canister && index) ? getEvent(canister, Number(index)) : undefined, [eventsAreFresh]);
@@ -34,6 +35,7 @@ export default function DropDetailPage (props : Props) {
     const [description, setDescription] = React.useState<string>();
     const [spots, setSpots] = React.useState<number>();
     const [supply, setSupply] = React.useState<number>();
+    const [mine, setMine] = React.useState(false);
 
     // Fetch spots
     React.useEffect(() => {
@@ -153,6 +155,9 @@ export default function DropDetailPage (props : Props) {
     if (!event && eventsAreFresh || !canister) return <Navigate to="/" />;
 
     const collection = event?.collection;
+
+    // @ts-ignore principal lib mismatch
+    const mints = React.useMemo(() => transactions?.filter(x => x.operation === 'mint' && mine ? x.to === (principal ? principalToAddress(principal) : false) : true), [transactions, mine]);
     
     return <>
         <Navbar />
@@ -220,12 +225,12 @@ export default function DropDetailPage (props : Props) {
                         tabs={[
                             ['Mints', <>
                                 <div style={{ display: 'flex', gap: '10px', padding: '10px'}}>
-                                    <Button size='small'>All</Button>
-                                    <Button size='small'>Mine</Button>
+                                    <Button active={!mine} onClick={() => setMine(false)} size='small'>All</Button>
+                                    <Button active={mine} onClick={() => setMine(true)} size='small'>Mine</Button>
                                 </div>
                                 <Grid>
-                                    {transactions ? <More>
-                                        {transactions.map(x => <NFTPreview
+                                    {mints ? <More>
+                                        {mints.map(x => <NFTPreview
                                             tokenid={x.token}
                                             minter={x.to}
                                             key={`preview${x.token}`}
