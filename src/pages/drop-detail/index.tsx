@@ -34,15 +34,18 @@ export default function DropDetailPage (props : Props) {
     const [error, setError] = React.useState<string>();
     const [description, setDescription] = React.useState<string>();
     const [spots, setSpots] = React.useState<number>();
+    const [spotsLoading, setSpotsLoading] = React.useState<boolean>(false);
     const [supply, setSupply] = React.useState<number>();
-    const [mine, setMine] = React.useState(false);
+    const [mine, setMine] = React.useState<boolean>(false);
 
     // Fetch spots
     React.useEffect(() => {
         if (!actor || !canister || !index) return;
+        setSpotsLoading(true)
         actor?.getAllowlistSpots(Principal.fromText(canister), BigInt(index))
         // @ts-ignore variant types...
-        .then(r => setSpots(Number(r.ok)));
+        .then(r => setSpots(Number(r.ok)))
+        .finally(() => setSpotsLoading(false));
     }, [mintResult, actor, canister, index]);
 
     // Fetch supply
@@ -156,8 +159,22 @@ export default function DropDetailPage (props : Props) {
 
     const collection = event?.collection;
 
-    // @ts-ignore principal lib mismatch
-    const mints = React.useMemo(() => transactions?.filter(x => x.operation === 'mint' && mine ? x.to === (principal ? principalToAddress(principal) : false) : true), [transactions, mine]);
+    const mints = React.useMemo(() => transactions?.filter(x => {
+        if (x.operation !== 'mint') return false;
+        if (mine) {
+            if (!principal) return false;
+            if (principalToAddress(
+                // @ts-ignore principal lib mismatch
+                principal
+            ) !== x.to) return false
+        };
+        return true;
+    }), [transactions, mine, principal]);
+
+    const transfers = React.useMemo(() => transactions?.filter(x => {
+        if (!['transfer', 'sale'].includes(x.operation)) return false;
+        return true;
+    }), [transactions, principal]);
     
     return <>
         <Navbar />
@@ -189,11 +206,13 @@ export default function DropDetailPage (props : Props) {
                         <div className={Styles.statLabel}>Allowlist</div>
                         <div className={Styles.statValue}>
                             {
-                                spots
-                                ? spots !== -1
-                                    ? <>{spots} Mints</>
-                                    : <>∞ Mints</>
-                                : <>No Access</>
+                                spotsLoading
+                                    ? <Spinner size='small' />
+                                    : spots
+                                        ? spots !== -1
+                                            ? <>{spots} Mints</>
+                                            : <>∞ Mints</>
+                                        : <>No Access</>
                             }
                         </div>
                     </div>
@@ -242,7 +261,21 @@ export default function DropDetailPage (props : Props) {
                                     </More> : <>None yet!</>}
                                 </Grid>
                             </>],
-                            ['Transfers', <>Transfers...</>],
+                            ['Transfers', <>
+                                <Grid>
+                                    {transfers ? <More>
+                                        {transfers.map(x => <NFTPreview
+                                            tokenid={x.token}
+                                            minter={x.to}
+                                            key={`preview${x.token}`}
+                                            event={{
+                                                type: x.operation as CAPEvent['type'],
+                                                timestamp: x.time
+                                            }}
+                                        />)}
+                                    </More> : <>None yet!</>}
+                                </Grid>
+                            </>],
                         ]}
                     />
                 </div>
