@@ -14,7 +14,7 @@ export default function LineText ({
         <div className={[Styles.fore, bright ? Styles['bright'] : ''].join(' ')}>
             {children}
         </div>
-        <div className={Styles.back} aria-hidden="true">{children}</div>
-        <div className={Styles.glow} aria-hidden="true">{children}</div>
+        {/* <div className={Styles.back} aria-hidden="true">{children}</div>
+        <div className={Styles.glow} aria-hidden="true">{children}</div> */}
     </div>
 }
