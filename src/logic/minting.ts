@@ -29,6 +29,7 @@ export function mapEvent (
         collection  : {
             icon: candid.details.iconImageUrl,
             banner: candid.details.bannerImageUrl,
+            preview: candid.details.previewImageUrl,
             description: candid.details.descriptionMarkdownUrl,
             name: candid.name,
             canister: canister.toString(),

@@ -41,6 +41,7 @@ export interface Collection {
     canister    : CanisterId;
     banner      : string;
     icon        : string;
+    preview     : string;
     name        : string;
     description : string;
 };

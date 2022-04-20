@@ -20,9 +20,10 @@ export default function DropCard (props : Props) {
     
     return <div className={Styles.dropcard}>
         <div className={Styles.artStage}>
-            <video className={Styles.art} autoPlay controls={false} muted loop>
+            {/* <video className={Styles.art} autoPlay controls={false} muted loop>
                 <source type="video/mp4" src={props.art} />
-            </video>
+            </video> */}
+            <img className={Styles.art} src={props.art} />
         </div>
         <img className={Styles.collection} src={Disk} />
         <div className={Styles.text}>
