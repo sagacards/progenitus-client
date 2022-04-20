@@ -17,7 +17,7 @@ export default function Revealer ({ content } : Props) {
                     : content.split(' ').slice(0, 12).join(' ') + '...'
                 }
             </ReactMarkdown>
-            <a href="#" onClick={() => setShow(!show)}>Read {show ? 'Less' : 'More'}</a>
+            <span className="link" onClick={() => setShow(!show)}>Read {show ? 'Less' : 'More'}</span>
         </>}
         
     </div>
