@@ -64,7 +64,7 @@ export function eventIsMintable (
     else if (!connected) r = 'not-connected';
     else if (event === undefined || userBalance === undefined) r = 'loading';
     else if (userAllowlist === 0) r = 'no-access';
-    else if (userBalance.e8s < event.price.e8s + 10_000) r = 'insufficient-funds';
+    else if (userBalance.e8s < event.price.e8s) r = 'insufficient-funds';
     else if (new Date().getTime() < event.startDate.getTime()) r = 'not-started';
     else if (new Date().getTime() > event.endDate.getTime()) r = 'ended';
     else if (supplyRemaining === 0) r = 'no-supply';
