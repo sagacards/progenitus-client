@@ -42,6 +42,7 @@ export function collectionFactory (index? : number) : Collection {
         name: `#${i} ${arcana[i]}`,
         icon: Disk,
         banner: '',
+        preview: '',
         canister: SagaCanisters[index || Math.floor(SagaCanisters.length * Math.random())],
         description,
     };
