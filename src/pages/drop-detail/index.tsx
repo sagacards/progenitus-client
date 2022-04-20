@@ -24,13 +24,31 @@ interface Props {};
 export default function DropDetailPage (props : Props) {
     const { canister, index } = useParams();
     const { actor, connecting, connected, getEvent, eventsLastFetch, fetchEvents, pushMessage, balance, fetchSupply, eventSupply, isMinting, setIsMinting, setMintResult, mintResult } = useStore();
+    const { cap : { [canister as string] : transactions }, capPoll, filtersSet, capRoots } = useTokenStore();
     const eventsAreFresh = React.useMemo(() => new Date().getTime() - (eventsLastFetch?.getTime() || 0) < 60_000, [eventsLastFetch])
     const event = React.useMemo(() => (canister && index) ? getEvent(canister, Number(index)) : undefined, [eventsAreFresh]);
     const fetching = React.useMemo(() => !event && !eventsAreFresh, [event, eventsAreFresh]);
-    const allowlistSpots = undefined;
+    
     const [timerSentinel, setTimerSentinel] = React.useState(0);
     const [error, setError] = React.useState<string>();
     const [description, setDescription] = React.useState<string>();
+    const [spots, setSpots] = React.useState<number>();
+    const [supply, setSupply] = React.useState<number>();
+
+    // Fetch spots
+    React.useEffect(() => {
+        if (!actor || !canister || !index) return;
+        actor?.getAllowlistSpots(Principal.fromText(canister), BigInt(index))
+        // @ts-ignore variant types...
+        .then(r => setSpots(Number(r.ok)));
+    }, [mintResult, actor, canister, index]);
+
+    // Fetch supply
+    React.useEffect(() => {
+        fetch(`https://${canister}.raw.ic0.app/supply`)
+        .then(r => r.text())
+        .then(r => setSupply(Number(r)));
+    }, []);
 
     // Fetch description markdown
     React.useEffect(() => {
@@ -45,7 +63,7 @@ export default function DropDetailPage (props : Props) {
         return eventSupply?.[canister]?.[Number(index)];
     }, [eventSupply, canister, index]);
 
-    const mintable = React.useMemo(() => eventIsMintable(event, supplyRemaining, !connecting && connected, balance, allowlistSpots, isMinting), [event, supplyRemaining, balance, allowlistSpots, timerSentinel, isMinting]);
+    const mintable = React.useMemo(() => eventIsMintable(event, supplyRemaining, !connecting && connected, balance, spots, isMinting), [event, supplyRemaining, balance, spots, timerSentinel, isMinting]);
 
     const MintableMessage = React.useMemo(() => {
         const messages = {
@@ -103,7 +121,7 @@ export default function DropDetailPage (props : Props) {
         setError(undefined);
         setIsMinting(true);
         setMintResult(undefined);
-        mint(event, supplyRemaining, connected, balance, allowlistSpots, actor, Number(index))
+        mint(event, supplyRemaining, connected, balance, spots, actor, Number(index))
         ?.then(r => {
             // @ts-ignore: result types...
             if (r?.ok) {
@@ -123,9 +141,8 @@ export default function DropDetailPage (props : Props) {
             alert('Mint failure!');
         })
         .finally(() => setIsMinting(false));
-    }, [event, supplyRemaining, connected, balance, allowlistSpots, actor, index]);
+    }, [event, supplyRemaining, connected, balance, spots, actor, index]);
 
-    const { cap : { [canister as string] : transactions }, capPoll, filtersSet, capRoots } = useTokenStore();
     React.useEffect(() => {
         if (!canister) return;
         filtersSet([Principal.fromText(canister)]);
@@ -149,7 +166,7 @@ export default function DropDetailPage (props : Props) {
                 <div className={Styles.stats}>
                     <div className={Styles.stat}>
                         <div className={Styles.statLabel}>Supply</div>
-                        <div className={Styles.statValue}>{event?.supply}</div>
+                        <div className={Styles.statValue}>{supply}</div>
                     </div>
                     <div className={Styles.stat}>
                         <div className={Styles.statLabel}>For Sale</div>
@@ -167,11 +184,11 @@ export default function DropDetailPage (props : Props) {
                         <div className={Styles.statLabel}>Allowlist</div>
                         <div className={Styles.statValue}>
                             {
-                                allowlistSpots
-                                ? allowlistSpots !== 0
-                                    ? <>{allowlistSpots} Mints</>
-                                    : <>No Access</>
-                                : <>∞ Mints</>
+                                spots
+                                ? spots !== -1
+                                    ? <>{spots} Mints</>
+                                    : <>∞ Mints</>
+                                : <>No Access</>
                             }
                         </div>
                     </div>
