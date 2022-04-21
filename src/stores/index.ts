@@ -458,10 +458,15 @@ const useStore = create<Store>((set, get) => ({
     didInit: false,
     async init () {
         if (get().didInit) return;
-        if (!(await get().plugReconnect())) {
-            get().stoicReconnect();
+        try {
+            get().plugReconnect()
+            .then(r => {
+                if (!r) get().stoicReconnect()
+            });
+        } catch (e) {
+            console.error(e);
         }
-        get().fetchBalance();
+        get().fetchBalance()
         get().fetchEvents();
         // get().fetchCollections();
 
