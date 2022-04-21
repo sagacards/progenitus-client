@@ -81,8 +81,8 @@ interface Store {
     disconnect      : () => void;
     wallet?         : Wallet;
     postconnect     : () => void;
-    plugReconnect   : () => void;
-    stoicReconnect  : () => void;
+    plugReconnect   : () => Promise<boolean>;
+    stoicReconnect  : () => Promise<boolean>;
     
     ledgerActor?    : ActorSubclass<Ledger>;
     address?        : string;
@@ -284,6 +284,7 @@ const useStore = create<Store>((set, get) => ({
     },
 
     async plugReconnect () {
+        set({ connecting: true });
         const plug = window?.ic?.plug;
         if (await plug?.isConnected()) {
             const agent = await plug?.agent;
@@ -294,7 +295,7 @@ const useStore = create<Store>((set, get) => ({
                 await plug?.createAgent({ host: `${ic.protocol}://${ic.host}`, whitelist });
             }
 
-            const principal = await agent?.getPrincipal();
+            const principal = await plug?.agent?.getPrincipal();
 
             const actor = await plug?.createActor<Rex>({
                 canisterId: ic.canisters.progenitus,
@@ -306,13 +307,22 @@ const useStore = create<Store>((set, get) => ({
                 interfaceFactory: likesIdl,
             });
 
-            set(() => ({ connected: true, principal, actor, wallet: 'plug', likesActor }));
+            set(() => ({ connected: true, connecting: false, principal, actor, wallet: 'plug', likesActor }));
 
             get().postconnect();
+            return true;
         }
+        set({ connecting: false });
+        return false;
     },
 
-    async stoicReconnect () {},
+    async stoicReconnect () {
+        if (window.localStorage.getItem('_scApp')) {
+            get().stoicConnect();
+            return true;
+        };
+        return false;
+    },
 
     disconnect () {
         StoicIdentity.disconnect();
@@ -450,8 +460,9 @@ const useStore = create<Store>((set, get) => ({
     didInit: false,
     async init () {
         if (get().didInit) return;
-        console.error('test');
-        get().plugReconnect();
+        if (!(await get().plugReconnect())) {
+            get().stoicReconnect();
+        }
         get().fetchBalance();
         get().fetchEvents();
         // get().fetchCollections();
