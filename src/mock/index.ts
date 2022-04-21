@@ -1,6 +1,7 @@
 import { Collection, CAPEvent, _Token } from 'stores/index'
 import Disk from 'assets/disk/8.png'
 import { MintingEvent } from 'src/logic/minting';
+import { DateTime } from 'luxon';
 
 export default function makeEvents (count : number = 3) : { [ key : MintingEvent['id']] : MintingEvent } {
     let events : { [ key : MintingEvent['id']] : MintingEvent } = {};
@@ -28,7 +29,7 @@ export function eventFactory () : MintingEvent {
         price: {
             e8s: 4_00_000_000 + Math.floor(Math.random() * 10) * 1_00_000_000,
         },
-        startDate: new Date(Date.now() + 1000 * 30),// randomDate(24, Math.random() > .5),
+        startDate: randomDate(24, Math.random() > .5),
         endDate: randomDate(72, true),
         collection: collectionFactory(),
     };
@@ -65,7 +66,7 @@ for (const canister of SagaCanisters) {
         l.push({
             token: { index, canister, },
             // listing: { price: Math.random() * 100, id : index, canister },
-            event: { type: 'mint', timestamp: randomDate(4) } as CAPEvent,
+            event: { type: 'mint', timestamp: randomDate(4).toJSDate() } as CAPEvent,
         });
         index++
     };
@@ -73,7 +74,7 @@ for (const canister of SagaCanisters) {
 };
 
 function randomDate (hourVariance : number = 4, future : boolean = false) {
-    return new Date(new Date().getTime() + Math.random() * 1000 * 60 * hourVariance * (future ? 1 : -1))
+    return DateTime.fromMillis(new Date().getTime() + Math.random() * 1000 * 60 * hourVariance * (future ? 1 : -1))
 };
 
 export {
