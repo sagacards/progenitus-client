@@ -3,7 +3,6 @@ import * as THREE from 'three';
 import { useThree, Canvas, useFrame, useLoader } from '@react-three/fiber'
 import { animated, useSpring, useSpringRef } from '@react-spring/three'
 import Threads from 'assets/textures/threads.png'
-import { useControls } from 'leva';
 import useStore, { ic } from 'stores/index';
 import { cardMovementSpringConf, cardSpringConf } from './springs';
 import { Legend } from './legend';
@@ -191,29 +190,16 @@ function LegendBox ({ open, minting } : { open : boolean, minting : boolean }) {
 
 function Sprites () {
     // Light ref
-    const light = React.useRef<THREE.DirectionalLight>();
+    const light = React.useRef<THREE.DirectionalLight>(null);
     
     // Particles
-    const { count, roam, color, speed } = useControls('Fireflies', {
-        count: {
-            value: 50,
-            min: 0,
-            max: 500,
-            step: 1,
-        },
-        roam: {
-            value: 8,
-            min: 4,
-            max: 20,
-        },
-        speed: {
-            value: .1,
-            min: 0,
-            max: 1,
-        },
+    const { count, roam, color, speed } = {
+        count: 50,
+        roam: 8,
+        speed: .1,
         color: '#ffeb36',
-    });
-    const mesh = React.useRef<THREE.InstancedMesh>();
+    };
+    const mesh = React.useRef<THREE.InstancedMesh>(null);
     const group = React.useRef<THREE.Group>(null);
     const dummy = React.useMemo(() => new THREE.Object3D(), []);
     const particles = React.useMemo(() => {

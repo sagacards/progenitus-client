@@ -130,7 +130,7 @@ export default function AccountPage(props: Props) {
                                 <div className={Styles.asideLabel}>Wallet</div>
                                 <div className={Styles.asideRow}>
                                     <WalletIcon size='small' />
-                                    <Hash>{principal}</Hash>
+                                    <Hash>{principal?.toText()}</Hash>
                                     <Button size='small' onClick={disconnect}>Disconnect</Button>
                                 </div>
                             </div>

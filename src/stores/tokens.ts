@@ -58,8 +58,6 @@ const capIsPolling: {[key : string] : boolean | undefined} = {};
 
 export const useTokenStore = create<Store>(
 
-    persist( // Middleware to persist our store localstorage. NOTE: I dislike this big-wrap syntax.
-
         (set, get) => ({
 
 
@@ -70,6 +68,7 @@ export const useTokenStore = create<Store>(
 
 
             // Our local list of NFT canisters.
+            // @ts-ignore: principal lib mistmatch
             dab: collections,
 
             // Last DAB update time, so we can throttle updates.
@@ -237,53 +236,13 @@ export const useTokenStore = create<Store>(
 
             // Toggles the state of a single filter.
             filtersToggle(canister: Principal) {
-                set(state => {
-                    if (state.filters.includes(canister)) {
-                        state.filtersRemove([canister]);
-                    } else {
-                        state.filtersAdd([canister]);
-                    };
-                });
+                if (get().filters.includes(canister)) {
+                    get().filtersRemove([canister]);
+                } else {
+                    get().filtersAdd([canister]);
+                };
             },
 
         }),
 
-
-        //////////////////
-        // Persistence //
-        ////////////////
-
-
-        {
-            name: 'goodies-store',
-
-            partialize: state => ({
-                dabLastFetch: state.dabLastFetch,
-                dab: state.dab,
-                cap: state.cap,
-                filters: state.filters,
-                capRoots: state.capRoots,
-            }),
-            
-            serialize: state => JSON.stringify({
-                // @ts-ignore: this middleware has bad type support
-                dabLastFetch: state.state.dabLastFetch.getTime(),
-                // @ts-ignore: this middleware has bad type support
-                dab: state.state.dab,
-                // @ts-ignore: this middleware has bad type support
-                filters: state.state.filters
-            }),
-
-            // @ts-ignore: this middleware has bad type support
-            deserialize: state => {
-                const data = JSON.parse(state);
-                return {
-                    dabLastFetch: new Date(data.dabLastFetch),
-                    dab: data.dab,
-                    filters: data.filters,
-                }
-            },
-        },
-
-    )
 );

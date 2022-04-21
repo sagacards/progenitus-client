@@ -6,6 +6,9 @@ import content from '@originjs/vite-plugin-content'
 
 // https://vitejs.dev/config/
 export default defineConfig({
+    build: {
+        sourcemap: 'inline',
+    },
     envDir: './env',
     envPrefix: 'PROGENITUS_',
     plugins: [

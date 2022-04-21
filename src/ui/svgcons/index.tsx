@@ -1,6 +1,5 @@
 import Styles from './styles.module.css'
 import React from 'react'
-import { useControls } from 'leva';
 import useStore from 'stores/index';
 
 interface Props {
@@ -37,12 +36,6 @@ export function SunIcon ({
 } : SunProps) {
 
     const { edges, setEdges } = useStore();
-    useControls({
-        edges: {
-            value: edges,
-            onChange: setEdges,
-        },
-    });
 
     const r = (width && height) ? Math.min(width, height) : sizeMap[size];
     const rayMap : { [key in Size] : number } = {
@@ -87,12 +80,6 @@ export function MoonIcon ({
     shadow = .75,
 }: MoonProps) {
     const { edges, setEdges } = useStore();
-    useControls({
-        edges: {
-            value: edges,
-            onChange: setEdges,
-        },
-    });
 
     const r = (width && height) ? Math.min(width, height) : sizeMap[size];
 
@@ -127,12 +114,6 @@ export function MenuIcon ({
     height,
 } : MenuProps) {
     const { edges, setEdges } = useStore();
-    useControls({
-        edges: {
-            value: edges,
-            onChange: setEdges,
-        },
-    });
     
     const r = (width && height) ? Math.min(width, height) : sizeMap[size];
 

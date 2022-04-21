@@ -50,7 +50,7 @@ export function Legend ({ manifest, canister } : { canister: string, manifest : 
     const target = React.useRef(new THREE.WebGLRenderTarget(d[0], d[1]));
     const camera = React.useRef(new THREE.OrthographicCamera(-f[0] / 2, f[0] / 2, f[1] / 2, -f[1] / 2));
     React.useEffect(() => void (camera.current.position.z = 20), []);
-    const mesh = React.useRef<THREE.Group>();
+    const mesh = React.useRef<THREE.Group>(null);
     const clock = React.useRef({
         tick: 0,
         lastTick: 0,

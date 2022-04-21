@@ -46,7 +46,7 @@ export default function Swap (props : Props) {
             <FaArrowDown />
         </div>
         <div className={Styles.wallet}>
-            <Hash icon={<WalletIcon />} size='large' alt>{principal}</Hash>
+            <Hash icon={<WalletIcon />} size='large' alt>{principal?.toText()}</Hash>
         </div>                
         <div className={Styles.actions}>
             <Button onClick={() => {
