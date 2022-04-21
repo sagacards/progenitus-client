@@ -5,6 +5,7 @@ import Styles from './styles.module.css'
 
 import Disk from 'assets/disk/8.png'
 import Timer from 'ui/timer';
+import { DateTime } from 'luxon';
 
 interface Props {
     children?: React.ReactNode;
@@ -12,8 +13,8 @@ interface Props {
     canister: string;
     id: number;
     art: string;
-    start: Date;
-    end: Date;
+    start: DateTime;
+    end: DateTime;
 }
 
 export default function DropCard (props : Props) {
@@ -31,7 +32,7 @@ export default function DropCard (props : Props) {
             <div className={Styles.timer}>
                 <div className={Styles.sizzle}>
                     {
-                        props.start.getTime() > new Date().getTime()
+                        props.start.toMillis() > DateTime.now().toMillis()
                         ? <>Starts <Timer time={props.start} /></>
                         : <>Ends <Timer time={props.end} /></>
                     }

@@ -1,21 +1,23 @@
+import { DateTime } from 'luxon';
 import React from 'react'
 import Styles from './styles.module.css'
 
 interface Props {
-    time : Date;
+    time : DateTime;
 }
 
-export default function Timer (props : Props) {
-    const now = new Date().getTime();
-    const time = props.time.getTime();
-    const active = now <= time;
+export default function Timer ({ time } : Props) {
+    const offset = React.useMemo(() => (time.offset - DateTime.now().offset) * 1000 * 60, []);
+    const now = time.diffNow().milliseconds - offset;
+    const active = now <= time.toMillis();
     
-    const [delta, setDelta] = React.useState<number>(time - now);
+    const [delta, setDelta] = React.useState<number>(time.diffNow().milliseconds);
 
     React.useEffect(() => {
         if (active) {
             const iter = setInterval(() => {
-                setDelta(Math.max(time - new Date().getTime(), 0));
+                const now = time.diffNow().milliseconds + offset;
+                setDelta(Math.max(now, 0));
             }, 1000);
             return () => clearInterval(iter)
         }
@@ -26,7 +28,7 @@ export default function Timer (props : Props) {
     </div>
 }
 
-function pad(n: number) { return n < 10 ? `0${n}` : `${n}` }
+function pad (n: number) { return n < 10 ? `0${n}` : `${n}` }
 
 export function countdownFormat(countdown: number) : string {
     // This expects a number representing a duration of time remaining.

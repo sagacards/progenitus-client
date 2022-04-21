@@ -1,3 +1,4 @@
+import { DateTime } from 'luxon';
 import { ActorSubclass } from '@dfinity/agent';
 import { Principal } from '@dfinity/principal';
 import { Data, Rex } from 'canisters/progenitus/progenitus.did';
@@ -8,8 +9,8 @@ export interface MintingEvent {
     supply      : number;
     price       : ICP8s;
     access      : 'private' | 'public';
-    startDate   : Date;
-    endDate     : Date;
+    startDate   : DateTime;
+    endDate     : DateTime;
     collection  : Collection;
 }
 
@@ -45,8 +46,12 @@ export function mapToken (
 
 export function mapDate (
     candid : BigInt
-) : Date {
-    return new Date(Number(candid) / (10 ** 6));
+) : DateTime {
+    const millis = Number(candid) / (10 ** 6);
+    const date = DateTime.fromMillis(millis, {
+        zone: 'America/Vancouver'
+    });
+    return date;
 };
 
 export type MintableResponse =  'minting' | 'not-connected' | 'loading' | 'no-access' | 'insufficient-funds' | 'not-started' | 'ended' | 'no-supply' | 'mintable';
@@ -65,8 +70,8 @@ export function eventIsMintable (
     else if (event === undefined || userBalance === undefined) r = 'loading';
     else if (userAllowlist === 0) r = 'no-access';
     else if (userBalance.e8s < event.price.e8s) r = 'insufficient-funds';
-    else if (new Date().getTime() < event.startDate.getTime()) r = 'not-started';
-    else if (new Date().getTime() > event.endDate.getTime()) r = 'ended';
+    else if (DateTime.now().toMillis() < event.startDate.toMillis()) r = 'not-started';
+    else if (DateTime.now().toMillis() > event.endDate.toMillis()) r = 'ended';
     else if (supplyRemaining === 0) r = 'no-supply';
     else r = 'mintable';
     return r;

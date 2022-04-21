@@ -18,6 +18,7 @@ import { mapEvent, MintingEvent } from 'src/logic/minting';
 import { Likes, idlFactory as likesIdl } from 'canisters/likes/likes.did';
 import { Like, mapLike } from 'src/logic/likes';
 import { principalToAddressBytes, toHexString } from 'ictool';
+import { DateTime } from 'luxon';
 
 type ColorScheme = 'dark' | 'light';
 
@@ -520,7 +521,7 @@ const useStore = create<Store>((set, get) => ({
         .then(r => {
             const events = r
             .map(([p, e, i]) => mapEvent(p, e, i))
-            .filter(e => e.endDate.getTime() > new Date().getTime())
+            .filter(e => e.endDate.toMillis() > DateTime.now().toMillis())
             .reduce((agg, e) => ({ ...agg, [e.collection.canister] : { ...agg[e.collection.canister], [e.id] : e } }), {} as EventsMap)
 
             set({

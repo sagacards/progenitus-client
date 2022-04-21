@@ -21,6 +21,7 @@ import { Principal } from '@dfinity/principal';
 import { principalToAddress } from 'ictool';
 import useModalStore from 'ui/modal/store';
 import Copyable from 'ui/copyable';
+import { DateTime } from 'luxon';
 
 interface Props {};
 
@@ -82,10 +83,10 @@ export default function DropDetailPage (props : Props) {
             'not-connected': () => <><Link to="/connect" state={{referrer : window.location.pathname}}>Connect</Link> your wallet to mint</>,
             'no-access': () => <>Your wallet is not on the allow list</>,
             'insufficient-funds': () => <>Insufficient funds <Link to="/account">deposit</Link></>,
-            'not-started': (p : {time : Date}) => <>Starts in <Timer time={p.time} /></>,
+            'not-started': (p : {time : DateTime}) => <>Starts in <Timer time={p.time} /></>,
             'ended': () => <>Event ended!</>,
             'no-supply': () => <>Sold out</>,
-            'mintable': (p : {end : Date}) => <>Your wallet will be charged. Ends <Timer time={p.end} /></>,
+            'mintable': (p : {end : DateTime}) => <>Your wallet will be charged. Ends <Timer time={p.end} /></>,
             'minting': () => <>Minting...</>,
         };
         return messages[mintable];
@@ -230,7 +231,7 @@ export default function DropDetailPage (props : Props) {
                         </div>
                     </div>
                 </div>
-                {event && new Date().getTime() < event.startDate.getTime() ? <div className={Styles.timer}>Starts <Timer time={event.startDate} /></div> : event && new Date().getTime() <= event.endDate.getTime() && supplyRemaining !== 0 && <div className={Styles.timer}>Ends <Timer time={event.endDate} /></div>}
+                {event && DateTime.now().toMillis() < event.startDate.toMillis() ? <div className={Styles.timer}>Starts <Timer time={event.startDate} /></div> : event && DateTime.now().toMillis() <= event.endDate.toMillis() && supplyRemaining !== 0 && <div className={Styles.timer}>Ends <Timer time={event.endDate} /></div>}
                 {description && <div className={Styles.description}><Revealer content={description} /></div>}
                 <div className={[Styles.mintingStage, mintResult ? Styles.minted : ''].join(' ')}>
                     <div className={[Styles.stage, isMinting ? Styles.minting : ''].join(' ')}>
