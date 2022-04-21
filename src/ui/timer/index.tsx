@@ -8,7 +8,7 @@ interface Props {
 
 export default function Timer ({ time } : Props) {
     const offset = React.useMemo(() => (time.offset - DateTime.now().offset) * 1000 * 60, []);
-    const now = time.diffNow().milliseconds - offset;
+    const now = time.diffNow().milliseconds;
     const active = now <= time.toMillis();
     
     const [delta, setDelta] = React.useState<number>(time.diffNow().milliseconds);
@@ -16,7 +16,7 @@ export default function Timer ({ time } : Props) {
     React.useEffect(() => {
         if (active) {
             const iter = setInterval(() => {
-                const now = time.diffNow().milliseconds + offset;
+                const now = time.diffNow().milliseconds;
                 setDelta(Math.max(now, 0));
             }, 1000);
             return () => clearInterval(iter)
