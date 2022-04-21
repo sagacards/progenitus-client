@@ -160,6 +160,7 @@ export const useTokenStore = create<Store>(
 
                 // We don't want to be polling the same bucket more than once.
                 if (capIsPolling[tokenCanister]) return;
+                capIsPolling[tokenCanister] = true;
                 
                 // @ts-ignore: typescript definitions for cap-js are just wrong...
                 const root = await CapRoot.init({
@@ -185,6 +186,8 @@ export const useTokenStore = create<Store>(
                     if (filters.length === 0 || filters.map(x => x.toText()).includes(tokenCanister)) {
                         // Keep polling
                         setTimeout(poll, 5000);
+                    } else {
+                        capIsPolling[tokenCanister] = false;
                     }
                 };
 
