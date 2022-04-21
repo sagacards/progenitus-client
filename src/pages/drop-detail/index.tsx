@@ -24,7 +24,7 @@ interface Props {};
 
 export default function DropDetailPage (props : Props) {
     const { canister, index } = useParams();
-    const { actor, principal, connecting, connected, getEvent, eventsLastFetch, fetchEvents, pushMessage, balance, fetchSupply, eventSupply, isMinting, setIsMinting, setMintResult, mintResult } = useStore();
+    const { actor, principal, connecting, connected, getEvent, eventsLastFetch, fetchEvents, pushMessage, balance, fetchSupply, eventSupply, isMinting, setIsMinting, setMintResult, mintResult, fetchBalance } = useStore();
     const { cap : { [canister as string] : transactions }, capPoll, filtersSet, capRoots } = useTokenStore();
     const eventsAreFresh = React.useMemo(() => new Date().getTime() - (eventsLastFetch?.getTime() || 0) < 60_000, [eventsLastFetch])
     const event = React.useMemo(() => (canister && index) ? getEvent(canister, Number(index)) : undefined, [eventsAreFresh]);
@@ -37,6 +37,8 @@ export default function DropDetailPage (props : Props) {
     const [spotsLoading, setSpotsLoading] = React.useState<boolean>(false);
     const [supply, setSupply] = React.useState<number>();
     const [mine, setMine] = React.useState<boolean>(false);
+
+    const remainingInterval = React.useRef<number>();
 
     // Fetch spots
     React.useEffect(() => {
@@ -120,6 +122,8 @@ export default function DropDetailPage (props : Props) {
     React.useEffect(() => {
         if (!canister || !index) return;
         fetchSupply(canister, Number(index));
+        remainingInterval.current = setInterval(() => fetchSupply(canister, Number(index)), 5000) as unknown as number;
+        return () => clearInterval(remainingInterval.current);
     }, [canister, index]);
 
     const handleMint = React.useMemo(() => function () {
@@ -133,6 +137,7 @@ export default function DropDetailPage (props : Props) {
                 // @ts-ignore: result types...
                 setMintResult(Number(r.ok));
                 alert('Mint success!');
+                fetchBalance();
             } else {
                 // @ts-ignore: result types...
                 console.error(r.err)
