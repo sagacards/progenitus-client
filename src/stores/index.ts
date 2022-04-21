@@ -100,6 +100,7 @@ interface Store {
     setEdges: (e : boolean) => void;
 
     init: () => void;
+    didInit: boolean;
 
     messages: { [key: number] : Message };
     pushMessage: (m : Message) => void;
@@ -290,12 +291,10 @@ const useStore = create<Store>((set, get) => ({
             // isLocal && agent.fetchRootKey();
 
             if (!agent) {
-                console.info(`Reconnecting agent...`);
                 await plug?.createAgent({ host: `${ic.protocol}://${ic.host}`, whitelist });
             }
 
             const principal = await agent?.getPrincipal();
-            console.info(`Reinstating principal... ${principal?.toText()}`);
 
             const actor = await plug?.createActor<Rex>({
                 canisterId: ic.canisters.progenitus,
@@ -448,7 +447,10 @@ const useStore = create<Store>((set, get) => ({
 
     // Store init
 
+    didInit: false,
     async init () {
+        if (get().didInit) return;
+        console.error('test');
         get().plugReconnect();
         get().fetchBalance();
         get().fetchEvents();
@@ -467,7 +469,7 @@ const useStore = create<Store>((set, get) => ({
 
         const icpToUSD = Number(cycles.data.xdr_permyriad_per_icp) / 10000 * (xdr.hasOwnProperty("XDR_USD") ? xdr.XDR_USD : 1.4023);
 
-        set({ defaultAgent, icpToUSD });
+        set({ defaultAgent, icpToUSD, didInit: true });
     },
 
     // Generic UI messages

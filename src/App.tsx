@@ -18,7 +18,7 @@ function App() {
     const { capFetchRoots } = useTokenStore();
     React.useEffect(() => {
         capFetchRoots();
-        init()
+        init();
         pushMessage({
             type: 'info',
             message: 'Alpha notice! There will be bugs!',
