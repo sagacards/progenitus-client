@@ -19,10 +19,6 @@ function App() {
     React.useEffect(() => {
         capFetchRoots();
         init();
-        pushMessage({
-            type: 'info',
-            message: 'Alpha notice! There will be bugs!',
-        })
     }, []);
     return <>
         <Routes>

@@ -284,7 +284,6 @@ const useStore = create<Store>((set, get) => ({
     },
 
     async plugReconnect () {
-        set({ connecting: true });
         const plug = window?.ic?.plug;
         if (await plug?.isConnected()) {
             const agent = await plug?.agent;
@@ -307,12 +306,11 @@ const useStore = create<Store>((set, get) => ({
                 interfaceFactory: likesIdl,
             });
 
-            set(() => ({ connected: true, connecting: false, principal, actor, wallet: 'plug', likesActor }));
+            set(() => ({ connected: true, principal, actor, wallet: 'plug', likesActor }));
 
             get().postconnect();
             return true;
         }
-        set({ connecting: false });
         return false;
     },
 
