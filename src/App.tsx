@@ -1,6 +1,4 @@
 import React from 'react'
-import { Leva } from 'leva';
-// import useStore from 'stores/index';
 import { Route, Routes } from 'react-router-dom';
 import HomePage from 'pages/home';
 import ConnectPage from 'pages/connect';
@@ -40,7 +38,6 @@ function App() {
             <Route path="/collections" element={<CollectionsPage />} />
             <Route path="/profile" element={<ProfilePage />} />
         </Routes>
-        <Leva hidden={true} collapsed />
         <Messages />
         <ScrollToTop />
         <Modal />

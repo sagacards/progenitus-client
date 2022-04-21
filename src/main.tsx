@@ -1,5 +1,5 @@
 import React from 'react'
-import ReactDOM from 'react-dom'
+import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom'
 import '@fontsource/uncial-antiqua'
 import '@fontsource/almendra'
@@ -11,11 +11,12 @@ import './index.css'
 import 'react-toastify/dist/ReactToastify.css'
 import App from './App'
 
-ReactDOM.render(
+const container = document.getElementById('root') as HTMLDivElement;
+const root = createRoot(container);
+root.render(
     <React.StrictMode>
         <BrowserRouter>
             <App />
         </BrowserRouter>
     </React.StrictMode>,
-    document.getElementById('root')
 )
