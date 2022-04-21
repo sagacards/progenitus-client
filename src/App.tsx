@@ -13,6 +13,7 @@ import Messages from 'ui/messages';
 import useStore from './stores';
 import ScrollToTop from 'ui/scroll-to-top';
 import { useTokenStore } from 'stores/tokens';
+import Modal from 'ui/modal';
 
 function App() {
     const { init, pushMessage } = useStore();
@@ -42,6 +43,7 @@ function App() {
         <Leva hidden={true} collapsed />
         <Messages />
         <ScrollToTop />
+        <Modal />
     </>
 }
 

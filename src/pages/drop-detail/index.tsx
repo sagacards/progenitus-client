@@ -19,13 +19,17 @@ import { FiExternalLink } from 'react-icons/fi';
 import { useTokenStore } from 'stores/tokens';
 import { Principal } from '@dfinity/principal';
 import { principalToAddress } from 'ictool';
+import useModalStore from 'ui/modal/store';
+import Copyable from 'ui/copyable';
 
 interface Props {};
 
 export default function DropDetailPage (props : Props) {
     const { canister, index } = useParams();
-    const { actor, principal, connecting, connected, getEvent, eventsLastFetch, fetchEvents, pushMessage, balance, fetchSupply, eventSupply, isMinting, setIsMinting, setMintResult, mintResult, fetchBalance } = useStore();
+    const { actor, principal, connecting, connected, getEvent, eventsLastFetch, fetchEvents, pushMessage, balance, fetchSupply, eventSupply, isMinting, setIsMinting, setMintResult, mintResult, fetchBalance, wallet } = useStore();
     const { cap : { [canister as string] : transactions }, capPoll, filtersSet, capRoots } = useTokenStore();
+    const { open } = useModalStore();
+
     const eventsAreFresh = React.useMemo(() => new Date().getTime() - (eventsLastFetch?.getTime() || 0) < 60_000, [eventsLastFetch])
     const event = React.useMemo(() => (canister && index) ? getEvent(canister, Number(index)) : undefined, [eventsAreFresh]);
     const fetching = React.useMemo(() => !event && !eventsAreFresh, [event, eventsAreFresh]);
@@ -127,6 +131,10 @@ export default function DropDetailPage (props : Props) {
     }, [canister, index]);
 
     const handleMint = React.useMemo(() => function () {
+        if (canister && wallet === 'stoic' && !window.localStorage.getItem(`stoicwarning${canister}`)) {
+            window.localStorage.setItem(`stoicwarning${canister}`, 'true');
+            open('Notice For Stoic Wallet Users', <StoicWarning canister={canister} />);
+        };
         setError(undefined);
         setIsMinting(true);
         setMintResult(undefined);
@@ -289,3 +297,12 @@ export default function DropDetailPage (props : Props) {
         <Footer />
     </>;
 };
+
+function StoicWarning (props : { canister : string }) {
+    const { close } = useModalStore();
+    return <>
+        <p>You must add this canister to see your new NFT in your stoic wallet.</p>
+        <Copyable>{props.canister}</Copyable>
+        <Button size='large' onClick={() => close()}>Okay</Button>
+    </>
+}

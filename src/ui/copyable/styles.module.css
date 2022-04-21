@@ -1,0 +1,23 @@
+.root {
+    height: 56px;
+    width: 100%;
+
+    padding: 4px 12px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    cursor: pointer;
+
+    background: var(--chrome-2);
+    border-radius: 8px;
+    box-shadow: 0 0 0 1px var(--chrome-3);
+
+    font-size: 20px;
+}
+
+.copy {
+    color: var(--chrome-5);
+    font-size: 24px;
+}
