@@ -12,7 +12,6 @@ const collections = {
         icon: Icon,
         name: 'Legends Test',
         description: 'A Test Canister',
-        // @ts-ignore: different versions of @dfinity/principal in this package, @psychedelic/cap-js and @psychedelic/dab-js...
         principal_id: Principal.fromText('dklxm-nyaaa-aaaaj-qajza-cai'),
         standard: 'ext',
     },
@@ -20,7 +19,6 @@ const collections = {
         icon: Icon,
         name: 'The High Priestess',
         description: '',
-        // @ts-ignore: different versions of @dfinity/principal in this package, @psychedelic/cap-js and @psychedelic/dab-js...
         principal_id: Principal.fromText('zzk67-giaaa-aaaaj-qaujq-cai'),
         standard: 'ext',
     },

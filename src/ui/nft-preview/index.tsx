@@ -35,7 +35,6 @@ export default function NFTPreview (props : Props) {
     const token = React.useMemo(() => decodeTokenIdentifier(props.tokenid), []);
     const liked = React.useMemo(() => doesLike(token), [likes]);
 
-    // @ts-ignore principal lib mistmatch
     const mine = React.useMemo(() => principal && principalToAddress(principal) === props.minter, [principal]);
 
     React.useEffect(() => void likeCount(token).then(r => setCount(r)), [likes])

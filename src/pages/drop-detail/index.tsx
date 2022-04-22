@@ -180,10 +180,7 @@ export default function DropDetailPage (props : Props) {
         if (x.operation !== 'mint') return false;
         if (mine) {
             if (!principal) return false;
-            if (principalToAddress(
-                // @ts-ignore principal lib mismatch
-                principal
-            ) !== x.to) return false
+            if (principalToAddress(principal) !== x.to) return false
         };
         return true;
     }), [transactions, mine, principal]);

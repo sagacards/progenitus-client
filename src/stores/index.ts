@@ -363,10 +363,7 @@ const useStore = create<Store>((set, get) => ({
 
         if (!principal || !actor) return;
         
-        const address = Object.values(principalToAddressBytes(
-            // @ts-ignore: dfinity agent-js type wonk
-            principal
-        , 0)) as number[];
+        const address = Object.values(principalToAddressBytes(principal, 0)) as number[];
 
         return actor.transfer({ e8s: BigInt(amount.toFixed()) }, address)
         .catch(e => {
