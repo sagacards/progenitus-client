@@ -16,7 +16,7 @@ import { mapEvent, MintingEvent } from 'src/logic/minting';
 import { idlFactory as likesIdl } from 'canisters/likes/likes.did';
 import { Likes } from 'canisters/likes/likes.did.d';
 import { Like, mapLike } from 'src/logic/likes';
-import { principalToAddressBytes, toHexString } from 'ictool';
+import { principalToAddress, principalToAddressBytes, toHexString } from 'ictool';
 
 type ColorScheme = 'dark' | 'light';
 
