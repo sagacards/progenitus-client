@@ -176,8 +176,10 @@ function rosettaData (account : string) {
     };
 }
 
+export const host = `${ic.protocol}://${ic.host}`;
+
 // Create a default agent
-const defaultAgent = new HttpAgent({ host: `${ic.protocol}://${ic.host}` });
+const defaultAgent = new HttpAgent({ host });
 
 const defaultActor = Actor.createActor<Rex>(idlFactory, {
     agent: defaultAgent,
@@ -261,7 +263,7 @@ const useStore = create<Store>((set, get) => ({
             return;
         }
         
-        await window.ic.plug.requestConnect({ whitelist, host: `${ic.protocol}://${ic.host}` }).catch(complete);
+        await window.ic.plug.requestConnect({ whitelist, host }).catch(complete);
 
         const agent = await window.ic.plug.agent;
         // isLocal && agent.fetchRootKey();

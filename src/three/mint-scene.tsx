@@ -63,7 +63,7 @@ function Scene ({ canister } : { canister : string }) {
             {mintResult && manifest && <React.Suspense fallback={<Loader />}><Legend canister={canister} manifest={manifest} /></React.Suspense>}
             <LegendBox open={mintResult !== undefined} minting={isMinting} />
         </group>
-        {/* @ts-ignore */}
+        {/* @ts-ignore: r3f shorthand types not included */}
         <animated.directionalLight {...lightSpring} target={centerVec} />
         <group position={[0, 1, 4]}><Light i={mintResult ? 1.5 : 1} /></group>
         {isMinting && <Sprites />}
@@ -102,10 +102,10 @@ function LegendBox ({ open, minting } : { open : boolean, minting : boolean }) {
 
     const alpha = useLoader(THREE.TextureLoader, Threads);
 
-    {/* @ts-ignore */}
+    {/* @ts-ignore: r3f shorthand types not included */}
     return <animated.group {...rootSpring}>
         {/* Front half */}
-        {/* @ts-ignore */}
+        {/* @ts-ignore: r3f shorthand types not included */}
         <animated.group position={[0, 0, (thickness - .0125) * (open ? -1 : 1)]} {...doorSpring}>
             <mesh position={[1.5, 0, 0]}>
                 <boxGeometry args={[3, 5, thickness * 2]} />

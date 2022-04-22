@@ -34,7 +34,7 @@ export default function CardInk({
                     specular={specular}
                     shininess={shininess || 200}
                     normalMap={normal}
-                    // @ts-ignore
+                    // @ts-ignore: r3f shorthand types not included
                     normalScale={[0.05, 0.05]}
                     side={side || THREE.FrontSide}
                 />

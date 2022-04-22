@@ -170,7 +170,7 @@ export default function AccountPage(props: Props) {
                                 <tbody>
                                     {page.map(tx => <tr key={`tx${tx.id}`} className={Styles.txTr}>
                                         {columns.map(({ accessor, Cell }) => <td key={`td${tx.id}${accessor}`} className={Styles.txTd}>
-                                            {/* @ts-ignore */}
+                                            {/* @ts-ignore: react-table is wonk */}
                                             <Cell v={tx[accessor]} />
                                         </td>)}
                                     </tr>)}

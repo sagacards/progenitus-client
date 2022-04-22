@@ -188,7 +188,7 @@ export function Legend ({ manifest, canister } : { canister: string, manifest : 
                         specular={colorSpecular}
                         shininess={200}
                         normalMap={normal}
-                        // @ts-ignore
+                        // @ts-ignore: r3f shorthand types not included
                         normalScale={[0.03, 0.03]}
                     />
                     <meshBasicMaterial
