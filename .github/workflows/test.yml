@@ -10,4 +10,6 @@ jobs:
         with:
           node-version: 17
       - run: npm i
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
       - run: npm t
