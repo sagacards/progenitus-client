@@ -148,8 +148,7 @@ export default function DropDetailPage (props : Props) {
                 alert('Mint success!');
                 fetchBalance();
             } else {
-                // @ts-ignore: result types...
-                console.error(r.err)
+                console.error(r)
                 setError('Mint failure!');
                 alert('Mint failure!');
             }
