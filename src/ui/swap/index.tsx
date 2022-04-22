@@ -49,7 +49,7 @@ export default function Swap (props : Props) {
             <Hash icon={<WalletIcon />} size='large' alt>{principal?.toText()}</Hash>
         </div>                
         <div className={Styles.actions}>
-            <Button onClick={() => {
+            <Button full onClick={() => {
                 setLoading(true);
                 if (active === 'deposit') {
                     deposit(parseFloat(amount) * 10**8)
