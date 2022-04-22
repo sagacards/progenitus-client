@@ -1,4 +1,6 @@
-export const idlFactory = ({ IDL }) => {
+import { IDL } from '@dfinity/candid';
+
+export const idlFactory : IDL.InterfaceFactory = ({ IDL }) => {
   const Time = IDL.Int;
   const EventName = IDL.Text;
   const StableAllowlist = IDL.Vec(IDL.Tuple(IDL.Principal, IDL.Opt(IDL.Int)));
@@ -49,4 +51,3 @@ export const idlFactory = ({ IDL }) => {
   });
   return MockNFT;
 };
-export const init = ({ IDL }) => { return [IDL.Text]; };

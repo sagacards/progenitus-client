@@ -1,24 +1,22 @@
+import axios from 'axios';
 import create from 'zustand'
 import { StoicIdentity } from "ic-stoic-identity";
 import { Actor, ActorSubclass, Agent, HttpAgent } from '@dfinity/agent'
 import { IDL } from '@dfinity/candid'
 import { Principal } from '@dfinity/principal';
-import axios from 'axios';
-// @ts-ignore
-import { Rex, idlFactory } from 'canisters/progenitus/progenitus.did.js'
-// @ts-ignore
-import { Ledger, idlFactory as nnsIdl } from 'canisters/ledger/ledger.did.js'
-// @ts-ignore
-import { MockNFT, idlFactory as nftIdl } from 'canisters/nft/mock_nft.did.js'
-// @ts-ignore
-import CyclesDID from 'canisters/cycles/cycles.did.js';
+import { idlFactory } from 'canisters/progenitus/progenitus.did';
+import { Rex } from 'canisters/progenitus/progenitus.did.d';
+import { idlFactory as nnsIdl } from 'canisters/ledger/ledger.did'
+import { Ledger } from 'canisters/ledger/ledger.did.d'
+import { idlFactory as nftIdl } from 'canisters/nft/mock_nft.did'
+import { MockNFT } from 'canisters/nft/mock_nft.did.d'
+import { idlFactory as CyclesDID } from 'canisters/cycles/cycles.did';
 import { makeCollections } from 'mock/index'
 import { mapEvent, MintingEvent } from 'src/logic/minting';
-// @ts-ignore
-import { Likes, idlFactory as likesIdl } from 'canisters/likes/likes.did';
+import { idlFactory as likesIdl } from 'canisters/likes/likes.did';
+import { Likes } from 'canisters/likes/likes.did.d';
 import { Like, mapLike } from 'src/logic/likes';
 import { principalToAddressBytes, toHexString } from 'ictool';
-import { DateTime } from 'luxon';
 
 type ColorScheme = 'dark' | 'light';
 
