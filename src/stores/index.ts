@@ -179,7 +179,7 @@ function rosettaData (account : string) {
 }
 
 // Create a default agent
-const defaultAgent = new HttpAgent({ host: 'https://boundary.ic0.app/' });
+const defaultAgent = new HttpAgent({ host: `${ic.protocol}://${ic.host}` });
 
 const defaultActor = Actor.createActor<Rex>(idlFactory, {
     agent: defaultAgent,
