@@ -521,7 +521,6 @@ const useStore = create<Store>((set, get) => ({
         .then(r => {
             const events = r
             .map(([p, e, i]) => mapEvent(p, e, i))
-            .filter(e => e.endDate.toMillis() > DateTime.now().toMillis())
             .reduce((agg, e) => ({ ...agg, [e.collection.canister] : { ...agg[e.collection.canister], [e.id] : e } }), {} as EventsMap)
 
             set({
