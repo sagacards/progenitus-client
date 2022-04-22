@@ -374,11 +374,9 @@ const useStore = create<Store>((set, get) => ({
             pushMessage({ type: 'error', message: 'Transfer failed!'});
         })
         .then(r => {
-            // @ts-ignore
-            if (r?.Err) {
+            if (r && 'Err' in r) {
                 pushMessage({
                     type: 'error',
-                    // @ts-ignore
                     message: Object.keys(r.Err)[0],
                 })
             } else {
@@ -419,11 +417,9 @@ const useStore = create<Store>((set, get) => ({
             })
             .then(r => {
                 console.log(r);
-                // @ts-ignore
-                if (r?.Err) {
+                if (r && 'Err' in r) {
                     pushMessage({
                         type: 'error',
-                        // @ts-ignore
                         message: Object.keys(r.Err)[0],
                     })
                 } else {
