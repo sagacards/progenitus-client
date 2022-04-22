@@ -11,13 +11,13 @@ interface Props {
 export default function Footer (props : Props) {
     const feed : {figure : HTMLElement, link: string, date: string, title: string}[] = React.useMemo(() => {
         const parser = new DOMParser();
-        return Feed.rss.channel[0].item.map((item : any) => {
-            const xml = parser.parseFromString(item['content:encoded'], 'text/html');
+        return Feed.feed.entry.map((item : any) => {
+            const xml = parser.parseFromString(item['content'], 'text/html');
             return {
                 figure: xml.querySelector('figure'),
-                link: item.link[0],
-                date: item.pubDate[0],
-                title: item.title[0],
+                link: item.link[0].$.href,
+                date: item.updated[0],
+                title: item.title[0]._,
             }
         });
     }, []);
