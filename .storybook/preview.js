@@ -8,4 +8,27 @@ export const parameters = {
       date: /Date$/,
     },
   },
+  backgrounds: { disable: true },
 }
+
+export const globalTypes = {
+  theme: {
+    name: 'Theme',
+    defaultValue: 'dark',
+    toolbar: {
+      icon: 'contrast',
+      items: [
+        { value: 'dark', title: 'Dark' },
+        { value: 'light', title: 'Light' },
+      ]
+    }
+  },
+};
+
+// function theme (Story, context) {
+//   console.log(context);
+// };
+
+// export const decorators = [theme];
+
+// document.querySelector('html')?.setAttribute('data-theme', colorScheme);
