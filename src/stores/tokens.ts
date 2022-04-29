@@ -24,6 +24,13 @@ const collections = {
         principal_id: Principal.fromText('zzk67-giaaa-aaaaj-qaujq-cai'),
         standard: 'ext',
     },
+    "5t24r-yqaaa-aaaaj-qauta-cai": {
+        icon: Icon,
+        name: 'The Empress',
+        description: '',
+        principal_id: Principal.fromText('5t24r-yqaaa-aaaaj-qauta-cai'),
+        standard: 'ext',
+    },
 };
 
 const DAB_UPDATE_INTERVAL = 1000 * 60 * 10;
