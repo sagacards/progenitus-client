@@ -2,6 +2,8 @@ import { Collection, CAPEvent, _Token } from 'stores/index'
 import Disk from 'assets/disk/8.png'
 import { MintingEvent } from 'src/logic/minting';
 import { DateTime } from 'luxon';
+import { Transaction } from 'src/logic/transactions';
+import { encodeTokenIdentifier } from 'ictool';
 
 export default function makeEvents (count : number = 3) : { [ key : MintingEvent['id']] : MintingEvent } {
     let events : { [ key : MintingEvent['id']] : MintingEvent } = {};
@@ -56,15 +58,23 @@ const SagaCanisters = [
     "nges7-giaaa-aaaaj-qaiya-cai",
     "6e6eb-piaaa-aaaaj-qal6a-cai",
     "cwu5z-wyaaa-aaaaj-qaoaq-cai",
+    "rkp4c-7iaaa-aaaaa-aaaca-cai",
 ];
 
-const history : { [key : string] : _Token[] } = {};
+const history : { [key : string] : Transaction[] } = {};
 let index = 0;
 for (const canister of SagaCanisters) {
-    let l = [];
+    let l : Transaction[] = [];
     for (let i = 50; i >= 0; i--) {
         l.push({
-            token: { index, canister, },
+            token: encodeTokenIdentifier(canister, index),
+            to: '',
+            from: '',
+            caller: '',
+            item: 0,
+            operation: 'mint',
+            time: new Date(),
+            price: { value: 0, currency: 'ICP', decimals: 8 },
             // listing: { price: Math.random() * 100, id : index, canister },
             event: { type: 'mint', timestamp: randomDate(4).toJSDate() } as CAPEvent,
         });
