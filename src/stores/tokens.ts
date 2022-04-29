@@ -1,11 +1,11 @@
 import create from 'zustand';
-import { persist } from 'zustand/middleware';
 import { getAllNFTS, DABCollection } from '@psychedelic/dab-js';
-import { CapRouter, CapRoot, Hosts  } from '@psychedelic/cap-js';
+import { CapRouter, CapRoot  } from '@psychedelic/cap-js';
 import { Principal } from '@dfinity/principal';
 import { parseGetTransactionsResponse, Transaction } from '../logic/transactions';
 import Icon from 'assets/disk/8.png'
 import { host } from '.';
+// import { history } from 'src/mock';
 
 // Instead of relying on DAB, we'll hard code the collections that we're interested in for now
 export interface NftCollection extends Omit<DABCollection, 'principal_id'> {
@@ -24,6 +24,13 @@ const collections = {
         name: 'The High Priestess',
         description: '',
         principal_id: Principal.fromText('zzk67-giaaa-aaaaj-qaujq-cai'),
+        standard: 'ext',
+    },
+    "5t24r-yqaaa-aaaaj-qauta-cai": {
+        icon: Icon,
+        name: 'The Empress',
+        description: '',
+        principal_id: Principal.fromText('5t24r-yqaaa-aaaaj-qauta-cai'),
         standard: 'ext',
     },
 };
