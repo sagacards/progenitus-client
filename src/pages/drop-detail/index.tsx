@@ -22,6 +22,7 @@ import { principalToAddress } from 'ictool';
 import useModalStore from 'ui/modal/store';
 import Copyable from 'ui/copyable';
 import { DateTime } from 'luxon';
+import Swap from 'ui/swap';
 
 interface Props {};
 
@@ -82,7 +83,7 @@ export default function DropDetailPage (props : Props) {
             'loading': () => <Spinner size='small' />,
             'not-connected': () => <><Link to="/connect" state={{referrer : window.location.pathname}}>Connect</Link> your wallet to mint</>,
             'no-access': () => <>Your wallet is not on the allow list</>,
-            'insufficient-funds': () => <>Insufficient funds <Link to="/account">deposit</Link></>,
+            'insufficient-funds': () => <>Insufficient funds in mint account <a onClick={() => open('Deposit Minting Funds', <SwapModal />)}>deposit from wallet</a></>,
             'not-started': (p : {time : DateTime}) => <>Starts in <Timer time={p.time} /></>,
             'ended': () => <>Event ended!</>,
             'no-supply': () => <>Sold out</>,
@@ -307,3 +308,17 @@ function StoicWarning (props : { canister : string }) {
         <Button size='large' onClick={() => close()}>Okay</Button>
     </>
 }
+
+function SwapModal () {
+    const { close } = useModalStore();
+    const { balanceDisplay, walletBalanceDisplay } = useStore();
+    return <>
+        <Swap />
+        <div>
+            <small className="t-mono">Mint account: {balanceDisplay() !== undefined ? balanceDisplay()?.toFixed(2) : <Spinner size='small' />} <span className={Styles.icp}>ICP</span> </small>
+            <br />
+            <small className="t-mono">Wallet: {walletBalanceDisplay() !== undefined ? walletBalanceDisplay()?.toFixed(2) : <Spinner size='small' />} <span className={Styles.icp}>ICP</span> </small>
+        </div>
+        <a onClick={close}>Done</a>
+    </>;
+};

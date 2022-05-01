@@ -17,7 +17,7 @@ import { mapEvent, MintingEvent } from 'src/logic/minting';
 // @ts-ignore
 import { Likes, idlFactory as likesIdl } from 'canisters/likes/likes.did';
 import { Like, mapLike } from 'src/logic/likes';
-import { principalToAddressBytes, toHexString } from 'ictool';
+import { principalToAddress, principalToAddressBytes, toHexString } from 'ictool';
 import { DateTime } from 'luxon';
 
 type ColorScheme = 'dark' | 'light';
@@ -92,6 +92,8 @@ interface Store {
     deposit         : (a : number) => Promise<void>;
     withdraw        : (a : number) => Promise<void>;
     balanceDisplay  : () => number | undefined;
+    walletBalance?  : ICP8s;
+    walletBalanceDisplay: () => number | undefined
 
     colorScheme: ColorScheme;
     setColorScheme: (c : ColorScheme) => void;
@@ -340,16 +342,29 @@ const useStore = create<Store>((set, get) => ({
     // Account
 
     fetchBalance () {
-        const { address } = get();
-        if (!address) return;
+        const { address, principal } = get();
+        if (!address || !principal) return;
         axios.post(`${rosetta}/account/balance`, rosettaData(address))
             .then(r => {
                 set({ balance : { e8s : parseInt(r.data.balances[0].value) } })
+            })
+        axios.post(`${rosetta}/account/balance`, rosettaData(principalToAddress(principal)))
+            .then(r => {
+                set({ walletBalance : { e8s : parseInt(r.data.balances[0].value) } })
             })
     },
 
     balanceDisplay () {
         const { balance } = get();
+        if (balance) {
+            return balance.e8s / 10**8;
+        } else {
+            return undefined;
+        }
+    },
+    
+    walletBalanceDisplay () {
+        const { walletBalance : balance } = get();
         if (balance) {
             return balance.e8s / 10**8;
         } else {
