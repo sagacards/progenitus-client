@@ -139,3 +139,16 @@
     font-size: 30px;
     font-family: 'Space Mono';
 }
+
+@media (min-width: 500px) {
+    .root {
+        min-width: 420px;
+    }
+}
+
+@media (max-width: 499px) {
+    .top {
+        flex-direction: column;
+        gap: 10px;
+    }
+}

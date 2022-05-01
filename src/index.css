@@ -117,3 +117,7 @@ iframe[id*="connect_iframe"] {
 .Toastify__progress-bar-theme--dark {
     background: var(--gold-1) !important;
 }
+
+.t-mono {
+    font-family: 'Space Mono', monospace;
+}

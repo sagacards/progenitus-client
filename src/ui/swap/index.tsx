@@ -13,7 +13,7 @@ interface Props {
 
 export default function Swap (props : Props) {
 
-    const { principal, pushMessage, deposit, withdraw, icpToUSD } = useStore()
+    const { principal, pushMessage, deposit, withdraw, icpToUSD, fetchBalance } = useStore()
 
     const [active, setActive] = React.useState<'deposit' | 'withdraw'>('deposit');
     const [amount, setAmount] = React.useState<string>('0');
@@ -53,10 +53,16 @@ export default function Swap (props : Props) {
                 setLoading(true);
                 if (active === 'deposit') {
                     deposit(parseFloat(amount) * 10**8)
-                    .finally(() => setLoading(false));
+                    .finally(() => {
+                        setLoading(false);
+                        fetchBalance();
+                    });
                 } else {
                     withdraw(parseFloat(amount) * 10**8)
-                    .finally(() => setLoading(false));
+                    .finally(() => {
+                        setLoading(false);
+                        fetchBalance();
+                    });
                 };
             }}>{loading ? <Spinner size='small' /> : active}</Button>
         </div>
