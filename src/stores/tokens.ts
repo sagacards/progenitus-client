@@ -31,6 +31,13 @@ const collections = {
         principal_id: Principal.fromText('5t24r-yqaaa-aaaaj-qauta-cai'),
         standard: 'ext',
     },
+    "4zv6l-2aaaa-aaaaj-qauua-cai": {
+        icon: 'https://4zv6l-2aaaa-aaaaj-qauua-cai.raw.ic0.app/assets/logo-emperor.png',
+        name: 'The Emperor',
+        description: '',
+        principal_id: Principal.fromText('4zv6l-2aaaa-aaaaj-qauua-cai'),
+        standard: 'ext',
+    },
 };
 
 const DAB_UPDATE_INTERVAL = 1000 * 60 * 10;
