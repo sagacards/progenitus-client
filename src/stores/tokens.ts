@@ -38,6 +38,13 @@ const collections = {
         principal_id: Principal.fromText('4zv6l-2aaaa-aaaaj-qauua-cai'),
         standard: 'ext',
     },
+    "6kk5l-syaaa-aaaaj-qau2q-cai": {
+        icon: 'https://6kk5l-syaaa-aaaaj-qau2q-cai.raw.ic0.app/assets/logo.png',
+        name: 'The Hierophant',
+        description: '',
+        principal_id: Principal.fromText('6kk5l-syaaa-aaaaj-qau2q-cai'),
+        standard: 'ext',
+    },
 };
 
 const DAB_UPDATE_INTERVAL = 1000 * 60 * 10;
