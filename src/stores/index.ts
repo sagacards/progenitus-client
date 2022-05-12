@@ -1,24 +1,22 @@
+import axios from 'axios';
 import create from 'zustand'
 import { StoicIdentity } from "ic-stoic-identity";
 import { Actor, ActorSubclass, Agent, HttpAgent } from '@dfinity/agent'
 import { IDL } from '@dfinity/candid'
 import { Principal } from '@dfinity/principal';
-import axios from 'axios';
-// @ts-ignore
-import { Rex, idlFactory } from 'canisters/progenitus/progenitus.did.js'
-// @ts-ignore
-import { Ledger, idlFactory as nnsIdl } from 'canisters/ledger/ledger.did.js'
-// @ts-ignore
-import { MockNFT, idlFactory as nftIdl } from 'canisters/nft/mock_nft.did.js'
-// @ts-ignore
-import CyclesDID from 'canisters/cycles/cycles.did.js';
+import { idlFactory } from 'canisters/progenitus/progenitus.did';
+import { Rex } from 'canisters/progenitus/progenitus.did.d';
+import { idlFactory as nnsIdl } from 'canisters/ledger/ledger.did'
+import { Ledger } from 'canisters/ledger/ledger.did.d'
+import { idlFactory as nftIdl } from 'canisters/nft/mock_nft.did'
+import { MockNFT } from 'canisters/nft/mock_nft.did.d'
+import { idlFactory as CyclesDID } from 'canisters/cycles/cycles.did';
 import { makeCollections } from 'mock/index'
 import { mapEvent, MintingEvent } from 'src/logic/minting';
-// @ts-ignore
-import { Likes, idlFactory as likesIdl } from 'canisters/likes/likes.did';
+import { idlFactory as likesIdl } from 'canisters/likes/likes.did';
+import { Likes } from 'canisters/likes/likes.did.d';
 import { Like, mapLike } from 'src/logic/likes';
 import { principalToAddress, principalToAddressBytes, toHexString } from 'ictool';
-import { DateTime } from 'luxon';
 
 type ColorScheme = 'dark' | 'light';
 
@@ -180,8 +178,10 @@ function rosettaData (account : string) {
     };
 }
 
+export const host = `${ic.protocol}://${ic.host}`;
+
 // Create a default agent
-const defaultAgent = new HttpAgent({ host: 'https://boundary.ic0.app/' });
+const defaultAgent = new HttpAgent({ host });
 
 const defaultActor = Actor.createActor<Rex>(idlFactory, {
     agent: defaultAgent,
@@ -265,7 +265,7 @@ const useStore = create<Store>((set, get) => ({
             return;
         }
         
-        await window.ic.plug.requestConnect({ whitelist, host: `${ic.protocol}://${ic.host}` }).catch(complete);
+        await window.ic.plug.requestConnect({ whitelist, host }).catch(complete);
 
         const agent = await window.ic.plug.agent;
         // isLocal && agent.fetchRootKey();
@@ -378,10 +378,7 @@ const useStore = create<Store>((set, get) => ({
 
         if (!principal || !actor) return;
         
-        const address = Object.values(principalToAddressBytes(
-            // @ts-ignore: dfinity agent-js type wonk
-            principal
-        , 0)) as number[];
+        const address = Object.values(principalToAddressBytes(principal, 0)) as number[];
 
         return actor.transfer({ e8s: BigInt(amount.toFixed()) }, address)
         .catch(e => {
@@ -389,11 +386,9 @@ const useStore = create<Store>((set, get) => ({
             pushMessage({ type: 'error', message: 'Transfer failed!'});
         })
         .then(r => {
-            // @ts-ignore
-            if (r?.Err) {
+            if (r && 'Err' in r) {
                 pushMessage({
                     type: 'error',
-                    // @ts-ignore
                     message: Object.keys(r.Err)[0],
                 })
             } else {
@@ -434,11 +429,9 @@ const useStore = create<Store>((set, get) => ({
             })
             .then(r => {
                 console.log(r);
-                // @ts-ignore
-                if (r?.Err) {
+                if (r && 'Err' in r) {
                     pushMessage({
                         type: 'error',
-                        // @ts-ignore
                         message: Object.keys(r.Err)[0],
                     })
                 } else {
@@ -536,7 +529,6 @@ const useStore = create<Store>((set, get) => ({
         .then(r => {
             const events = r
             .map(([p, e, i]) => mapEvent(p, e, i))
-            .filter(e => e.endDate.toMillis() > DateTime.now().toMillis())
             .reduce((agg, e) => ({ ...agg, [e.collection.canister] : { ...agg[e.collection.canister], [e.id] : e } }), {} as EventsMap)
 
             set({

@@ -1,4 +1,6 @@
-export const idlFactory = ({ IDL }) => {
+import { IDL } from '@dfinity/candid';
+
+export const idlFactory : IDL.InterfaceFactory = ({ IDL }) => {
   const TokenIndex = IDL.Nat;
   const Like = IDL.Tuple(IDL.Principal, TokenIndex, IDL.Principal);
   const Stable = IDL.Vec(IDL.Tuple(IDL.Principal, IDL.Vec(Like)));
@@ -16,4 +18,3 @@ export const idlFactory = ({ IDL }) => {
   });
   return Likes;
 };
-export const init = ({ IDL }) => { return []; };

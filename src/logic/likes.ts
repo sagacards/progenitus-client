@@ -1,5 +1,5 @@
 import { Principal } from '@dfinity/principal';
-import { TokenIndex } from 'canisters/likes/likes.did';
+import { TokenIndex } from 'canisters/likes/likes.did.d';
 
 export interface Like {
     canister: Principal;

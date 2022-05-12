@@ -5,6 +5,8 @@
     /* height: 40px;
     min-width: 40px; */
 
+    display: inline-flex;
+
     cursor: pointer;
     flex-shrink: 0;
 

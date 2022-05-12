@@ -46,13 +46,19 @@ export default function DropDetailPage (props : Props) {
 
     const remainingInterval = React.useRef<number>();
 
+
     // Fetch spots
     React.useEffect(() => {
         if (!actor || !canister || !index) return;
         setSpotsLoading(true)
         actor?.getAllowlistSpots(Principal.fromText(canister), BigInt(index))
-        // @ts-ignore variant types...
-        .then(r => setSpots(Number(r.ok)))
+        .then(r => {
+            if ('ok' in r) {
+                setSpots(Number(r.ok))
+            } else {
+                console.error(r);
+            }
+        })
         .finally(() => setSpotsLoading(false));
     }, [mintResult, actor, canister, index]);
 
@@ -142,15 +148,12 @@ export default function DropDetailPage (props : Props) {
         setMintResult(undefined);
         mint(event, supplyRemaining, connected, balance, spots, actor, Number(index))
         ?.then(r => {
-            // @ts-ignore: result types...
-            if (r?.ok) {
-                // @ts-ignore: result types...
+            if (r && 'ok' in r) {
                 setMintResult(Number(r.ok));
                 alert('Mint success!');
                 fetchBalance();
             } else {
-                // @ts-ignore: result types...
-                console.error(r.err)
+                console.error(r)
                 setError('Mint failure!');
                 alert('Mint failure!');
             }
@@ -178,10 +181,7 @@ export default function DropDetailPage (props : Props) {
         if (x.operation !== 'mint') return false;
         if (mine) {
             if (!principal) return false;
-            if (principalToAddress(
-                // @ts-ignore principal lib mismatch
-                principal
-            ) !== x.to) return false
+            if (principalToAddress(principal) !== x.to) return false
         };
         return true;
     }), [transactions, mine, principal]);

@@ -1,7 +1,7 @@
 import React from 'react'
 import Styles from './styles.module.css'
 
-interface Props {
+export interface Props {
     children?: React.ReactNode;
     onClick?: (e : React.MouseEvent) => void;
     flush?: boolean;
@@ -14,7 +14,7 @@ interface Props {
     active?: boolean;
 }
 
-type Size = 'tiny' | 'small' | 'medium' | 'large' | 'xl';
+export type Size = 'tiny' | 'small' | 'medium' | 'large' | 'xl';
 
 const sizeMap : { [key in Size] : number } = {
     tiny: 16,

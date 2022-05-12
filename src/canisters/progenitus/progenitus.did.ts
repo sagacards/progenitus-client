@@ -1,4 +1,6 @@
-export const idlFactory = ({ IDL }) => {
+import { IDL } from '@dfinity/candid';
+
+export const idlFactory : IDL.InterfaceFactory = ({ IDL }) => {
   const Tokens = IDL.Record({ 'e8s' : IDL.Nat64 });
   const Time = IDL.Int;
   const EventName = IDL.Text;
@@ -76,4 +78,3 @@ export const idlFactory = ({ IDL }) => {
   });
   return Rex;
 };
-export const init = ({ IDL }) => { return [IDL.Text]; };

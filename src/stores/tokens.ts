@@ -1,18 +1,21 @@
 import create from 'zustand';
-import { persist } from 'zustand/middleware';
 import { getAllNFTS, DABCollection } from '@psychedelic/dab-js';
-import { CapRouter, CapRoot, Hosts  } from '@psychedelic/cap-js';
+import { CapRouter, CapRoot  } from '@psychedelic/cap-js';
 import { Principal } from '@dfinity/principal';
 import { parseGetTransactionsResponse, Transaction } from '../logic/transactions';
 import Icon from 'assets/disk/8.png'
+import { host } from '.';
+// import { history } from 'src/mock';
 
 // Instead of relying on DAB, we'll hard code the collections that we're interested in for now
+export interface NftCollection extends Omit<DABCollection, 'principal_id'> {
+    principal_id: Principal;
+};
 const collections = {
     "dklxm-nyaaa-aaaaj-qajza-cai": {
         icon: Icon,
         name: 'Legends Test',
         description: 'A Test Canister',
-        // @ts-ignore: different versions of @dfinity/principal in this package, @psychedelic/cap-js and @psychedelic/dab-js...
         principal_id: Principal.fromText('dklxm-nyaaa-aaaaj-qajza-cai'),
         standard: 'ext',
     },
@@ -20,7 +23,6 @@ const collections = {
         icon: Icon,
         name: 'The High Priestess',
         description: '',
-        // @ts-ignore: different versions of @dfinity/principal in this package, @psychedelic/cap-js and @psychedelic/dab-js...
         principal_id: Principal.fromText('zzk67-giaaa-aaaaj-qaujq-cai'),
         standard: 'ext',
     },
@@ -56,7 +58,7 @@ type CanisterId = string;
 
 interface Store {
 
-    dab: { [key : CanisterId] : DABCollection },
+    dab: { [key : CanisterId] : NftCollection },
     dabFetch: (force?: boolean) => void;
     dabLastFetch: Date;
 
@@ -64,7 +66,6 @@ interface Store {
     capRoots: { [key : string] : Principal };
     capFetchRoots: () => void;
     capPoll: (tokenCanister : string) => void;
-    capFetch: (tokenCanister : string) => void;
 
 
     filters: Principal[];
@@ -89,7 +90,6 @@ export const useTokenStore = create<Store>(
 
 
             // Our local list of NFT canisters.
-            // @ts-ignore: principal lib mistmatch
             dab: collections,
 
             // Last DAB update time, so we can throttle updates.
@@ -144,12 +144,9 @@ export const useTokenStore = create<Store>(
                 // Root buckets won't really change in the normal course of action, so if we have a bucket for a canister, we don't need to bother checking again. That will save an IC call per NFT canister, which would add up.
                 // NOTE: There doesn't seem to be a bulk query method.
                 await Promise.all(
-                    Object.values(dab).filter(x => !Object.values(knownRoots).includes(
-                        // @ts-ignore: different versions of @dfinity/principal in this package, @psychedelic/cap-js and @psychedelic/dab-js...
-                        x.principal_id
-                    ))
+                    Object.values(dab).filter(x => !Object.values(knownRoots).includes(x.principal_id))
                     .map(async (x) => (await CapRouter.init({})).get_token_contract_root_bucket({
-                        // @ts-ignore: different versions of @dfinity/principal in this package, @psychedelic/cap-js and @psychedelic/dab-js...
+                        // @ts-ignore: principal lib mismatch
                         tokenId: x.principal_id,
                         witness,
                     }).then(r => ({
@@ -182,9 +179,9 @@ export const useTokenStore = create<Store>(
                 if (capIsPolling[tokenCanister]) return;
                 capIsPolling[tokenCanister] = true;
                 
-                // @ts-ignore: typescript definitions for cap-js are just wrong...
                 const root = await CapRoot.init({
-                    canisterId: rootPrincipal.toText()
+                    canisterId: rootPrincipal.toText(),
+                    host,
                 });
 
                 // Recursive polling function

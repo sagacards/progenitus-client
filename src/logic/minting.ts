@@ -1,7 +1,7 @@
 import { DateTime } from 'luxon';
 import { ActorSubclass } from '@dfinity/agent';
 import { Principal } from '@dfinity/principal';
-import { Data, Rex } from 'canisters/progenitus/progenitus.did';
+import { Rex, Data } from 'canisters/progenitus/progenitus.did.d';
 import { Collection, ICP8s } from "stores/index"
 
 export interface MintingEvent {

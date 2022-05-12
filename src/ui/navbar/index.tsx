@@ -56,10 +56,7 @@ export default function Navbar (props : Props) {
                     {connected && <div className={Styles.balance}>{balanceDisplay() !== undefined ? balanceDisplay()?.toFixed(2) : <Spinner size='small' />} <span className={Styles.icp}>ICP</span> <img className={Styles.icpImg} src={ICP} /></div>}
                     {connected
                         ? <Link to="/account" className="no-fancy">
-                            <Button icon={principal && <Hashatar size={'24px'} name={principalToAddress(
-                                // @ts-ignore principal mismatch
-                                principal
-                            )} />}>
+                            <Button icon={principal && <Hashatar size={'24px'} name={principalToAddress(principal)} />}>
                                 Account
                             </Button>
                         </Link>
