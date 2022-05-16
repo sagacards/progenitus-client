@@ -29,7 +29,7 @@ export default function DropCard (props : Props) {
         <img className={Styles.collection} src={Disk} />
         <div className={Styles.text}>
             <div className={Styles.name}>{props.name}</div>
-            <div className={Styles.timer}>
+            {props.start.toMillis() !== 0 || props.end.toMillis() !== 0 && <div className={Styles.timer}>
                 <div className={Styles.sizzle}>
                     {
                         props.start.toMillis() > DateTime.now().toMillis()
@@ -37,7 +37,7 @@ export default function DropCard (props : Props) {
                         : <>Ends <Timer time={props.end} /></>
                     }
                 </div>
-            </div>
+            </div>}
         </div>
         <Link className="no-fancy" to={`/drops/${props.canister}/${props.id}`}>
             <Button>Drop Details</Button>

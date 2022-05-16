@@ -327,7 +327,7 @@ const useStore = create<Store>((set, get) => ({
 
     disconnect () {
         StoicIdentity.disconnect();
-        window.ic?.plug?.deleteAgent();
+        window.ic?.plug?.deleteAgent && window.ic?.plug?.deleteAgent();
         set({ connected: false, principal: undefined, address: undefined, actor: undefined, balance: undefined, wallet: undefined, ledgerActor: undefined, likesActor: undefined });
     },
 

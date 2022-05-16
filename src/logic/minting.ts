@@ -6,7 +6,6 @@ import { Collection, ICP8s } from "stores/index"
 
 export interface MintingEvent {
     id          : number;
-    supply      : number;
     price       : ICP8s;
     access      : 'private' | 'public';
     startDate   : DateTime;
@@ -21,12 +20,10 @@ export function mapEvent (
 ) : MintingEvent {
     return {
         id          : Number(index),
-        supply      : 0, // TODO: Sort out paradigm for this data
         price       : mapToken(candid.price),
         access      : candid.accessType.hasOwnProperty('Private') ? 'private' : 'public',
         startDate   : mapDate(candid.startsAt),
         endDate     : mapDate(candid.endsAt),
-        // TODO: Remove description
         collection  : {
             icon: candid.details.iconImageUrl,
             banner: candid.details.bannerImageUrl,
@@ -70,11 +67,15 @@ export function eventIsMintable (
     else if (event === undefined || userBalance === undefined) r = 'loading';
     else if (userAllowlist === 0) r = 'no-access';
     else if (userBalance.e8s < event.price.e8s) r = 'insufficient-funds';
-    else if (DateTime.now().toMillis() < event.startDate.toMillis()) r = 'not-started';
-    else if (DateTime.now().toMillis() > event.endDate.toMillis()) r = 'ended';
+    else if (eventIsTimeGated(event) && DateTime.now().toMillis() < event.startDate.toMillis()) r = 'not-started';
+    else if (eventIsTimeGated(event) && DateTime.now().toMillis() > event.endDate.toMillis()) r = 'ended';
     else if (supplyRemaining === 0) r = 'no-supply';
     else r = 'mintable';
     return r;
+};
+
+export function eventIsTimeGated (event? : MintingEvent) {
+    return event?.endDate.toMillis() !== 0 || event?.startDate.toMillis() !== 0;
 };
 
 export function mint (

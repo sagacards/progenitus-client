@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link, Navigate, useParams } from 'react-router-dom';
 import useStore, { CAPEvent, ic } from 'stores/index';
-import { eventIsMintable, mint } from 'src/logic/minting';
+import { eventIsMintable, eventIsTimeGated, mint } from 'src/logic/minting';
 import Navbar from 'ui/navbar';
 import Footer from 'ui/footer';
 import Container from 'ui/container';
@@ -35,6 +35,7 @@ export default function DropDetailPage (props : Props) {
     const eventsAreFresh = React.useMemo(() => new Date().getTime() - (eventsLastFetch?.getTime() || 0) < 60_000, [eventsLastFetch])
     const event = React.useMemo(() => (canister && index) ? getEvent(canister, Number(index)) : undefined, [eventsAreFresh]);
     const fetching = React.useMemo(() => !event && !eventsAreFresh, [event, eventsAreFresh]);
+    const timeGated = React.useMemo(() => eventIsTimeGated(event), []);
     
     const [timerSentinel, setTimerSentinel] = React.useState(0);
     const [error, setError] = React.useState<string>();
@@ -93,7 +94,7 @@ export default function DropDetailPage (props : Props) {
             'not-started': (p : {time : DateTime}) => <>Starts in <Timer time={p.time} /></>,
             'ended': () => <>Event ended!</>,
             'no-supply': () => <>Sold out</>,
-            'mintable': (p : {end : DateTime}) => <>Your wallet will be charged. Ends <Timer time={p.end} /></>,
+            'mintable': (p : {end : DateTime}) => <>Your wallet will be charged.{timeGated && <>Ends <Timer time={p.end} /></>}</>,
             'minting': () => <>Minting...</>,
         };
         return messages[mintable];
@@ -206,7 +207,7 @@ export default function DropDetailPage (props : Props) {
                         <div className={Styles.statValue}>{supply}</div>
                     </div>
                     <div className={Styles.stat}>
-                        <div className={Styles.statLabel}>For Sale</div>
+                        <div className={Styles.statLabel}>Unminted</div>
                         <div className={Styles.statValue}>{supplyRemaining}</div>
                     </div>
                     <div className={Styles.stat}>
@@ -223,11 +224,13 @@ export default function DropDetailPage (props : Props) {
                             {
                                 spotsLoading
                                     ? <Spinner size='small' />
-                                    : spots
-                                        ? spots !== -1
-                                            ? <>{spots} Mints</>
-                                            : <>∞ Mints</>
-                                        : <>No Access</>
+                                    : connected
+                                        ? spots
+                                            ? spots !== -1
+                                                ? <>{spots} Mints</>
+                                                : <>∞ Mints</>
+                                            : <>No Access</>
+                                        : <><Link to="/connect" state={{referrer : window.location.pathname}}>Connect</Link></>
                             }
                         </div>
                     </div>
