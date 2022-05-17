@@ -9,16 +9,19 @@ import relativetime from 'dayjs/plugin/relativeTime'
 import { Principal } from '@dfinity/principal'
 import { useTokenStore } from 'stores/tokens'
 import { decodeTokenIdentifier, principalToAddress } from 'ictool'
+import { Transaction } from 'src/logic/transactions'
 
 dayjs.extend(relativetime);
 
 
 // TODO: Create an arbitrary metadata structure so that you can pass whatever you want?
 interface Props {
-    minter: string;
+    to: string;
+    from?: string;
     tokenid: string;
     listing?: Listing;
-    event?  : CAPEvent;
+    event?: CAPEvent;
+    price?: Transaction['price'];
 }
 
 export default function NFTPreview (props : Props) {
@@ -35,7 +38,7 @@ export default function NFTPreview (props : Props) {
     const token = React.useMemo(() => decodeTokenIdentifier(props.tokenid), []);
     const liked = React.useMemo(() => doesLike(token), [likes]);
 
-    const mine = React.useMemo(() => principal && principalToAddress(principal) === props.minter, [principal]);
+    const mine = React.useMemo(() => principal && principalToAddress(principal) === props.to, [principal]);
 
     React.useEffect(() => void likeCount(token).then(r => setCount(r)), [likes])
     
@@ -83,7 +86,7 @@ export default function NFTPreview (props : Props) {
     const collection = dab[token.canister];
 
     return <div className={[Styles.root, mine ? Styles.mine : ''].join(' ')} onMouseEnter={() => { setPlay(true); fetchAnimated(); }} onMouseLeave={() => setPlay(false)}>
-        <Lineage minter={props.minter} collection={collection} />
+        <Lineage to={props.to} from={props.from} collection={collection} operation={props.event?.type} />
         <div className={Styles.stage}>
             {readyStatic && <img className={Styles.static} src={`https://${token.canister}.raw.ic0.app/${token.index}.webp`} />}
             {animated && <video className={[Styles.animated, play && animated ? Styles.animatedPlay : ''].join(' ')} loop autoPlay muted>
@@ -113,9 +116,16 @@ export default function NFTPreview (props : Props) {
                 </div>}
                 {props.event && <div className={Styles.stat}>
                     <div>{dayjs(props.event.timestamp).from(new Date())}</div>
-                    <div>{props.event.type}</div>
+                    <div>
+                        {props.event.type}
+                        {props.price?.currency && <> {priceDisplay(props.price)}</>}
+                    </div>
                 </div>}
             </div>
         </div>
     </div>
+}
+
+function priceDisplay ({ decimals, value, currency }: Transaction['price']) {
+    return `${(value / 10 ** decimals).toFixed(2)} ${currency}`;
 }
