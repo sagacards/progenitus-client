@@ -1,9 +1,9 @@
 import React from 'react'
 import { useGesture } from '@use-gesture/react'
 import { useSpring } from '@react-spring/web'
-import Styles from './styles.module.css'
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
 import Button from '../../ui/button';
+import Styles from './styles.module.css'
 
 interface Props {
     children?: React.ReactNode;
@@ -41,7 +41,7 @@ export default function ScrollRow(props: Props) {
 
         scroll.current?.addEventListener('scroll', listener);
         return () => scroll.current?.removeEventListener('scroll', listener);
-    }, [scroll.current, min, max]);
+    }, [scroll.current, min, max, props.children]);
 
     // Function to jump the scroll position based on a percent of row width (negative backwards, positive forwards)
     const jump = React.useMemo(() => function (percent : number) {

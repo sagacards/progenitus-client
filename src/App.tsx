@@ -1,5 +1,9 @@
 import React from 'react'
 import { Route, Routes } from 'react-router-dom';
+
+import useStore from 'stores/index';
+import { useTokenStore } from 'stores/provenance';
+
 import HomePage from 'pages/home';
 import ConnectPage from 'pages/connect';
 import AccountPage from 'pages/account';
@@ -7,10 +11,9 @@ import DropsPage from 'pages/drops';
 import CollectionsPage from 'pages/collections';
 import ProfilePage from 'pages/profile';
 import DropDetailPage from 'pages/drop-detail';
+
 import Messages from 'ui/messages';
-import useStore from './stores';
 import ScrollToTop from 'ui/scroll-to-top';
-import { useTokenStore } from 'stores/provenance';
 import Modal from 'ui/modal';
 
 function App() {

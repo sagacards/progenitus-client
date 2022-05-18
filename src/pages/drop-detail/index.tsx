@@ -6,6 +6,7 @@ import { principalToAddress } from 'ictool';
 import { DateTime } from 'luxon';
 
 import useStore, { CAPEvent, eventIsMintable, eventIsTimeGated, mint, icConf } from 'stores/index';
+import useMessageStore from 'stores/messages';
 import { useTokenStore } from 'stores/provenance';
 
 import Button from 'ui/button';
@@ -25,7 +26,6 @@ import useModalStore from 'ui/modal/store';
 import MintScene from 'src/three/mint-scene';
 
 import Styles from './styles.module.css'
-import useMessageStore from 'stores/messages';
 
 interface Props {};
 

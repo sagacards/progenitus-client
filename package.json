@@ -24,7 +24,7 @@
     "@fontsource/uncial-antiqua": "^4.5.6",
     "@psychedelic/cap-js": "^0.0.7",
     "@psychedelic/dab-js": "^1.2.2",
-    "@react-spring/three": "^9.4.4",
+    "@react-spring/three": "^9.4.5",
     "@react-spring/web": "^9.4.5",
     "@react-three/drei": "^9.5.0",
     "@react-three/fiber": "^8.0.12",
