@@ -13,6 +13,12 @@ import { decodeTokenIdentifier } from 'ictool';
 
 export default {};
 
+export interface Price {
+  value: number,
+  currency: string,
+  decimals: number,
+};
+
 export interface Transaction extends Omit<TransactionEvent, 'to' | 'from' | 'caller' | 'operation' | 'time'> {
   item: number,
   to: string;
@@ -21,11 +27,7 @@ export interface Transaction extends Omit<TransactionEvent, 'to' | 'from' | 'cal
   operation: string;
   time: Date;
   token: string;
-  price: {
-    value: number,
-    currency: string,
-    decimals: number,
-  }
+  price: Price;
 }
 
 export const toTransactionTime = (time: bigint) => {
@@ -137,4 +139,8 @@ export const parseGetTransactionsResponse = ({
     // from the response, is at the very top
     // showing the oldest transaction in the page
     .sort((a, b) => b.time.getTime() - a.time.getTime());
+}
+
+export function priceDisplay ({ decimals, value, currency }: Transaction['price'], ticker = true) {
+  return `${(value / 10 ** decimals).toFixed(2)} ${ticker ? currency : ''}`;
 }

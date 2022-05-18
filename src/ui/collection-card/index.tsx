@@ -14,5 +14,6 @@ export default function CollectionCard (props : Props) {
         <div className={Styles.art}></div>
         <div className={Styles.collection}></div>
         <div className={Styles.name}>{props.name}</div>
+        <div className={Styles.supply}>20 Unminted</div>
     </Link>
 }

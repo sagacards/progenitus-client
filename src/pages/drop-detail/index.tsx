@@ -1,35 +1,39 @@
 import React from 'react';
 import { Link, Navigate, useParams } from 'react-router-dom';
-import useStore, { CAPEvent, ic } from 'stores/index';
-import { eventIsMintable, eventIsTimeGated, mint } from 'src/logic/minting';
-import Navbar from 'ui/navbar';
-import Footer from 'ui/footer';
-import Container from 'ui/container';
-import Tabs from 'ui/tabs';
-import Grid from 'ui/grid';
-import NFTPreview from 'ui/nft-preview';
-import More from 'ui/more';
-import Button from 'ui/button';
-import Revealer from 'ui/revealer';
-import Spinner from 'ui/spinner';
-import Timer from 'ui/timer';
-import MintScene from 'src/three/mint-scene';
-import Styles from './styles.module.css'
 import { FiExternalLink } from 'react-icons/fi';
-import { useTokenStore } from 'stores/tokens';
 import { Principal } from '@dfinity/principal';
 import { principalToAddress } from 'ictool';
-import useModalStore from 'ui/modal/store';
-import Copyable from 'ui/copyable';
 import { DateTime } from 'luxon';
+
+import useStore, { CAPEvent, eventIsMintable, eventIsTimeGated, mint, icConf } from 'stores/index';
+import { useTokenStore } from 'stores/provenance';
+
+import Button from 'ui/button';
+import Container from 'ui/container';
+import Copyable from 'ui/copyable';
+import Footer from 'ui/footer';
+import Grid from 'ui/grid';
+import More from 'ui/more';
+import Navbar from 'ui/navbar';
+import NFTPreview from 'ui/nft-preview';
+import Revealer from 'ui/revealer';
+import Spinner from 'ui/spinner';
 import Swap from 'ui/swap';
+import Tabs from 'ui/tabs';
+import Timer from 'ui/timer';
+import useModalStore from 'ui/modal/store';
+import MintScene from 'src/three/mint-scene';
+
+import Styles from './styles.module.css'
+import useMessageStore from 'stores/messages';
 
 interface Props {};
 
 export default function DropDetailPage (props : Props) {
     const { canister, index } = useParams();
-    const { actor, principal, connecting, connected, getEvent, eventsLastFetch, fetchEvents, pushMessage, balance, fetchSupply, eventSupply, isMinting, setIsMinting, setMintResult, mintResult, fetchBalance, wallet } = useStore();
+    const { actors : { bazaar }, principal, connecting, connected, getEvent, eventsLastFetch, fetchEvents, balance, fetchSupply, eventSupply, isMinting, setIsMinting, setMintResult, mintResult, fetchBalance, wallet } = useStore();
     const { cap : { [canister as string] : transactions }, capPoll, filtersSet, capRoots } = useTokenStore();
+    const { pushMessage } = useMessageStore();
     const { open } = useModalStore();
 
     const eventsAreFresh = React.useMemo(() => new Date().getTime() - (eventsLastFetch?.getTime() || 0) < 60_000, [eventsLastFetch])
@@ -50,9 +54,9 @@ export default function DropDetailPage (props : Props) {
 
     // Fetch spots
     React.useEffect(() => {
-        if (!actor || !canister || !index) return;
+        if (!canister || !index) return;
         setSpotsLoading(true)
-        actor?.getAllowlistSpots(Principal.fromText(canister), BigInt(index))
+        bazaar.getAllowlistSpots(Principal.fromText(canister), BigInt(index))
         .then(r => {
             if ('ok' in r) {
                 setSpots(Number(r.ok))
@@ -61,7 +65,7 @@ export default function DropDetailPage (props : Props) {
             }
         })
         .finally(() => setSpotsLoading(false));
-    }, [mintResult, actor, canister, index]);
+    }, [mintResult, bazaar, canister, index]);
 
     // Fetch supply
     React.useEffect(() => {
@@ -147,7 +151,7 @@ export default function DropDetailPage (props : Props) {
         setError(undefined);
         setIsMinting(true);
         setMintResult(undefined);
-        mint(event, supplyRemaining, connected, balance, spots, actor, Number(index))
+        mint(event, supplyRemaining, connected, balance, spots, bazaar, Number(index))
         ?.then(r => {
             if (r && 'ok' in r) {
                 setMintResult(Number(r.ok));
@@ -165,7 +169,7 @@ export default function DropDetailPage (props : Props) {
             alert('Mint failure!');
         })
         .finally(() => setIsMinting(false));
-    }, [event, supplyRemaining, connected, balance, spots, actor, index]);
+    }, [event, supplyRemaining, connected, balance, spots, bazaar, index]);
 
     React.useEffect(() => {
         if (!canister) return;
@@ -239,7 +243,7 @@ export default function DropDetailPage (props : Props) {
                 {description && <div className={Styles.description}><Revealer content={description} /></div>}
                 <div className={[Styles.mintingStage, mintResult ? Styles.minted : ''].join(' ')}>
                     <div className={[Styles.stage, isMinting ? Styles.minting : ''].join(' ')}>
-                        <a href={`${ic.protocol}://${canister}.raw.${ic.host}/${mintResult}`} target="_blank" className={Styles.externalLink}>
+                        <a href={`${icConf.protocol}://${canister}.raw.${icConf.host}/${mintResult}`} target="_blank" className={Styles.externalLink}>
                             <Button>
                                 <FiExternalLink />
                             </Button>
@@ -269,7 +273,7 @@ export default function DropDetailPage (props : Props) {
                                     {mints ? <More>
                                         {mints.map(x => <NFTPreview
                                             tokenid={x.token}
-                                            minter={x.to}
+                                            to={x.to}
                                             key={`preview${x.token}`}
                                             event={{
                                                 type: x.operation as CAPEvent['type'],
@@ -284,7 +288,7 @@ export default function DropDetailPage (props : Props) {
                                     {transfers ? <More>
                                         {transfers.map(x => <NFTPreview
                                             tokenid={x.token}
-                                            minter={x.to}
+                                            to={x.to}
                                             key={`preview${x.token}`}
                                             event={{
                                                 type: x.operation as CAPEvent['type'],

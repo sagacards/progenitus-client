@@ -1,8 +1,99 @@
-import { DateTime } from 'luxon';
-import { ActorSubclass } from '@dfinity/agent';
+// A slice of the Bazaar store handling the minting canister.
+
+import { Actor, ActorSubclass } from '@dfinity/agent';
 import { Principal } from '@dfinity/principal';
+import { DateTime } from 'luxon';
 import { Rex, Data } from 'canisters/progenitus/progenitus.did.d';
-import { Collection, ICP8s } from "stores/index"
+import { CompleteStore, StoreSlice } from 'stores/index';
+import { ICP8s } from 'stores/connect';
+import { getLegendActor } from './actors';
+
+type CanisterId = string;
+
+interface EventsMap { [key : string] :  { [key : number] : MintingEvent } };
+
+export interface Collection {
+    canister    : CanisterId;
+    banner      : string;
+    icon        : string;
+    preview     : string;
+    name        : string;
+    description : string;
+};
+
+export interface MintingStore {
+
+    events          : EventsMap;
+    getEvent        : (c : string, i : number) => MintingEvent | undefined;
+    fetchEvents     : () => void;
+    eventsLastFetch?: Date;
+
+    eventSupply : { [key : string] : { [key : number] : number } };
+    fetchSupply : (c : string, i : number) => void;
+
+    isMinting       : boolean;
+    setIsMinting    : (m : boolean) => void;
+    mintResult?     : number;
+    setMintResult   : (m : number | undefined) => void;
+
+};
+
+// Main store function.
+export const createMintingSlice : StoreSlice<MintingStore, CompleteStore> = (set, get) => ({
+
+    // Events
+
+    events : {},
+
+    getEvent (canister, index) {
+        const { events } = get();
+        return events?.[canister]?.[index];
+    },
+
+    fetchEvents () {
+        const { actors : { bazaar } } = get();
+        // Mock Events
+        // set({ events: makeEvents() });
+
+        // Real Events
+        bazaar.getAllEvents()
+        .then(r => {
+            const events = r
+            .map(([p, e, i]) => mapEvent(p, e, i))
+            .reduce((agg, e) => ({ ...agg, [e.collection.canister] : { ...agg[e.collection.canister], [e.id] : e } }), {} as EventsMap)
+
+            set({
+                events,
+                eventsLastFetch: new Date(),
+            });
+        })
+    },
+
+    // Event Supply
+
+    eventSupply: {},
+
+    fetchSupply (canister, index) {
+        const { eventSupply } = get();
+        let n = { ...eventSupply };
+        n?.[canister]?.[index]
+        getLegendActor(canister)
+        .launchpadTotalAvailable(BigInt(index))
+        .then(s => {
+            n[canister] = n[canister] || {};
+            n[canister][index] = Number(s);
+            set({ eventSupply: n });
+        });
+    },
+
+    // Minting
+
+    isMinting: false,
+    setIsMinting (isMinting) { set({ isMinting }) },
+    mintResult: undefined,
+    setMintResult (mintResult) { set({ mintResult }) },
+
+});
 
 export interface MintingEvent {
     id          : number;

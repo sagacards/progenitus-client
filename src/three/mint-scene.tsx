@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import { useThree, Canvas, useFrame, useLoader } from '@react-three/fiber'
 import { animated, useSpring, useSpringRef } from '@react-spring/three'
 import Threads from 'assets/textures/threads.png'
-import useStore, { ic } from 'stores/index';
+import useStore from 'stores/index';
 import { cardMovementSpringConf, cardSpringConf } from './springs';
 import { Legend } from './legend';
 import { fetchLegendManifest, LegendManifest } from 'src/apis/legends';

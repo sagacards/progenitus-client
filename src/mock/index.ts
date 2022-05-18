@@ -1,6 +1,6 @@
-import { Collection, CAPEvent, _Token } from 'stores/index'
+import { Collection, CAPEvent } from 'stores/index'
 import Disk from 'assets/disk/8.png'
-import { MintingEvent } from 'src/logic/minting';
+import { MintingEvent } from 'stores/minting';
 import { DateTime } from 'luxon';
 import { Transaction } from 'src/logic/transactions';
 import { encodeTokenIdentifier } from 'ictool';
@@ -26,7 +26,6 @@ export function makeCollections (count : number = 3) : { [ key : string ] : Coll
 export function eventFactory () : MintingEvent {
     return {
         id : Math.floor(Math.random() * 1_000_000_000),
-        supply: 100 + (50 - Math.floor(100 * Math.random())),
         access: Math.random() > .5 ? 'private' : 'public',
         price: {
             e8s: 4_00_000_000 + Math.floor(Math.random() * 10) * 1_00_000_000,

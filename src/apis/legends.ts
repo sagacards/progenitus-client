@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { useLoader } from "@react-three/fiber";
-import { ic } from "stores/index";
+import { icConf } from "stores/index";
 
 export function fetchLegend (
     canister: string,
@@ -14,7 +14,7 @@ export function fetchLegendManifest (
     canister    : string,
     index       : number,
 ) : Promise<LegendManifest> {
-    return fetch(`${ic.protocol}://${canister}.raw.${ic.host}/${index}.json`)
+    return fetch(`${icConf.protocol}://${canister}.raw.${icConf.host}/${index}.json`)
         .then(r => r.json() as unknown as LegendManifest);
 };
 
@@ -22,7 +22,7 @@ export function fetchTexture (
     canister    : string,
     filename    : string,
 ) : THREE.Texture {
-    return useLoader(THREE.TextureLoader, `${ic.protocol}://${canister}.raw.${ic.host}/${filename}`);
+    return useLoader(THREE.TextureLoader, `${icConf.protocol}://${canister}.raw.${icConf.host}/${filename}`);
 };
 
 export function fetchLegendTextures (

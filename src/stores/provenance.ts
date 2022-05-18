@@ -4,8 +4,13 @@ import { CapRouter, CapRoot  } from '@psychedelic/cap-js';
 import { Principal } from '@dfinity/principal';
 import { parseGetTransactionsResponse, Transaction } from '../logic/transactions';
 import Icon from 'assets/disk/8.png'
-import { host } from '.';
+import { host } from 'stores/connect';
 // import { history } from 'src/mock';
+
+export interface CAPEvent {
+    timestamp: Date;
+    type: 'mint' | 'transfer' | 'sale';
+};
 
 // Instead of relying on DAB, we'll hard code the collections that we're interested in for now
 export interface NftCollection extends Omit<DABCollection, 'principal_id'> {

@@ -23,6 +23,11 @@
     /* -webkit-text-fill-color: transparent; */
 }
 
+.title {
+    font-size: 38px;
+    font-weight: 800;
+}
+
 .tagline {
     color: var(--chrome-5);
     /* font-family: 'Space Grotesk'; */

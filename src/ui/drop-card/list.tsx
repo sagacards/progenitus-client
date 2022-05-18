@@ -1,6 +1,6 @@
 import { DateTime } from 'luxon';
 import React from 'react'
-import { eventIsTimeGated, MintingEvent } from 'src/logic/minting';
+import { eventIsTimeGated, MintingEvent } from 'stores/minting';
 import useStore from 'stores/index'
 import DropCard from '.'
 import Styles from './styles.module.css'

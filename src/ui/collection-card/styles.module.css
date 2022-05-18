@@ -44,3 +44,8 @@
 .name {
     font-weight: 500;
 }
+
+.supply {
+    color: var(--chrome-4);
+    font-size: 14px;
+}

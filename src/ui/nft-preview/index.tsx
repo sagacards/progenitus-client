@@ -1,5 +1,5 @@
 import React from 'react'
-import useStore, { CAPEvent, Listing, Token } from 'stores/index'
+import useStore, { CAPEvent, Listing } from 'stores/index'
 import Lineage from 'ui/lineage'
 import Spinner from 'ui/spinner'
 import Styles from './styles.module.css'
@@ -7,9 +7,9 @@ import { FaHeart } from 'react-icons/fa'
 import dayjs from 'dayjs'
 import relativetime from 'dayjs/plugin/relativeTime'
 import { Principal } from '@dfinity/principal'
-import { useTokenStore } from 'stores/tokens'
+import { useTokenStore } from 'stores/provenance'
 import { decodeTokenIdentifier, principalToAddress } from 'ictool'
-import { Transaction } from 'src/logic/transactions'
+import { priceDisplay, Transaction } from 'src/logic/transactions'
 
 dayjs.extend(relativetime);
 
@@ -108,10 +108,10 @@ export default function NFTPreview (props : Props) {
             <div className={Styles.divider} />
             <div className={Styles.actions}>
                 {props.listing && <div>
-                    {icpToUSD && <div className={Styles.usd}>${(props.listing.price * icpToUSD).toFixed(2)} USD</div>}
+                    {/* {icpToUSD && <div className={Styles.usd}>${(props.listing.price * icpToUSD).toFixed(2)} USD</div>} */}
                     <div className={Styles.price}>
                         <div className={Styles.priceLabel}>Price</div>
-                        <div className={Styles.priceAmount}>{props.listing.price.toFixed(2)} ICP</div>
+                        {/* <div className={Styles.priceAmount}>{props.listing.price.toFixed(2)} ICP</div> */}
                     </div>
                 </div>}
                 {props.event && <div className={Styles.stat}>
@@ -124,8 +124,4 @@ export default function NFTPreview (props : Props) {
             </div>
         </div>
     </div>
-}
-
-function priceDisplay ({ decimals, value, currency }: Transaction['price']) {
-    return `${(value / 10 ** decimals).toFixed(2)} ${currency}`;
 }

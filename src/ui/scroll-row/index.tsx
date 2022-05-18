@@ -37,6 +37,8 @@ export default function ScrollRow(props: Props) {
             }
         };
 
+        listener();
+
         scroll.current?.addEventListener('scroll', listener);
         return () => scroll.current?.removeEventListener('scroll', listener);
     }, [scroll.current, min, max]);
