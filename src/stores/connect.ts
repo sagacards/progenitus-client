@@ -27,7 +27,7 @@ export interface ICP8s {
 
 export interface ConnectStore {
     initialized: boolean;
-    init: () => void;
+    initConnect: () => void;
 
     agent?: HttpAgent;
 
@@ -51,8 +51,14 @@ export interface ConnectStore {
 
 export const createConnectSlice : StoreSlice<ConnectStore, CompleteStore> = (set, get) => ({
 
+    // Boolean connection state
+    connected: false,
+    connecting: false,
+
+    // Run once on startup should be called from the root store's init function.
     initialized: false,
-    init () {
+    initConnect () {
+
         const { initialized, plugReconnect, stoicReconnect, } = get();
         if (initialized) return;
 
@@ -68,9 +74,6 @@ export const createConnectSlice : StoreSlice<ConnectStore, CompleteStore> = (set
 
         set({ initialized : true });
     },
-
-    connected: false,
-    connecting: false,
 
     // Ensures only one connection attempt when implemented properly.
     idempotentConnect () {
@@ -207,6 +210,7 @@ export const createConnectSlice : StoreSlice<ConnectStore, CompleteStore> = (set
         createActors();
     },
     
+    // Display-ready wallet balance.
     walletBalanceDisplay () {
         const { walletBalance : balance } = get();
         if (balance) {
