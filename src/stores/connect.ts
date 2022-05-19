@@ -6,6 +6,7 @@ import { ActorSubclass, HttpAgent } from '@dfinity/agent'
 import { IDL } from '@dfinity/candid'
 import { CompleteStore, StoreSlice } from 'stores/index'
 import { whitelist } from 'stores/actors'
+import { toHexString } from 'ictool'
 
 
 export const icConf = {
@@ -173,6 +174,21 @@ export const createConnectSlice : StoreSlice<ConnectStore, CompleteStore> = (set
 
         // Track connected wallet
         wallet && window.localStorage.setItem('wallet', wallet);
+
+        // Update identity on actors
+        createActors();
+
+        const { fetchBalance, actors : { bazaar }, fetchLikes } = get();
+
+        // Fetch user's likes
+        fetchLikes();
+
+        // Fetch and update personal minting account address
+        const address = toHexString(await bazaar.getPersonalAccount());
+        set({ address });
+
+        // Update account balance
+        fetchBalance();
 
     },
 
