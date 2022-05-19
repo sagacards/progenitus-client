@@ -33,7 +33,7 @@ export interface ConnectStore {
 
     connected: boolean;
     connecting: boolean;
-    postConnect: () => void;
+    postConnect: () => Promise<void>;
     idempotentConnect: () => null | (() => void);
     plugConnect: () => void;
     stoicConnect: () => void;
@@ -43,7 +43,7 @@ export interface ConnectStore {
     walletBalance?  : ICP8s;
     walletBalanceDisplay: () => number | undefined
 
-    disconnect: () => void;
+    disconnect: () => Promise<void>;
 
     principal?: Principal;
     wallet?: Wallet;
@@ -179,7 +179,7 @@ export const createConnectSlice : StoreSlice<ConnectStore, CompleteStore> = (set
         wallet && window.localStorage.setItem('wallet', wallet);
 
         // Update identity on actors
-        createActors();
+        await createActors()
 
         const { fetchBalance, actors : { bazaar }, fetchLikes } = get();
 
@@ -196,10 +196,10 @@ export const createConnectSlice : StoreSlice<ConnectStore, CompleteStore> = (set
     },
 
     // Disconnect from users wallet.
-    disconnect () {
+    async disconnect () {
         const { createActors } = get();
         StoicIdentity.disconnect();
-        window.ic?.plug?.deleteAgent();
+        window.ic?.plug?.deleteAgent && window.ic?.plug?.deleteAgent();
         set({
             connected: false,
             principal: undefined,
@@ -207,7 +207,7 @@ export const createConnectSlice : StoreSlice<ConnectStore, CompleteStore> = (set
             agent: undefined,
         });
         window.localStorage.removeItem('wallet');
-        createActors();
+        await createActors();
     },
     
     // Display-ready wallet balance.
@@ -233,7 +233,7 @@ declare global {
                 createActor: <T>(args : {
                     canisterId          : string,
                     interfaceFactory    : IDL.InterfaceFactory,
-                }) => ActorSubclass<T>,
+                }) => Promise<ActorSubclass<T>>,
                 isConnected : () => Promise<boolean>;
                 createAgent : (args?: {
                     whitelist   : string[];

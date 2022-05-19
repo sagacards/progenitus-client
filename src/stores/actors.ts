@@ -21,7 +21,7 @@ export interface ActorsStore {
         cycles: ActorSubclass<Ledger>,
     };
 
-    createActors: () => void;
+    createActors: () => Promise<void>;
 };
 
 // TODO: How does DAB handle discovery of these IDs? It might be sweet to just swap out the DAB directory for dev/prod.
@@ -48,6 +48,7 @@ export const createActorsSlice: StoreSlice<ActorsStore, CompleteStore> = (set, g
 
 });
 
+// Create all the actors we need using the given agent.
 function makeActors(agent: HttpAgent = defaultAgent) {
     const actors = {
         bazaar: Actor.createActor<Rex>(BazaarIDL, {
@@ -70,19 +71,19 @@ function makeActors(agent: HttpAgent = defaultAgent) {
     return actors;
 };
 
-// TODO: Plug actors are... *acting* up!
+// Creating actors with plug must go through their special API, which also requires us to handle async.
 async function makeActorsPlug() {
     if (!window.ic?.plug?.createActor) throw new Error(`Cannot create actors, missing plug API.`);
     const actors = {
-        bazaar: window.ic.plug.createActor<Rex>({
+        bazaar: await window.ic.plug.createActor<Rex>({
             interfaceFactory: BazaarIDL,
             canisterId: import.meta.env.PROGENITUS_CANISTER_ID,
         }),
-        likes: window.ic.plug.createActor<Likes>({
+        likes: await window.ic.plug.createActor<Likes>({
             interfaceFactory: LikesIDL,
             canisterId: import.meta.env.PROGENITUS_LIKES_CANISTER_ID,
         }),
-        cycles: window.ic.plug.createActor<Ledger>({
+        cycles: await window.ic.plug.createActor<Ledger>({
             interfaceFactory: CyclesIDL,
             canisterId: import.meta.env.PROGENITUS_CYCLES_CANISTER_ID,
         }),

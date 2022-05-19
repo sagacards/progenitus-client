@@ -39,6 +39,7 @@ interface CatchallStore {
 
     init: () => void;
     didInit: boolean;
+
 };
 
 // Catchall store creation function.
