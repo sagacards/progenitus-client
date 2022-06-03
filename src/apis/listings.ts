@@ -7,7 +7,12 @@ import { useQueries, useQuery } from 'react-query';
 import { getLegendActor } from 'stores/actors';
 import { useTokenStore } from 'stores/provenance';
 import { encodeTokenIdentifier } from 'ictool';
-import useStore from 'stores/index';
+
+
+////////////
+// Types //
+//////////
+
 
 // An NFT marketplace listing.
 export interface Listing {
@@ -18,6 +23,12 @@ export interface Listing {
     seller: Principal;
     price: Price;
 };
+
+
+//////////////
+// Mapping //
+////////////
+
 
 // Map an NFT marketplace listing from canister response for use in this app.
 function mapListing (
@@ -32,7 +43,7 @@ function mapListing (
         seller: listing.seller as unknown as Principal, // Principal lib mismatch
         price: mapPrice(listing.price),
     };
-}
+};
 
 // Map a price object from the IC for use in this app.
 function mapPrice (price : bigint) : Price {
@@ -41,7 +52,9 @@ function mapPrice (price : bigint) : Price {
         decimals: 8,
         currency: 'ICP',
     }
-}
+};
+
+// We also include below functions for working with price objects.
 
 // Convert exponent price object into a float.
 export function priceFloat (
@@ -56,7 +69,7 @@ export function priceConvertDisplay (
     conversion : number,
 ) : string {
     return `$${(priceFloat(price) * conversion).toFixed(2)}`;
-}
+};
 
 // Display exponent price object as string.
 export function priceDisplay (
@@ -64,6 +77,12 @@ export function priceDisplay (
 ) : string {
     return `${priceFloat(price).toFixed(2)} ${price.currency}`;
 };
+
+
+///////////////
+// Fetching //
+/////////////
+
 
 // Retrieve NFT marketplace listings from a specific canister.
 function fetchListings (
@@ -78,7 +97,7 @@ function fetchListings (
     })
 };
 
-// react-query (caching, persistence, throttling, etc) hook for consuming listings data.
+// Hook to retrieve listings for a specific canister.
 export function useCanisterListings (
     canister : string,
 ) {
@@ -91,7 +110,7 @@ export function useCanisterListings (
     };
 };
 
-// react-query hook for listings data from all legends canisters.
+// Hook to retrieve listings for all Legends canisters.
 export function useAllLegendListings () {
     const { dab } = useTokenStore();
     const query = useQueries(Object.keys(dab).map(canister => ({
@@ -102,4 +121,23 @@ export function useAllLegendListings () {
         ...agg,
         ...query?.data || [],
     ]), [] as Listing[]);
-}
+};
+
+
+/////////////////
+// Data Views //
+///////////////
+
+// We provide additional functions to achieve different views on the data, i.e. sorting and filtering.
+// Use these methods inside a memo.
+
+
+// Filter a list of listings.
+export function filterListings () {};
+
+// Sort a list of listings.
+export function sortListings (
+    listings : Listing[],
+) {
+    return listings.sort((a, b) => a.price.value - b.price.value)
+};

@@ -17,7 +17,7 @@ import NFTPreview from 'ui/nft-preview';
 import ScrollRow from 'ui/scroll-row';
 
 import Styles from './styles.module.css'
-import { useAllLegendListings } from 'apis/listings';
+import { sortListings, useAllLegendListings } from 'apis/listings';
 
 interface Props {};
 
@@ -81,7 +81,7 @@ export default function HomePage () {
                     <h2>Explore Listings</h2>
                     <Grid>
                         {listings ? <More>
-                            {listings.map(x => <NFTPreview
+                            {sortListings(listings).map(x => <NFTPreview
                                 tokenid={x.token}
                                 key={`preview${x.token}`}
                                 listing={x}

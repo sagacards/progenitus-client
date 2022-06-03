@@ -8,14 +8,13 @@ import { idlFactory as CyclesDID } from 'canisters/cycles/cycles.did';
 import { createAccountSlice, AccountStore } from 'stores/account';
 import { createActorsSlice, ActorsStore } from 'stores/actors';
 import { createConnectSlice, ConnectStore, defaultAgent } from 'stores/connect';
-import { createListingSlice, ListingsStore } from 'stores/listings';
 import { createLikesSlice, LikesStore } from 'stores/likes';
 import { createMintingSlice, MintingStore } from 'stores/minting';
 
 // Reexport submodules for convenience
 import { Wallet } from 'stores/connect';
 import { CAPEvent } from 'stores/provenance';
-import { Listing } from 'stores/listings';
+import { Listing } from 'apis/listings';
 import { Token } from 'stores/likes';
 import { eventIsMintable, eventIsTimeGated, mint, Collection } from 'stores/minting';
 import { icConf } from 'stores/connect';
@@ -30,7 +29,7 @@ export type StoreSlice<T extends object, E extends object = T> = (
 ) => T;
 
 // Interface of the complete store extends all its slices.
-export interface CompleteStore extends ActorsStore, ConnectStore, ListingsStore, AccountStore, MintingStore, CatchallStore, LikesStore { }
+export interface CompleteStore extends ActorsStore, ConnectStore, AccountStore, MintingStore, CatchallStore, LikesStore { }
 
 // Some things didn't fit into their own store.
 interface CatchallStore {
@@ -80,7 +79,6 @@ const createStore = (set: SetState<any>, get: GetState<any>) => ({
     ...createActorsSlice(set, get),
     ...createCatchallSlice(set, get),
     ...createConnectSlice(set, get),
-    ...createListingSlice(set, get),
     ...createMintingSlice(set, get),
     ...createLikesSlice(set, get),
 });
