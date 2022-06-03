@@ -167,6 +167,9 @@
 }
 
 .price {
+    color: var(--foreground);
+    font-size: 14px;
+
     display: flex;
     justify-content: flex-end;
     align-items: center;

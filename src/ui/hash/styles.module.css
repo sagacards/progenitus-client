@@ -28,6 +28,11 @@
     font-size: 18px;
 }
 
+.tiny {
+    font-size: 10px;
+    padding: 0 6px;
+}
+
 .icon {
     width: 24px;
     height: 24px;

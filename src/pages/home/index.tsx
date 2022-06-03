@@ -17,12 +17,14 @@ import NFTPreview from 'ui/nft-preview';
 import ScrollRow from 'ui/scroll-row';
 
 import Styles from './styles.module.css'
+import { useAllLegendListings } from 'apis/listings';
 
 interface Props {};
 
 export default function HomePage () {
     const { connected } = useStore();
-    const { cap, capPoll, filtersSet, capRoots } = useTokenStore();
+    const { cap, capPoll, filtersSet, capRoots, dab } = useTokenStore();
+    const listings = useAllLegendListings();
 
     const cards = React.useMemo(() => {
         const cards = Array(22).fill(undefined).map((x, i) => ({
@@ -57,24 +59,35 @@ export default function HomePage () {
                 <div className={Styles.collections}>
                     <h2>Recent Activity</h2>
                     <ScrollRow>
-                        {recent ?
-                            recent.slice(0, 12).map(x => <NFTPreview
-                                tokenid={x.token}
-                                to={x.to}
-                                from={x.from}
-                                key={`preview${x.time}${x.token}`}
-                                event={{
-                                    type: x.operation as CAPEvent['type'],
-                                    timestamp: x.time
-                                }}
-                                price={x.price}
-                            />)
-                        : <>None yet!</>}
+                            {recent ? recent.slice(0, 12).map(x => <>
+                                {/* This padding gives space for lineage tooltips. */}
+                                <div style={{ paddingTop: '24px '}}>
+                                        <NFTPreview
+                                        tokenid={x.token}
+                                        to={x.to}
+                                        from={x.from}
+                                        key={`preview${x.time}${x.token}`}
+                                        event={{
+                                            type: x.operation as CAPEvent['type'],
+                                            timestamp: x.time
+                                        }}
+                                        price={x.price}
+                                    />
+                                </div>
+                            </>) : <>None yet!</>}
                     </ScrollRow>
                 </div>
                 <div className={Styles.collections}>
                     <h2>Explore Listings</h2>
-                    <CollectionCardList />
+                    <Grid>
+                        {listings ? <More>
+                            {listings.map(x => <NFTPreview
+                                tokenid={x.token}
+                                key={`preview${x.token}`}
+                                listing={x}
+                            />)}
+                        </More> : <>None yet!</>}
+                    </Grid>
                 </div>
             </div>
         </Container>

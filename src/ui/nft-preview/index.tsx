@@ -9,14 +9,15 @@ import relativetime from 'dayjs/plugin/relativeTime'
 import { Principal } from '@dfinity/principal'
 import { useTokenStore } from 'stores/provenance'
 import { decodeTokenIdentifier, principalToAddress } from 'ictool'
-import { priceDisplay, Transaction } from 'src/logic/transactions'
+import { Transaction } from 'src/logic/transactions'
+import { priceDisplay, priceConvertDisplay } from 'apis/listings'
 
 dayjs.extend(relativetime);
 
 
 // TODO: Create an arbitrary metadata structure so that you can pass whatever you want?
 interface Props {
-    to: string;
+    to?: string;
     from?: string;
     tokenid: string;
     listing?: Listing;
@@ -86,7 +87,7 @@ export default function NFTPreview (props : Props) {
     const collection = dab[token.canister];
 
     return <div className={[Styles.root, mine ? Styles.mine : ''].join(' ')} onMouseEnter={() => { setPlay(true); fetchAnimated(); }} onMouseLeave={() => setPlay(false)}>
-        <Lineage to={props.to} from={props.from} collection={collection} operation={props.event?.type} />
+        <Lineage to={props.to} from={props.from || props.listing?.seller.toHex()} collection={collection} operation={props.event?.type || 'listing'} />
         <div className={Styles.stage}>
             {readyStatic && <img className={Styles.static} src={`https://${token.canister}.raw.ic0.app/${token.index}.webp`} />}
             {animated && <video className={[Styles.animated, play && animated ? Styles.animatedPlay : ''].join(' ')} loop autoPlay muted>
@@ -107,12 +108,15 @@ export default function NFTPreview (props : Props) {
             </div>
             <div className={Styles.divider} />
             <div className={Styles.actions}>
-                {props.listing && <div>
-                    {/* {icpToUSD && <div className={Styles.usd}>${(props.listing.price * icpToUSD).toFixed(2)} USD</div>} */}
-                    <div className={Styles.price}>
-                        <div className={Styles.priceLabel}>Price</div>
-                        {/* <div className={Styles.priceAmount}>{props.listing.price.toFixed(2)} ICP</div> */}
+                {props.listing && <div className={Styles.stat}>
+                    <div>
+                        <div className={Styles.price}>
+                            {/* <div className={Styles.priceLabel}>Price</div> */}
+                            <div className={Styles.priceAmount}>{priceDisplay(props.listing.price)}</div>
+                        </div>
+                        {props.listing.price && icpToUSD && <div className={Styles.usd}>{priceConvertDisplay(props.listing.price, icpToUSD)}</div>}
                     </div>
+                    <div>For Sale</div>
                 </div>}
                 {props.event && <div className={Styles.stat}>
                     <div>{dayjs(props.event.timestamp).from(new Date())}</div>

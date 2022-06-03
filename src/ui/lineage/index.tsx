@@ -5,20 +5,34 @@ import Styles from './styles.module.css'
 import Saga from 'assets/disk/8.png'
 import Hash from 'ui/hash';
 
+type operation = 'sale' | 'mint' | 'transfer' | 'listing';
+
 interface Props {
     children?: React.ReactNode;
-    to: string;
+    to?: string;
     from?: string;
-    operation?: 'sale' | 'mint' | 'transfer';
+    operation: operation;
     collection : {
         name: string;
         icon?: string;
     }
 }
 
+const toLabel = {
+    'sale': 'buyer',
+    'mint': 'minter',
+    'transfer': 'recipient',
+    'listing': 'seller',
+}
+
+const fromLabel = {
+    'sale': 'seller',
+    'mint': 'agent',
+    'transfer': 'sender',
+    'listing': 'seller',
+}
+
 export default function Lineage (props : Props) {
-    const toLabel = React.useMemo(() => props.operation === 'sale' ? 'buyer' : props.operation === 'mint' ? 'minter' : 'recipient', [props.operation]);
-    const fromLabel = React.useMemo(() => props.operation === 'sale' ? 'seller' : props.operation === 'mint' ? 'agent' : 'sender', [props.operation]);
     return <div className={Styles.root}>
         <div className={Styles.item}>
             <div className={Styles.disk}><img className={Styles.image} src={Saga} /></div>
@@ -30,12 +44,12 @@ export default function Lineage (props : Props) {
         </div>
         {props.from && <div className={Styles.item}>
             <div className={Styles.disk}><Hashatar name={props.from} /></div>
-            <div className={Styles.tip}>{fromLabel}: <Hash>{props.from}</Hash></div>
+            <div className={Styles.tip}>{fromLabel[props.operation]}: <Hash size='tiny'>{props.from}</Hash></div>
         </div>}
-        <div className={Styles.item}>
+        {props.to && <div className={Styles.item}>
             <div className={Styles.disk}><Hashatar name={props.to} /></div>
-            <div className={Styles.tip}>{toLabel}: <Hash>{props.to}</Hash></div>
-        </div>
+            <div className={Styles.tip}>{toLabel[props.operation]}: <Hash size='tiny'>{props.to}</Hash></div>
+        </div>}
         {/* <div className={Styles.item}>
             <div className={Styles.disk}><Hashatar name="owner" /></div>
             <div className={Styles.tip}>Owner: ?</div>
