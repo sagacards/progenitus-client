@@ -7,8 +7,13 @@
 
     border-radius: 24px;
     box-shadow: 0 0 0 1px inset var(--chrome-2);
+    overflow: hidden;
 
-    transition: 320ms ease-out box-shadow;
+    transition: 320ms ease-out box-shadow, 320ms ease-out transform;
+}
+
+.root:hover {
+    transform: scale(1.01);
 }
 
 .body {
@@ -17,24 +22,43 @@
     right: 0;
     bottom: 0;
     left: 0;
+    z-index: 10;
 
     padding: 16px;
 
     display: flex;
     flex-direction: column;
+    justify-content: flex-end;
     gap: 4px;
+
+    background: linear-gradient(
+        0deg,
+        rgba(0, 0, 0, 0.5) 20%,
+        rgba(0, 0, 0, 0) 25%
+    );
 }
 
 .title {
     font-size: 20px;
-    font-weight: 500;
+    font-weight: 600;
+    color: white;
 }
 
 .flavour {
-    color: var(--chrome-4);
+    color: rgb(200, 200, 200);
     font-size: 14px;
 }
 
 .flavour::first-letter {
     text-transform: uppercase;
+}
+
+.image {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+
+    width: 100%;
 }

@@ -18,6 +18,7 @@ import ScrollRow from 'ui/scroll-row';
 import Styles from './styles.module.css'
 import { sortListings, useAllLegendListings } from 'apis/listings';
 import { CAPEvent, useAllProvenance } from 'apis/cap';
+import { ArcanaArt } from 'apis/cards/cards';
 
 interface Props { };
 
@@ -30,7 +31,7 @@ export default function HomePage() {
         const cards = Array(22).fill(undefined).map((x, i) => ({
             title: TarotDeckData[i].name,
             flavour: TarotDeckData[i].keywords.slice(0, 3).join(', '),
-            image: '',
+            image: ArcanaArt[i],
             featured: false,
         }));
         cards[0].featured = true;
@@ -43,7 +44,10 @@ export default function HomePage() {
         <Container>
             <div className={Styles.root}>
                 <ScrollRow>
-                    {cards.map((card, i) => <LegendPreview {...card} key={`card-${card.title}`} />)}
+                    {/* This padding gives space for hover effects. */}
+                    {cards.map((card, i) => <div style={{ paddingTop: '24px ' }} key={`card-${card.title}`}>
+                        <LegendPreview {...card} />
+                    </div>)}
                 </ScrollRow>
                 <div className={Styles.splash}>
                     <h2>The Open Tarot Marketplace</h2>

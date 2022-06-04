@@ -1,5 +1,28 @@
 import cardData from './data.json';
 
+import Fool from 'assets/cards/fool.webp';
+import Magician from 'assets/cards/magician.webp';
+import Priestess from 'assets/cards/high-priestess.webp';
+import Empress from 'assets/cards/empress.webp';
+import Emperor from 'assets/cards/emperor.webp';
+import Hierophant from 'assets/cards/hierophant.webp';
+import Lovers from 'assets/cards/lovers.webp';
+import Chariot from 'assets/cards/chariot.webp';
+import Strength from 'assets/cards/strength.webp';
+import Hermit from 'assets/cards/hermit.webp';
+import Wheel from 'assets/cards/wheel.webp';
+import Justice from 'assets/cards/justice.webp';
+import Hanged from 'assets/cards/hanged-man.webp';
+import Death from 'assets/cards/death.webp';
+import Temperance from 'assets/cards/temperance.webp';
+import Devil from 'assets/cards/devil.webp';
+import Tower from 'assets/cards/tower.webp';
+import Star from 'assets/cards/star.webp';
+import Moon from 'assets/cards/moon.webp';
+import Sun from 'assets/cards/sun.webp';
+import Judgement from 'assets/cards/judgement.webp';
+import World from 'assets/cards/world.webp';
+
 export type TarotDeck = TarotCard[];
 
 export interface TarotSuit {
@@ -31,6 +54,31 @@ export interface TarotCard {
 }
 
 export const TarotDeckData = cardData.cards as TarotDeck;
+
+export const ArcanaArt = [
+    Fool,
+    Magician,
+    Priestess,
+    Empress,
+    Emperor,
+    Hierophant,
+    Lovers,
+    Chariot,
+    Strength,
+    Hermit,
+    Wheel,
+    Justice,
+    Hanged,
+    Death,
+    Temperance,
+    Devil,
+    Tower,
+    Star,
+    Moon,
+    Sun,
+    Judgement,
+    World,
+];
 
 export const TarotSuitData: TarotSuit[] = [
     {
