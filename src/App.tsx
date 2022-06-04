@@ -1,9 +1,10 @@
-import React from 'react'
+import React from 'react';
 import { Route, Routes } from 'react-router-dom';
-import { QueryClient, QueryClientProvider } from 'react-query'
+import { QueryClient, QueryClientProvider } from 'react-query';
+import { createWebStoragePersistor } from 'react-query/createWebStoragePersistor-experimental';
+import { persistQueryClient } from 'react-query/persistQueryClient-experimental';
 
 import useStore from 'stores/index';
-import { useTokenStore } from 'stores/provenance';
 
 import HomePage from 'pages/home';
 import ConnectPage from 'pages/connect';
@@ -18,14 +19,18 @@ import ScrollToTop from 'ui/scroll-to-top';
 import Modal from 'ui/modal';
 
 
+// This query agent does the heavy lifting for querying, caching and persisting data from backend canisters.
 const queryClient = new QueryClient()
+const localStoragePersistor = createWebStoragePersistor({ storage: window.localStorage });
+persistQueryClient({
+    queryClient,
+    persistor: localStoragePersistor,
+});
 
 
 function App() {
     const { init } = useStore();
-    const { capFetchRoots } = useTokenStore();
     React.useEffect(() => {
-        capFetchRoots();
         init();
     }, []);
     return <>

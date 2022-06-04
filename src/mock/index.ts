@@ -1,9 +1,9 @@
-import { Collection, CAPEvent } from 'stores/index'
+import { Collection } from 'stores/index'
 import Disk from 'assets/disk/8.png'
 import { MintingEvent } from 'stores/minting';
 import { DateTime } from 'luxon';
-import { Transaction } from 'src/logic/transactions';
 import { encodeTokenIdentifier } from 'ictool';
+import { CAPEvent, Transaction } from 'apis/cap';
 
 export default function makeEvents (count : number = 3) : { [ key : MintingEvent['id']] : MintingEvent } {
     let events : { [ key : MintingEvent['id']] : MintingEvent } = {};

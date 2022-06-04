@@ -35,8 +35,6 @@ export function SunIcon ({
     size = 'small',
 } : SunProps) {
 
-    const { edges, setEdges } = useStore();
-
     const r = (width && height) ? Math.min(width, height) : sizeMap[size];
     const rayMap : { [key in Size] : number } = {
         tiny: 8,
@@ -56,7 +54,7 @@ export function SunIcon ({
         rayPaths.push([[x1, y1], [x2, y2]]);
     }
     return <svg
-        className={[Styles.root, edges ? Styles.edges : '', Styles[size]].join(' ')}
+        className={[Styles.root, Styles[size]].join(' ')}
         viewBox={`-${r} -${r} ${r * 2} ${r * 2}`}
         strokeWidth={`${thickness}px`}
         style={{ width : width || sizeMap[size], height: height || sizeMap[size] }}
@@ -79,7 +77,6 @@ export function MoonIcon ({
     body = .75,
     shadow = .75,
 }: MoonProps) {
-    const { edges, setEdges } = useStore();
 
     const r = (width && height) ? Math.min(width, height) : sizeMap[size];
 
@@ -88,7 +85,7 @@ export function MoonIcon ({
     const shadowY = -r * body * shadow * .75;
 
     return <svg
-        className={[Styles.root, edges ? Styles.edges : '', Styles[size]].join(' ')}
+        className={[Styles.root, Styles[size]].join(' ')}
         viewBox={`-${r} -${r} ${r * 2} ${r * 2}`}
         strokeWidth={`${thickness}px`}
         style={{ width : width || sizeMap[size], height: height || sizeMap[size] }}
@@ -113,12 +110,11 @@ export function MenuIcon ({
     width,
     height,
 } : MenuProps) {
-    const { edges, setEdges } = useStore();
     
     const r = (width && height) ? Math.min(width, height) : sizeMap[size];
 
     return <svg
-        className={[Styles.root, edges ? Styles.edges : '', Styles[size]].join(' ')}
+        className={[Styles.root, Styles[size]].join(' ')}
         viewBox={`-${r} -${r} ${r * 2} ${r * 2}`}
         strokeWidth={`${thickness}px`}
         style={{ width : width || sizeMap[size], height: height || sizeMap[size] }}

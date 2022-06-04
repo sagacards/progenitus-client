@@ -3,13 +3,13 @@ import hash from 'string-hash'
 import Styles from './styles.module.css'
 
 interface Props {
-    name    : string;
+    name?   : string;
     size?   : string;
     radius? : string;
 }
 
 export default function Hashatar ({
-    name,
+    name = 'default',
     size = '100%',
 } : Props) {
     const hue = React.useMemo(() => hash(name) % 360, [name]);

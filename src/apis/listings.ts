@@ -2,11 +2,10 @@ import { Principal } from '@dfinity/principal';
 import { DateTime } from 'luxon';
 import { ExtListing, TokenIndex } from 'canisters/legends/legends.did.d';
 import { mapDate } from 'stores/minting';
-import { Price } from 'src/logic/transactions';
 import { useQueries, useQuery } from 'react-query';
 import { getLegendActor } from 'stores/actors';
-import { useTokenStore } from 'stores/provenance';
 import { encodeTokenIdentifier } from 'ictool';
+import { useTarotDAB } from './dab';
 
 
 ////////////
@@ -20,8 +19,15 @@ export interface Listing {
     id: number;
     canister: string;
     locked?: DateTime;
-    seller: Principal;
+    seller: string;
     price: Price;
+};
+
+// An exponent price object (from CAP).
+export interface Price {
+    value: number,
+    currency: string,
+    decimals: number,
 };
 
 
@@ -40,7 +46,7 @@ function mapListing (
         token: encodeTokenIdentifier(canister, index),
         id: index,
         locked: listing.locked.length ? mapDate(listing.locked[0]) : undefined,
-        seller: listing.seller as unknown as Principal, // Principal lib mismatch
+        seller: listing.seller.toText(),
         price: mapPrice(listing.price),
     };
 };
@@ -112,11 +118,12 @@ export function useCanisterListings (
 
 // Hook to retrieve listings for all Legends canisters.
 export function useAllLegendListings () {
-    const { dab } = useTokenStore();
-    const query = useQueries(Object.keys(dab).map(canister => ({
-        queryKey: `listings-${canister}`,
-        queryFn: () => fetchListings(canister),
-    })));
+    const { data : dab } = useTarotDAB();
+    const query = useQueries(dab?.map(canister => ({
+        queryKey: `listings-${canister.principal}`,
+        queryFn: () => fetchListings(canister.principal),
+        enabled: !!dab,
+    })) || []);
     return query.reduce((agg, query) => ([
         ...agg,
         ...query?.data || [],

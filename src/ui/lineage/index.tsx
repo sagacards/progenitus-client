@@ -12,9 +12,9 @@ interface Props {
     to?: string;
     from?: string;
     operation: operation;
-    collection : {
+    collection?: {
         name: string;
-        icon?: string;
+        thumbnail: string;
     }
 }
 
@@ -39,8 +39,8 @@ export default function Lineage (props : Props) {
             <div className={Styles.tip}>Creator: Saga Cards</div>
         </div>
         <div className={Styles.item}>
-            <div className={Styles.disk}>{props.collection.icon ? <img className={Styles.image} src={props.collection.icon} /> : <Hashatar name={props.collection.name} />}</div>
-            <div className={Styles.tip}>Collection: {props.collection.name}</div>
+            <div className={Styles.disk}>{props?.collection?.thumbnail ? <img className={Styles.image} src={props.collection.thumbnail} /> : <Hashatar name={props?.collection?.name} />}</div>
+            <div className={Styles.tip}>Collection: {props?.collection?.name}</div>
         </div>
         {props.from && <div className={Styles.item}>
             <div className={Styles.disk}><Hashatar name={props.from} /></div>

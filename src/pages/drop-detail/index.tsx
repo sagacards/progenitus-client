@@ -5,9 +5,8 @@ import { Principal } from '@dfinity/principal';
 import { principalToAddress } from 'ictool';
 import { DateTime } from 'luxon';
 
-import useStore, { CAPEvent, eventIsMintable, eventIsTimeGated, mint, icConf } from 'stores/index';
+import useStore, { eventIsMintable, eventIsTimeGated, mint, icConf } from 'stores/index';
 import useMessageStore from 'stores/messages';
-import { useTokenStore } from 'stores/provenance';
 
 import Button from 'ui/button';
 import Container from 'ui/container';
@@ -26,13 +25,14 @@ import useModalStore from 'ui/modal/store';
 import MintScene from 'src/three/mint-scene';
 
 import Styles from './styles.module.css'
+import { CAPEvent, useProvenance } from 'apis/cap';
 
 interface Props {};
 
 export default function DropDetailPage (props : Props) {
     const { canister, index } = useParams();
     const { actors : { bazaar }, principal, connecting, connected, getEvent, eventsLastFetch, fetchEvents, balance, fetchSupply, eventSupply, isMinting, setIsMinting, setMintResult, mintResult, fetchBalance, wallet } = useStore();
-    const { cap : { [canister as string] : transactions }, capPoll, filtersSet, capRoots } = useTokenStore();
+    const { events } = useProvenance(canister as string);
     const { pushMessage } = useMessageStore();
     const { open } = useModalStore();
 
@@ -171,30 +171,24 @@ export default function DropDetailPage (props : Props) {
         .finally(() => setIsMinting(false));
     }, [event, supplyRemaining, connected, balance, spots, bazaar, index]);
 
-    React.useEffect(() => {
-        if (!canister) return;
-        filtersSet([Principal.fromText(canister)]);
-        capPoll(canister);
-    }, [canister, capRoots]);
-
     // Redirect home if event not found.
     if (!event && eventsAreFresh || !canister) return <Navigate to="/" />;
 
     const collection = event?.collection;
 
-    const mints = React.useMemo(() => transactions?.filter(x => {
+    const mints = React.useMemo(() => events?.filter(x => {
         if (x.operation !== 'mint') return false;
         if (mine) {
             if (!principal) return false;
             if (principalToAddress(principal) !== x.to) return false
         };
         return true;
-    }), [transactions, mine, principal]);
+    }), [events, mine, principal]);
 
-    const transfers = React.useMemo(() => transactions?.filter(x => {
+    const transfers = React.useMemo(() => events?.filter(x => {
         if (!['transfer', 'sale'].includes(x.operation)) return false;
         return true;
-    }), [transactions, principal]);
+    }), [events, principal]);
     
     return <>
         <Navbar />

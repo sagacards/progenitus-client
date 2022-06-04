@@ -13,12 +13,11 @@ import { createMintingSlice, MintingStore } from 'stores/minting';
 
 // Reexport submodules for convenience
 import { Wallet } from 'stores/connect';
-import { CAPEvent } from 'stores/provenance';
 import { Listing } from 'apis/listings';
 import { Token } from 'stores/likes';
 import { eventIsMintable, eventIsTimeGated, mint, Collection } from 'stores/minting';
 import { icConf } from 'stores/connect';
-export type { CAPEvent, Listing, Token, Collection, Wallet };
+export type { Listing, Token, Collection, Wallet };
 export { eventIsMintable, eventIsTimeGated, mint, icConf };
 
 // The store is broken into manageably sized "slices." Each slice is a function which creates a piece of the complete store (defined by this type).

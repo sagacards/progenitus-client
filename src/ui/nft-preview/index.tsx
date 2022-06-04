@@ -1,5 +1,5 @@
 import React from 'react'
-import useStore, { CAPEvent, Listing } from 'stores/index'
+import useStore, { Listing } from 'stores/index'
 import Lineage from 'ui/lineage'
 import Spinner from 'ui/spinner'
 import Styles from './styles.module.css'
@@ -7,10 +7,10 @@ import { FaHeart } from 'react-icons/fa'
 import dayjs from 'dayjs'
 import relativetime from 'dayjs/plugin/relativeTime'
 import { Principal } from '@dfinity/principal'
-import { useTokenStore } from 'stores/provenance'
 import { decodeTokenIdentifier, principalToAddress } from 'ictool'
-import { Transaction } from 'src/logic/transactions'
 import { priceDisplay, priceConvertDisplay } from 'apis/listings'
+import { CAPEvent, Transaction } from 'apis/cap'
+import { useTarotDAB } from 'apis/dab'
 
 dayjs.extend(relativetime);
 
@@ -82,12 +82,11 @@ export default function NFTPreview (props : Props) {
         };
     }, [likes, principal]);
 
-    const { dab } = useTokenStore();
-
-    const collection = dab[token.canister];
+    const { data: dab } = useTarotDAB();
+    const collection = React.useMemo(() => dab?.find(c => c.principal === token.canister), [dab]);
 
     return <div className={[Styles.root, mine ? Styles.mine : ''].join(' ')} onMouseEnter={() => { setPlay(true); fetchAnimated(); }} onMouseLeave={() => setPlay(false)}>
-        <Lineage to={props.to} from={props.from || props.listing?.seller.toHex()} collection={collection} operation={props.event?.type || 'listing'} />
+        <Lineage to={props.to} from={props.from || props.listing?.seller} collection={collection} operation={props.event?.type || 'listing'} />
         <div className={Styles.stage}>
             {readyStatic && <img className={Styles.static} src={`https://${token.canister}.raw.ic0.app/${token.index}.webp`} />}
             {animated && <video className={[Styles.animated, play && animated ? Styles.animatedPlay : ''].join(' ')} loop autoPlay muted>

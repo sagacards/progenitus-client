@@ -6,6 +6,7 @@ import Spinner from 'ui/spinner';
 import WalletIcon from 'ui/wallet-icon';
 import Styles from './styles.module.css'
 import { FaArrowDown } from 'react-icons/fa'
+import useMessageStore from 'stores/messages';
 
 interface Props {
     children?: React.ReactNode;
@@ -13,7 +14,8 @@ interface Props {
 
 export default function Swap (props : Props) {
 
-    const { principal, pushMessage, deposit, withdraw, icpToUSD, fetchBalance } = useStore()
+    const { principal, deposit, withdraw, icpToUSD, fetchBalance } = useStore()
+    const { pushMessage } = useMessageStore();
 
     const [active, setActive] = React.useState<'deposit' | 'withdraw'>('deposit');
     const [amount, setAmount] = React.useState<string>('0');

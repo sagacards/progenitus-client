@@ -28,11 +28,3 @@ export const globalTypes = {
     }
   },
 };
-
-// function theme (Story, context) {
-//   console.log(context);
-// };
-
-// export const decorators = [theme];
-
-// document.querySelector('html')?.setAttribute('data-theme', colorScheme);
