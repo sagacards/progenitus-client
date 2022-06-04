@@ -1,5 +1,8 @@
 import { CompleteStore, StoreSlice } from '.';
 
-export interface TEMPLATEStore {};
+export interface TEMPLATEStore {}
 
-export const createTEMPLATEStore : StoreSlice<TEMPLATEStore, CompleteStore> = (set, get) => ({});
+export const createTEMPLATEStore: StoreSlice<TEMPLATEStore, CompleteStore> = (
+    set,
+    get
+) => ({});

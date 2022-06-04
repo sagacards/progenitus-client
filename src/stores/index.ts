@@ -1,7 +1,7 @@
 // The root Bazaar application store.
 
-import create, { GetState, SetState } from 'zustand'
-import { Actor } from '@dfinity/agent'
+import create, { GetState, SetState } from 'zustand';
+import { Actor } from '@dfinity/agent';
 import { idlFactory as CyclesDID } from 'canisters/cycles/cycles.did';
 
 // Slices of the store.
@@ -15,7 +15,12 @@ import { createMintingSlice, MintingStore } from 'stores/minting';
 import { Wallet } from 'stores/connect';
 import { Listing } from 'apis/listings';
 import { Token } from 'stores/likes';
-import { eventIsMintable, eventIsTimeGated, mint, Collection } from 'stores/minting';
+import {
+    eventIsMintable,
+    eventIsTimeGated,
+    mint,
+    Collection,
+} from 'stores/minting';
 import { icConf } from 'stores/connect';
 export type { Listing, Token, Collection, Wallet };
 export { eventIsMintable, eventIsTimeGated, mint, icConf };
@@ -28,25 +33,30 @@ export type StoreSlice<T extends object, E extends object = T> = (
 ) => T;
 
 // Interface of the complete store extends all its slices.
-export interface CompleteStore extends ActorsStore, ConnectStore, AccountStore, MintingStore, CatchallStore, LikesStore { }
+export interface CompleteStore
+    extends ActorsStore,
+        ConnectStore,
+        AccountStore,
+        MintingStore,
+        CatchallStore,
+        LikesStore {}
 
 // Some things didn't fit into their own store.
 interface CatchallStore {
-
     icpToUSD?: number;
 
     init: () => void;
     didInit: boolean;
-
-};
+}
 
 // Catchall store creation function.
-export const createCatchallSlice: StoreSlice<CatchallStore, CompleteStore> = (set, get) => ({
-
+export const createCatchallSlice: StoreSlice<CatchallStore, CompleteStore> = (
+    set,
+    get
+) => ({
     didInit: false,
 
     async init() {
-
         const { didInit, initConnect, fetchBalance, fetchEvents } = get();
 
         // Idempotent init.
@@ -56,7 +66,7 @@ export const createCatchallSlice: StoreSlice<CatchallStore, CompleteStore> = (se
         initConnect();
 
         // Fetch data.
-        fetchBalance()
+        fetchBalance();
         fetchEvents();
 
         // Get ICP to USD exchange rate
@@ -64,13 +74,16 @@ export const createCatchallSlice: StoreSlice<CatchallStore, CompleteStore> = (se
             agent: defaultAgent,
             canisterId: 'rkp4c-7iaaa-aaaaa-aaaca-cai',
         }).get_icp_xdr_conversion_rate();
-        const xdr = await fetch("https://free.currconv.com/api/v7/convert?q=XDR_USD&compact=ultra&apiKey=df6440fc0578491bb13eb2088c4f60c7").then(r => r.json());
-        const icpToUSD = Number(cycles.data.xdr_permyriad_per_icp) / 10000 * (xdr.hasOwnProperty("XDR_USD") ? xdr.XDR_USD : 1.4023);
+        const xdr = await fetch(
+            'https://free.currconv.com/api/v7/convert?q=XDR_USD&compact=ultra&apiKey=df6440fc0578491bb13eb2088c4f60c7'
+        ).then(r => r.json());
+        const icpToUSD =
+            (Number(cycles.data.xdr_permyriad_per_icp) / 10000) *
+            (xdr.hasOwnProperty('XDR_USD') ? xdr.XDR_USD : 1.4023);
 
         set({ icpToUSD, didInit: true });
     },
-
-})
+});
 
 // Create the root store.
 const createStore = (set: SetState<any>, get: GetState<any>) => ({

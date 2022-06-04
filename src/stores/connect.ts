@@ -1,17 +1,16 @@
 // A slice of the Bazaar store handling connection to the IC.
 
-import { StoicIdentity } from 'ic-stoic-identity'
-import { Principal } from '@dfinity/principal'
-import { ActorSubclass, HttpAgent } from '@dfinity/agent'
-import { IDL } from '@dfinity/candid'
-import { CompleteStore, StoreSlice } from 'stores/index'
-import { whitelist } from 'stores/actors'
-import { toHexString } from 'ictool'
-
+import { StoicIdentity } from 'ic-stoic-identity';
+import { Principal } from '@dfinity/principal';
+import { ActorSubclass, HttpAgent } from '@dfinity/agent';
+import { IDL } from '@dfinity/candid';
+import { CompleteStore, StoreSlice } from 'stores/index';
+import { whitelist } from 'stores/actors';
+import { toHexString } from 'ictool';
 
 export const icConf = {
-    protocol: import.meta.env.PROGENITUS_IC_PROTOCOL as string || 'https',
-    host: import.meta.env.PROGENITUS_IC_HOST as string || 'ic0.app',
+    protocol: (import.meta.env.PROGENITUS_IC_PROTOCOL as string) || 'https',
+    host: (import.meta.env.PROGENITUS_IC_HOST as string) || 'ic0.app',
     isLocal: import.meta.env.PROGENITUS_IS_LOCAL === 'true',
 };
 
@@ -22,8 +21,8 @@ export const defaultAgent = new HttpAgent({ host });
 export type Wallet = 'plug' | 'stoic' | 'earth' | 'ii';
 
 export interface ICP8s {
-    e8s : number;
-};
+    e8s: number;
+}
 
 export interface ConnectStore {
     initialized: boolean;
@@ -40,43 +39,43 @@ export interface ConnectStore {
     plugReconnect: () => Promise<boolean>;
     stoicReconnect: () => Promise<boolean>;
 
-    walletBalance?  : ICP8s;
-    walletBalanceDisplay: () => number | undefined
+    walletBalance?: ICP8s;
+    walletBalanceDisplay: () => number | undefined;
 
     disconnect: () => Promise<void>;
 
     principal?: Principal;
     wallet?: Wallet;
-};
+}
 
-export const createConnectSlice : StoreSlice<ConnectStore, CompleteStore> = (set, get) => ({
-
+export const createConnectSlice: StoreSlice<ConnectStore, CompleteStore> = (
+    set,
+    get
+) => ({
     // Boolean connection state
     connected: false,
     connecting: false,
 
     // Run once on startup should be called from the root store's init function.
     initialized: false,
-    initConnect () {
-
-        const { initialized, plugReconnect, stoicReconnect, } = get();
+    initConnect() {
+        const { initialized, plugReconnect, stoicReconnect } = get();
         if (initialized) return;
 
         // Attempt to reconnect to wallets
         try {
-            plugReconnect()
-            .then(r => {
-                if (!r) stoicReconnect()
+            plugReconnect().then(r => {
+                if (!r) stoicReconnect();
             });
         } catch (e) {
             console.error(e);
         }
 
-        set({ initialized : true });
+        set({ initialized: true });
     },
 
     // Ensures only one connection attempt when implemented properly.
-    idempotentConnect () {
+    idempotentConnect() {
         const { connecting } = get();
         if (connecting) return null;
         set({ connecting: true });
@@ -86,39 +85,38 @@ export const createConnectSlice : StoreSlice<ConnectStore, CompleteStore> = (set
     },
 
     // Request connection to user's stoic wallet.
-    async stoicConnect () {
-
+    async stoicConnect() {
         const { idempotentConnect, postConnect } = get();
 
         // Ensure singular connection attempt.
-        const complete = idempotentConnect()
+        const complete = idempotentConnect();
         if (complete === null) return;
 
-        StoicIdentity.load().then(async (identity : any) => {
-            if (!identity) {
-              identity = await StoicIdentity.connect();
-            };
+        StoicIdentity.load()
+            .then(async (identity: any) => {
+                if (!identity) {
+                    identity = await StoicIdentity.connect();
+                }
 
-            const agent = new HttpAgent({
-                identity,
-                host,
-            });
+                const agent = new HttpAgent({
+                    identity,
+                    host,
+                });
 
-            set(() => ({
-                agent,
-                connected: true,
-                principal: identity.getPrincipal(),
-                wallet: 'stoic'
-            }));
-            
-            postConnect();
-        })
-        .finally(complete);
+                set(() => ({
+                    agent,
+                    connected: true,
+                    principal: identity.getPrincipal(),
+                    wallet: 'stoic',
+                }));
+
+                postConnect();
+            })
+            .finally(complete);
     },
 
     // Request connection to user's plug wallet.
-    async plugConnect () {
-
+    async plugConnect() {
         const { idempotentConnect, postConnect } = get();
 
         // Ensure singular connection attempt.
@@ -130,7 +128,7 @@ export const createConnectSlice : StoreSlice<ConnectStore, CompleteStore> = (set
             window.open('https://plugwallet.ooo/', '_blank');
             return;
         }
-        
+
         await window.ic.plug.requestConnect({ whitelist, host });
         const agent = await window.ic.plug.agent;
         const principal = await agent.getPrincipal();
@@ -141,10 +139,13 @@ export const createConnectSlice : StoreSlice<ConnectStore, CompleteStore> = (set
     },
 
     // Attempt to restore a live connection to user's plug wallet.
-    async plugReconnect () {
+    async plugReconnect() {
         const { postConnect } = get();
         const plug = window?.ic?.plug;
-        if (await plug?.isConnected() && window.localStorage.getItem('wallet') === 'plug') {
+        if (
+            (await plug?.isConnected()) &&
+            window.localStorage.getItem('wallet') === 'plug'
+        ) {
             const agent = await plug?.agent;
 
             if (!agent) {
@@ -162,26 +163,33 @@ export const createConnectSlice : StoreSlice<ConnectStore, CompleteStore> = (set
     },
 
     // Attempt to restore a live connection to user's stoic wallet.
-    async stoicReconnect () {
+    async stoicReconnect() {
         const { stoicConnect } = get();
-        if (window.localStorage.getItem('_scApp') && window.localStorage.getItem('wallet') === 'stoic') {
+        if (
+            window.localStorage.getItem('_scApp') &&
+            window.localStorage.getItem('wallet') === 'stoic'
+        ) {
             stoicConnect();
             return true;
-        };
+        }
         return false;
     },
 
     // Things that happen after a wallet connection.
-    async postConnect () {
+    async postConnect() {
         const { wallet, createActors } = get();
 
         // Track connected wallet
         wallet && window.localStorage.setItem('wallet', wallet);
 
         // Update identity on actors
-        await createActors()
+        await createActors();
 
-        const { fetchBalance, actors : { bazaar }, fetchLikes } = get();
+        const {
+            fetchBalance,
+            actors: { bazaar },
+            fetchLikes,
+        } = get();
 
         // Fetch user's likes
         fetchLikes();
@@ -192,11 +200,10 @@ export const createConnectSlice : StoreSlice<ConnectStore, CompleteStore> = (set
 
         // Update account balance
         fetchBalance();
-
     },
 
     // Disconnect from users wallet.
-    async disconnect () {
+    async disconnect() {
         const { createActors } = get();
         StoicIdentity.disconnect();
         window.ic?.plug?.deleteAgent && window.ic?.plug?.deleteAgent();
@@ -209,19 +216,17 @@ export const createConnectSlice : StoreSlice<ConnectStore, CompleteStore> = (set
         window.localStorage.removeItem('wallet');
         await createActors();
     },
-    
+
     // Display-ready wallet balance.
-    walletBalanceDisplay () {
-        const { walletBalance : balance } = get();
+    walletBalanceDisplay() {
+        const { walletBalance: balance } = get();
         if (balance) {
-            return (balance.e8s / 10 ** 8);
+            return balance.e8s / 10 ** 8;
         } else {
             return undefined;
         }
     },
-
 });
-
 
 // This is the stuff that plug wallet extension stuffs into the global window namespace.
 // I stole this for Norton: https://github.com/FloorLamp/cubic/blob/3b9139b4f2d16bf142bf35f2efb4c29d6f637860/src/ui/components/Buttons/LoginButton.tsx#L59
@@ -230,31 +235,31 @@ declare global {
         ic?: {
             plug?: {
                 agent: any;
-                createActor: <T>(args : {
-                    canisterId          : string,
-                    interfaceFactory    : IDL.InterfaceFactory,
-                }) => Promise<ActorSubclass<T>>,
-                isConnected : () => Promise<boolean>;
-                createAgent : (args?: {
-                    whitelist   : string[];
-                    host?       : string;
+                createActor: <T>(args: {
+                    canisterId: string;
+                    interfaceFactory: IDL.InterfaceFactory;
+                }) => Promise<ActorSubclass<T>>;
+                isConnected: () => Promise<boolean>;
+                createAgent: (args?: {
+                    whitelist: string[];
+                    host?: string;
                 }) => Promise<undefined>;
                 requestBalance: () => Promise<
                     Array<{
-                        amount      : number;
-                        canisterId  : string | null;
-                        image       : string;
-                        name        : string;
-                        symbol      : string;
-                        value       : number | null;
+                        amount: number;
+                        canisterId: string | null;
+                        image: string;
+                        name: string;
+                        symbol: string;
+                        value: number | null;
                     }>
                 >;
                 requestTransfer: (arg: {
-                    to      : string;
-                    amount  : number;
-                    opts?   : {
-                        fee?            : number;
-                        memo?           : number;
+                    to: string;
+                    amount: number;
+                    opts?: {
+                        fee?: number;
+                        memo?: number;
                         from_subaccount?: number;
                         created_at_time?: {
                             timestamp_nanos: number;

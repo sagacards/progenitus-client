@@ -1,22 +1,29 @@
 // CAP is a service that provides provenance for NFTs. We query this service for a history of transaction and minting events across all NFT canisters.
 
 import { Principal } from '@dfinity/principal';
-import { Event as TransactionEvent, CapRouter, CapRoot, prettifyCapTransactions } from '@psychedelic/cap-js';
+import {
+    Event as TransactionEvent,
+    CapRouter,
+    CapRoot,
+    prettifyCapTransactions,
+} from '@psychedelic/cap-js';
 import { decodeTokenIdentifier } from 'ictool';
-import { useQuery } from 'react-query';
+import { useQueries, useQuery } from 'react-query';
 import { host } from 'stores/connect';
 import { useTarotDAB } from './dab';
 import { Price } from './listings';
-
 
 ////////////
 // Types //
 //////////
 
-
 // ...
-export interface Transaction extends Omit<TransactionEvent, 'to' | 'from' | 'caller' | 'operation' | 'time'> {
-    item: number,
+export interface Transaction
+    extends Omit<
+        TransactionEvent,
+        'to' | 'from' | 'caller' | 'operation' | 'time'
+    > {
+    item: number;
     to: string;
     from: string;
     caller: string;
@@ -46,145 +53,158 @@ type TokenFields = TokenField[];
 export interface CAPEvent {
     timestamp: Date;
     type: 'mint' | 'transfer' | 'sale';
-};
-
+}
 
 //////////////
 // Mapping //
 ////////////
 
-
 // Map a list of CAP events for use in this application.
-export function mapCAP (
-    data?: TransactionEvent[]
-): Transaction[] {
+export function mapCAP(data?: TransactionEvent[]): Transaction[] {
     if (!data || !Array.isArray(data) || !data.length) return [];
 
-    return data.reduce<Transaction[]>((agg, transaction) => {
-        // Filter out transaction without a timestamp.
-        if (transaction.time === undefined) {
-            return agg;
-        }
-        
-        let t = Number(transaction.time);
-        while (t > 9999999999999) {
-            t = t / 10;
-        }
-        const { details } = prettifyCapTransactions(transaction) as unknown as { details: TransactionDetails };
+    return (
+        data
+            .reduce<Transaction[]>((agg, transaction) => {
+                // Filter out transaction without a timestamp.
+                if (transaction.time === undefined) {
+                    return agg;
+                }
 
-        // TODO: To remove "possible fields" as the Token Standard field is now available!
-        // TODO: there are no conventions on naming fields
-        // so, for the moment will check for matching token
-        const possibleFields: TokenFields = ['token', 'token_id', 'tokenId'];
-        const tokenField = possibleFields.find((field) => details[field]);
+                let t = Number(transaction.time);
+                while (t > 9999999999999) {
+                    t = t / 10;
+                }
+                const { details } = prettifyCapTransactions(
+                    transaction
+                ) as unknown as { details: TransactionDetails };
 
-        if (!tokenField) return agg;
+                // TODO: To remove "possible fields" as the Token Standard field is now available!
+                // TODO: there are no conventions on naming fields
+                // so, for the moment will check for matching token
+                const possibleFields: TokenFields = [
+                    'token',
+                    'token_id',
+                    'tokenId',
+                ];
+                const tokenField = possibleFields.find(field => details[field]);
 
-        const itemHandler = (details: TransactionDetails, tokenField: TokenField) => {
-            let tokenIndex: number | undefined;
+                if (!tokenField) return agg;
 
-            if (typeof details?.token_id === 'bigint') {
-                return details.token_id;
-            }
+                const itemHandler = (
+                    details: TransactionDetails,
+                    tokenField: TokenField
+                ) => {
+                    let tokenIndex: number | undefined;
 
-            try {
-                const tokenIdText = details[tokenField];
+                    if (typeof details?.token_id === 'bigint') {
+                        return details.token_id;
+                    }
 
-                if (!tokenIdText) throw Error('Oops! Token field not found');
+                    try {
+                        const tokenIdText = details[tokenField];
 
-                const { index } = decodeTokenIdentifier(tokenIdText);
-                tokenIndex = index;
+                        if (!tokenIdText)
+                            throw Error('Oops! Token field not found');
 
-                if (!tokenIndex) throw Error('Oops! Not a valid tokenIndex');
-            } catch (err) {
-                // console.warn(err);
-            }
+                        const { index } = decodeTokenIdentifier(tokenIdText);
+                        tokenIndex = index;
 
-            return tokenIndex;
-        };
+                        if (!tokenIndex)
+                            throw Error('Oops! Not a valid tokenIndex');
+                    } catch (err) {
+                        // console.warn(err);
+                    }
 
-        return [
-            ...agg,
-            {
-                ...transaction,
-                item: tokenField
-                    ? itemHandler(
-                        details,
-                        tokenField,
-                    )
-                    : undefined,
-                to: details?.to?.toString(),
-                from: details?.from?.toString(),
-                price: {
-                    value: Number(details?.price),
-                    currency: details?.price_currency,
-                    decimals: Number(details?.price_decimals),
-                },
-                token: tokenField && details[tokenField],
-                operation: transaction.operation,
-                time: new Date(t),
-            }
-        ]
-    }, [])
-    // Reverse the order
-    // because the natural order that the data is presented
-    // from the response, is at the very top
-    // showing the oldest transaction in the page
-    .sort((a, b) => b.time.getTime() - a.time.getTime());
+                    return tokenIndex;
+                };
+
+                return [
+                    ...agg,
+                    {
+                        ...transaction,
+                        item: tokenField
+                            ? itemHandler(details, tokenField)
+                            : undefined,
+                        to: details?.to?.toString(),
+                        from: details?.from?.toString(),
+                        price: {
+                            value: Number(details?.price),
+                            currency: details?.price_currency,
+                            decimals: Number(details?.price_decimals),
+                        },
+                        token: tokenField && details[tokenField],
+                        operation: transaction.operation,
+                        time: new Date(t),
+                    },
+                ];
+            }, [])
+            // Reverse the order
+            // because the natural order that the data is presented
+            // from the response, is at the very top
+            // showing the oldest transaction in the page
+            .sort((a, b) => b.time.getTime() - a.time.getTime())
+    );
 }
-
 
 ///////////////
 // Fetching //
 /////////////
 
-
 const Router = CapRouter.init({});
 
 // Get CAP for given canister. NFT canisters have sister CAP canisters storing provenance.
-async function fetchRoot (
-    canister : string,
-) : Promise<string> {
-    const root = await (await Router).get_token_contract_root_bucket({
+async function fetchRoot(canister: string): Promise<string> {
+    const root = await (
+        await Router
+    ).get_token_contract_root_bucket({
         // @ts-ignore: principal lib mismatch
         tokenId: Principal.fromText(canister),
         witness: false,
-    })
+    });
     return root.canister[0].toText();
-};
+}
 
 // Get provenance events from a given CAP canister.
-async function fetchEvents (
-    canisterId : string,
-) : Promise<Transaction[]> {
+async function fetchEvents(canisterId: string): Promise<Transaction[]> {
     // We grab the two most recent pages from the history canister.
-    const root = await CapRoot.init({ canisterId, host, });
+    const root = await CapRoot.init({ canisterId, host });
     const response = await Promise.all([
         root.get_transactions({ witness: false }),
         root.get_transactions({ witness: false, page: 2 }),
     ]);
 
     // Map and return the data for use in this app.
-    return mapCAP(response.reduce((agg, i) => ([...agg, ...i.data]), []));
-};
-
+    return mapCAP(response.reduce((agg, i) => [...agg, ...i.data], []));
+}
 
 ////////////
 // Hooks //
 //////////
 
 // Hook to retrieve provenance events for a given NFT canister.
-export function useProvenance (
-    canister : string,
-) {
-
+export function useProvenance(canister: string) {
     // Retrieve provenance canister for this NFT canister.
-    const { data : root } = useQuery(`provenance-root-${canister}`, () => fetchRoot(canister));
+    const { data: root } = useQuery(
+        `provenance-root-${canister}`,
+        () => fetchRoot(canister),
+        {
+            cacheTime: 30 * 24 * 60 * 60_000,
+            staleTime: 30 * 24 * 60 * 60_000,
+        }
+    );
 
     // Retrieve provenance events for this NFT canister.
-    const query = useQuery(`provenance-events-${canister}`, () => fetchEvents(root as string), {
-        enabled: !!root,
-    });
+    const query = useQuery(
+        `provenance-events-${canister}`,
+        () => fetchEvents(root as string),
+        {
+            enabled: !!root,
+            cacheTime: 60_000,
+            staleTime: 60_000,
+            refetchInterval: 60_000,
+        }
+    );
 
     return {
         events: query.data,
@@ -192,14 +212,37 @@ export function useProvenance (
         error: query.error,
         query,
     };
-};
+}
 
-// // Retrieve all tarot NFT canisters.
-// const { data : canisters } = useTarotDAB();
-        
-// // Retrieve CAP roots for all tarot NFT canisters.
-// // Pluck CAP root for this NFT canister.
-// const root = React.useMemo(() => canisters?.find(c => c.principal === canister), [canisters]);
-// if (canisters?.length && !root) {
-//     throw new Error(`Cannot find a CAP root for canister "${canister}"`);
-// }
+// Hook to retrieve provenance for all NFT canisters.
+export function useAllProvenance() {
+    // Retrieve all tarot NFT canisters.
+    const { data: canisters } = useTarotDAB();
+
+    // Retrieve cap root for all canisters
+    const roots = useQueries(
+        canisters?.map(c => ({
+            queryKey: `provenance-root-${c.principal}`,
+            queryFn: () => fetchRoot(c.principal),
+            cacheTime: 30 * 24 * 60 * 60_000,
+            staleTime: 30 * 24 * 60 * 60_000,
+        })) || []
+    );
+
+    // Retrieve provenance events for all NFT canisters.
+    const query = useQueries(
+        roots.map(c => ({
+            queryKey: `provenance-events-${c.data}`,
+            queryFn: () => fetchEvents(c.data as string),
+            enabled: !!roots,
+            cacheTime: 60_000,
+            staleTime: 60_000,
+            refetchInterval: 60_000,
+        }))
+    );
+
+    return query.reduce(
+        (agg, x) => [...agg, ...(x.data || [])],
+        [] as Transaction[]
+    );
+}

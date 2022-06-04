@@ -17,15 +17,14 @@ import ScrollRow from 'ui/scroll-row';
 
 import Styles from './styles.module.css'
 import { sortListings, useAllLegendListings } from 'apis/listings';
-import { CAPEvent, useProvenance } from 'apis/cap';
-import { useTarotDAB } from 'apis/dab';
+import { CAPEvent, useAllProvenance } from 'apis/cap';
 
 interface Props { };
 
 export default function HomePage() {
     const { connected } = useStore();
     const listings = useAllLegendListings();
-    const { events } = useProvenance('nges7-giaaa-aaaaj-qaiya-cai')
+    const events = useAllProvenance()
 
     const cards = React.useMemo(() => {
         const cards = Array(22).fill(undefined).map((x, i) => ({

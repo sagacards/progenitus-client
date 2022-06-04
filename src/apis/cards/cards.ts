@@ -32,27 +32,33 @@ export interface TarotCard {
 
 export const TarotDeckData = cardData.cards as TarotDeck;
 
-export const TarotSuitData: TarotSuit[] = [{
-    name: 'Trump',
-    index: 0,
-    cardCount: 22,
-}, {
-    name: 'Cups',
-    index: 1,
-    cardCount: 14,
-}, {
-    name: 'Swords',
-    index: 2,
-    cardCount: 14,
-}, {
-    name: 'Wands',
-    index: 3,
-    cardCount: 14,
-}, {
-    name: 'Pentacles',
-    index: 4,
-    cardCount: 14,
-},];
+export const TarotSuitData: TarotSuit[] = [
+    {
+        name: 'Trump',
+        index: 0,
+        cardCount: 22,
+    },
+    {
+        name: 'Cups',
+        index: 1,
+        cardCount: 14,
+    },
+    {
+        name: 'Swords',
+        index: 2,
+        cardCount: 14,
+    },
+    {
+        name: 'Wands',
+        index: 3,
+        cardCount: 14,
+    },
+    {
+        name: 'Pentacles',
+        index: 4,
+        cardCount: 14,
+    },
+];
 
 export const TarotMajorArcanaData = [
     'The Fool',
@@ -79,16 +85,16 @@ export const TarotMajorArcanaData = [
     'The World',
 ];
 
-export function mapIntToCard (int: number) {
+export function mapIntToCard(int: number) {
     TarotDeckData.sort((a, b) => a.index - b.index);
     try {
         return TarotDeckData[int];
     } catch (e) {
-        throw new Error(`No card exists for integer ${int}.`)
+        throw new Error(`No card exists for integer ${int}.`);
     }
 }
 
-export function mapIntToSuit (int: number) {
+export function mapIntToSuit(int: number) {
     const sortedSuitData = TarotSuitData.sort((a, b) => a.index - b.index);
     let previousSuitSum = 0;
     for (const suit of sortedSuitData) {
@@ -97,12 +103,28 @@ export function mapIntToSuit (int: number) {
         }
         previousSuitSum += suit.cardCount;
     }
-    throw new Error(`No suit exists for integer ${int}.`)
+    throw new Error(`No suit exists for integer ${int}.`);
 }
 
-export function mapIntToCardName (int: number) {
-    const numberAsString = [undefined, 'Ace', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten', 'Page', 'Knight', 'Queen', 'King'];
-    const {number, suit} = mapIntToCard(int);
+export function mapIntToCardName(int: number) {
+    const numberAsString = [
+        undefined,
+        'Ace',
+        'Two',
+        'Three',
+        'Four',
+        'Five',
+        'Six',
+        'Seven',
+        'Eight',
+        'Nine',
+        'Ten',
+        'Page',
+        'Knight',
+        'Queen',
+        'King',
+    ];
+    const { number, suit } = mapIntToCard(int);
     if (suit === 'Trump') {
         return TarotMajorArcanaData[number];
     } else {
@@ -110,8 +132,8 @@ export function mapIntToCardName (int: number) {
     }
 }
 
-export function getCardData (index: number) {
-    return TarotDeckData.find(x => x.index === index) as TarotCard
+export function getCardData(index: number) {
+    return TarotDeckData.find(x => x.index === index) as TarotCard;
 }
 
 export default TarotDeckData;

@@ -1,28 +1,28 @@
 // A slice of the Bazaar store handling actors for communicating with various canisters.
 
-import { Actor, ActorSubclass, HttpAgent } from '@dfinity/agent'
-import { idlFactory as BazaarIDL } from 'canisters/progenitus/progenitus.did'
-import { idlFactory as CyclesIDL } from 'canisters/cycles/cycles.did'
-import { idlFactory as LikesIDL } from 'canisters/likes/likes.did'
-import { idlFactory as LegendsIDL } from 'canisters/legends/legends.did'
-import { idlFactory as NnsIDL } from 'canisters/ledger/ledger.did'
-import { Ledger } from 'canisters/ledger/ledger.did.d'
-import { LegendsNFT } from 'canisters/legends/legends.did.d'
-import { Likes } from 'canisters/likes/likes.did.d'
-import { Rex } from 'canisters/progenitus/progenitus.did.d'
-import { defaultAgent } from 'stores/connect'
-import { CompleteStore, StoreSlice } from 'stores/index'
+import { Actor, ActorSubclass, HttpAgent } from '@dfinity/agent';
+import { idlFactory as BazaarIDL } from 'canisters/progenitus/progenitus.did';
+import { idlFactory as CyclesIDL } from 'canisters/cycles/cycles.did';
+import { idlFactory as LikesIDL } from 'canisters/likes/likes.did';
+import { idlFactory as LegendsIDL } from 'canisters/legends/legends.did';
+import { idlFactory as NnsIDL } from 'canisters/ledger/ledger.did';
+import { Ledger } from 'canisters/ledger/ledger.did.d';
+import { LegendsNFT } from 'canisters/legends/legends.did.d';
+import { Likes } from 'canisters/likes/likes.did.d';
+import { Rex } from 'canisters/progenitus/progenitus.did.d';
+import { defaultAgent } from 'stores/connect';
+import { CompleteStore, StoreSlice } from 'stores/index';
 
 export interface ActorsStore {
     actors: {
-        bazaar: ActorSubclass<Rex>,
-        nns?: ActorSubclass<Ledger>,
-        likes: ActorSubclass<Likes>,
-        cycles: ActorSubclass<Ledger>,
+        bazaar: ActorSubclass<Rex>;
+        nns?: ActorSubclass<Ledger>;
+        likes: ActorSubclass<Likes>;
+        cycles: ActorSubclass<Ledger>;
     };
 
     createActors: () => Promise<void>;
-};
+}
 
 // TODO: How does DAB handle discovery of these IDs? It might be sweet to just swap out the DAB directory for dev/prod.
 export const whitelist = [
@@ -32,8 +32,10 @@ export const whitelist = [
 ];
 
 // Main store function.
-export const createActorsSlice: StoreSlice<ActorsStore, CompleteStore> = (set, get) => ({
-
+export const createActorsSlice: StoreSlice<ActorsStore, CompleteStore> = (
+    set,
+    get
+) => ({
     actors: makeActors(),
 
     async createActors() {
@@ -41,11 +43,13 @@ export const createActorsSlice: StoreSlice<ActorsStore, CompleteStore> = (set, g
 
         // Replace identity on actors.
         // Note: might be nice to use Actor.replaceIdentity, but plug best practice requires a proprietary actor creation method, so I'll stick to recreation for now.
-        const actors = wallet === 'plug' ? await makeActorsPlug() : agent && makeActors(agent);
+        const actors =
+            wallet === 'plug'
+                ? await makeActorsPlug()
+                : agent && makeActors(agent);
 
         set({ actors });
     },
-
 });
 
 // Create all the actors we need using the given agent.
@@ -69,11 +73,12 @@ function makeActors(agent: HttpAgent = defaultAgent) {
         }),
     };
     return actors;
-};
+}
 
 // Creating actors with plug must go through their special API, which also requires us to handle async.
 async function makeActorsPlug() {
-    if (!window.ic?.plug?.createActor) throw new Error(`Cannot create actors, missing plug API.`);
+    if (!window.ic?.plug?.createActor)
+        throw new Error(`Cannot create actors, missing plug API.`);
     const actors = {
         bazaar: await window.ic.plug.createActor<Rex>({
             interfaceFactory: BazaarIDL,
@@ -89,7 +94,7 @@ async function makeActorsPlug() {
         }),
     };
     return actors;
-};
+}
 
 export function getLegendActor(canisterId: string): ActorSubclass<LegendsNFT> {
     if (LegendActors[canisterId]) {
@@ -101,8 +106,8 @@ export function getLegendActor(canisterId: string): ActorSubclass<LegendsNFT> {
         });
         LegendActors[canisterId] = actor;
         return actor;
-    };
-};
+    }
+}
 
 // Dynamically created Legend NFT canister actors.
 const LegendActors: { [key: string]: ActorSubclass<LegendsNFT> } = {};

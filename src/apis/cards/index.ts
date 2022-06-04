@@ -1,6 +1,4 @@
-import cardDraw, {
-    randomCardIndex,
-} from './draws';
+import cardDraw, { randomCardIndex } from './draws';
 
 import TarotDeckData, {
     mapIntToCard,
@@ -17,4 +15,4 @@ export {
     mapIntToCardName,
     TarotMajorArcanaData,
     randomCardIndex,
-}
+};
