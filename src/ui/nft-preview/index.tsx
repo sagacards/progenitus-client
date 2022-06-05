@@ -8,9 +8,9 @@ import dayjs from 'dayjs'
 import relativetime from 'dayjs/plugin/relativeTime'
 import { Principal } from '@dfinity/principal'
 import { decodeTokenIdentifier, principalToAddress } from 'ictool'
-import { priceDisplay, priceConvertDisplay } from 'apis/listings'
-import { CAPEvent, Transaction } from 'apis/cap'
-import { useTarotDAB } from 'apis/dab'
+import { priceDisplay, priceConvertDisplay } from 'api/listings'
+import { CAPEvent, Transaction } from 'api/cap'
+import { useTarotDAB } from 'api/dab'
 
 dayjs.extend(relativetime);
 
@@ -25,7 +25,7 @@ interface Props {
     price?: Transaction['price'];
 }
 
-export default function NFTPreview (props : Props) {
+export default function NFTPreview(props: Props) {
 
     // App store.
     const { icpToUSD, like, unlike, likes, doesLike, principal, likeCount, connected } = useStore();
@@ -42,7 +42,7 @@ export default function NFTPreview (props : Props) {
     const mine = React.useMemo(() => principal && principalToAddress(principal) === props.to, [principal]);
 
     React.useEffect(() => void likeCount(token).then(r => setCount(r)), [likes])
-    
+
     // Lazy load static thumbnails.
     React.useEffect(() => {
         const url = `https://${token.canister}.raw.ic0.app/${token.index}.webp`;
@@ -52,13 +52,13 @@ export default function NFTPreview (props : Props) {
     }, []);
 
     // Prefetch animated previews.
-    function fetchAnimated () {
+    function fetchAnimated() {
         if (animated) return;
         const url = `https://${token.canister}.raw.ic0.app/${token.index}.webm`;
         fetch(url).then(r => r.blob().then(b => {
             var reader = new FileReader();
-            reader.readAsDataURL(b); 
-            reader.onloadend = function() {
+            reader.readAsDataURL(b);
+            reader.onloadend = function () {
                 setAnimated(url);
             }
         }));

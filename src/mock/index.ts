@@ -3,7 +3,7 @@ import Disk from 'assets/disk/8.png';
 import { MintingEvent } from 'stores/minting';
 import { DateTime } from 'luxon';
 import { encodeTokenIdentifier } from 'ictool';
-import { CAPEvent, Transaction } from 'apis/cap';
+import { CAPEvent, Transaction } from 'api/cap';
 
 export default function makeEvents(count = 3): {
     [key: MintingEvent['id']]: MintingEvent;

@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 
 import useStore from 'stores/index';
-import { TarotDeckData } from 'src/apis/cards';
+import { TarotDeckData } from 'api/cards';
 
 import Button from 'ui/button';
 import CollectionCardList from 'ui/collection-card/list';
@@ -16,9 +16,9 @@ import NFTPreview from 'ui/nft-preview';
 import ScrollRow from 'ui/scroll-row';
 
 import Styles from './styles.module.css'
-import { sortListings, useAllLegendListings } from 'apis/listings';
-import { CAPEvent, useAllProvenance } from 'apis/cap';
-import { ArcanaArt } from 'apis/cards/cards';
+import { sortListings, useAllLegendListings } from 'api/listings';
+import { CAPEvent, useAllProvenance } from 'api/cap';
+import { ArcanaArt } from 'api/cards/cards';
 
 interface Props { };
 

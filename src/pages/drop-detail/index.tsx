@@ -25,13 +25,13 @@ import useModalStore from 'ui/modal/store';
 import MintScene from 'src/three/mint-scene';
 
 import Styles from './styles.module.css'
-import { CAPEvent, useProvenance } from 'apis/cap';
+import { CAPEvent, useProvenance } from 'api/cap';
 
-interface Props {};
+interface Props { };
 
-export default function DropDetailPage (props : Props) {
+export default function DropDetailPage(props: Props) {
     const { canister, index } = useParams();
-    const { actors : { bazaar }, principal, connecting, connected, getEvent, eventsLastFetch, fetchEvents, balance, fetchSupply, eventSupply, isMinting, setIsMinting, setMintResult, mintResult, fetchBalance, wallet } = useStore();
+    const { actors: { bazaar }, principal, connecting, connected, getEvent, eventsLastFetch, fetchEvents, balance, fetchSupply, eventSupply, isMinting, setIsMinting, setMintResult, mintResult, fetchBalance, wallet } = useStore();
     const { events } = useProvenance(canister as string);
     const { pushMessage } = useMessageStore();
     const { open } = useModalStore();
@@ -40,7 +40,7 @@ export default function DropDetailPage (props : Props) {
     const event = React.useMemo(() => (canister && index) ? getEvent(canister, Number(index)) : undefined, [eventsAreFresh]);
     const fetching = React.useMemo(() => !event && !eventsAreFresh, [event, eventsAreFresh]);
     const timeGated = React.useMemo(() => eventIsTimeGated(event), []);
-    
+
     const [timerSentinel, setTimerSentinel] = React.useState(0);
     const [error, setError] = React.useState<string>();
     const [description, setDescription] = React.useState<string>();
@@ -57,29 +57,29 @@ export default function DropDetailPage (props : Props) {
         if (!canister || !index) return;
         setSpotsLoading(true)
         bazaar.getAllowlistSpots(Principal.fromText(canister), BigInt(index))
-        .then(r => {
-            if ('ok' in r) {
-                setSpots(Number(r.ok))
-            } else {
-                console.error(r);
-            }
-        })
-        .finally(() => setSpotsLoading(false));
+            .then(r => {
+                if ('ok' in r) {
+                    setSpots(Number(r.ok))
+                } else {
+                    console.error(r);
+                }
+            })
+            .finally(() => setSpotsLoading(false));
     }, [mintResult, bazaar, canister, index]);
 
     // Fetch supply
     React.useEffect(() => {
         fetch(`https://${canister}.raw.ic0.app/supply`)
-        .then(r => r.text())
-        .then(r => setSupply(Number(r)));
+            .then(r => r.text())
+            .then(r => setSupply(Number(r)));
     }, []);
 
     // Fetch description markdown
     React.useEffect(() => {
         if (!event || !event.collection.description) return;
         fetch(event.collection.description)
-        .then(r => r.text())
-        .then(setDescription);
+            .then(r => r.text())
+            .then(setDescription);
     }, [event]);
 
     const supplyRemaining = React.useMemo(() => {
@@ -92,13 +92,13 @@ export default function DropDetailPage (props : Props) {
     const MintableMessage = React.useMemo(() => {
         const messages = {
             'loading': () => <Spinner size='small' />,
-            'not-connected': () => <><Link to="/connect" state={{referrer : window.location.pathname}}>Connect</Link> your wallet to mint</>,
+            'not-connected': () => <><Link to="/connect" state={{ referrer: window.location.pathname }}>Connect</Link> your wallet to mint</>,
             'no-access': () => <>Your wallet is not on the allow list</>,
             'insufficient-funds': () => <>Insufficient funds in mint account <a onClick={() => open('Deposit Minting Funds', <SwapModal />)}>deposit from wallet</a></>,
-            'not-started': (p : {time : DateTime}) => <>Starts in <Timer time={p.time} /></>,
+            'not-started': (p: { time: DateTime }) => <>Starts in <Timer time={p.time} /></>,
             'ended': () => <>Event ended!</>,
             'no-supply': () => <>Sold out</>,
-            'mintable': (p : {end : DateTime}) => <>Your wallet will be charged.{timeGated && <>Ends <Timer time={p.end} /></>}</>,
+            'mintable': (p: { end: DateTime }) => <>Your wallet will be charged.{timeGated && <>Ends <Timer time={p.end} /></>}</>,
             'minting': () => <>Minting...</>,
         };
         return messages[mintable];
@@ -122,7 +122,7 @@ export default function DropDetailPage (props : Props) {
             setTimer(undefined);
         }
     }, [mintable]);
-    
+
     // Attempt to retrieve the relevant event
     React.useEffect(() => {
         if (!eventsAreFresh) {
@@ -152,23 +152,23 @@ export default function DropDetailPage (props : Props) {
         setIsMinting(true);
         setMintResult(undefined);
         mint(event, supplyRemaining, connected, balance, spots, bazaar, Number(index))
-        ?.then(r => {
-            if (r && 'ok' in r) {
-                setMintResult(Number(r.ok));
-                alert('Mint success!');
-                fetchBalance();
-            } else {
-                console.error(r)
+            ?.then(r => {
+                if (r && 'ok' in r) {
+                    setMintResult(Number(r.ok));
+                    alert('Mint success!');
+                    fetchBalance();
+                } else {
+                    console.error(r)
+                    setError('Mint failure!');
+                    alert('Mint failure!');
+                }
+            })
+            .catch(r => {
+                console.error(r);
                 setError('Mint failure!');
                 alert('Mint failure!');
-            }
-        })
-        .catch(r => {
-            console.error(r);
-            setError('Mint failure!');
-            alert('Mint failure!');
-        })
-        .finally(() => setIsMinting(false));
+            })
+            .finally(() => setIsMinting(false));
     }, [event, supplyRemaining, connected, balance, spots, bazaar, index]);
 
     // Redirect home if event not found.
@@ -189,7 +189,7 @@ export default function DropDetailPage (props : Props) {
         if (!['transfer', 'sale'].includes(x.operation)) return false;
         return true;
     }), [events, principal]);
-    
+
     return <>
         <Navbar />
         <Container>
@@ -228,7 +228,7 @@ export default function DropDetailPage (props : Props) {
                                                 ? <>{spots} Mints</>
                                                 : <>∞ Mints</>
                                             : <>No Access</>
-                                        : <><Link to="/connect" state={{referrer : window.location.pathname}}>Connect</Link></>
+                                        : <><Link to="/connect" state={{ referrer: window.location.pathname }}>Connect</Link></>
                             }
                         </div>
                     </div>
@@ -259,7 +259,7 @@ export default function DropDetailPage (props : Props) {
                     <Tabs
                         tabs={[
                             ['Mints', <>
-                                <div style={{ display: 'flex', gap: '10px', padding: '10px'}}>
+                                <div style={{ display: 'flex', gap: '10px', padding: '10px' }}>
                                     <Button active={!mine} onClick={() => setMine(false)} size='small'>All</Button>
                                     <Button active={mine} onClick={() => setMine(true)} size='small'>Mine</Button>
                                 </div>
@@ -301,7 +301,7 @@ export default function DropDetailPage (props : Props) {
     </>;
 };
 
-function StoicWarning (props : { canister : string }) {
+function StoicWarning(props: { canister: string }) {
     const { close } = useModalStore();
     return <>
         <p>You must add this canister to see your new NFT in your stoic wallet.</p>
@@ -310,7 +310,7 @@ function StoicWarning (props : { canister : string }) {
     </>
 }
 
-function SwapModal () {
+function SwapModal() {
     const { close } = useModalStore();
     const { balanceDisplay, walletBalanceDisplay } = useStore();
     return <>

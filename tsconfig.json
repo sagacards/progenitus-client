@@ -17,7 +17,7 @@
         "jsx": "react-jsx",
         "baseUrl": ".",
         "paths": {
-            "apis/*": ["src/apis/*"],
+            "api/*": ["src/api/*"],
             "assets/*": ["src/assets/*"],
             "canisters/*": ["src/canisters/*"],
             "pages/*": ["src/pages/*"],

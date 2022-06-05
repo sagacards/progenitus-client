@@ -13,7 +13,7 @@ import { createMintingSlice, MintingStore } from 'stores/minting';
 
 // Reexport submodules for convenience
 import { Wallet } from 'stores/connect';
-import { Listing } from 'apis/listings';
+import { Listing } from 'api/listings';
 import { Token } from 'stores/likes';
 import {
     eventIsMintable,
