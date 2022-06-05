@@ -2,8 +2,8 @@ import React from 'react'
 import { ComponentStory, ComponentMeta } from '@storybook/react'
 
 import ScrollRow from '.'
-import { TarotDeckData } from '../../apis/cards'
-import LegendPreview from '../../ui/legend-preview'
+import { TarotDeckData } from 'api/cards'
+import LegendPreview from 'ui/legend-preview'
 
 // More on default export: https://storybook.js.org/docs/react/writing-stories/introduction#default-export
 export default {

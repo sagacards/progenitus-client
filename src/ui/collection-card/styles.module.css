@@ -23,7 +23,8 @@
 }
 
 .art {
-    padding-bottom: 40%;
+    object-fit: cover;
+    aspect-ratio: 2/1;
 
     border-radius: 10px;
     background-color: var(--chrome-2);

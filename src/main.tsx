@@ -13,6 +13,7 @@ import App from './App'
 
 import { Globals } from "@react-spring/shared";
 
+
 const container = document.getElementById('root') as HTMLDivElement;
 const root = createRoot(container);
 root.render(

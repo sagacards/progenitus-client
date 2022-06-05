@@ -20,12 +20,11 @@ import { sortListings, useAllLegendListings } from 'api/listings';
 import { CAPEvent, useAllProvenance } from 'api/cap';
 import { ArcanaArt } from 'api/cards/cards';
 
-interface Props { };
 
 export default function HomePage() {
     const { connected } = useStore();
     const listings = useAllLegendListings();
-    const events = useAllProvenance()
+    const events = useAllProvenance();
 
     const cards = React.useMemo(() => {
         const cards = Array(22).fill(undefined).map((x, i) => ({
@@ -58,7 +57,9 @@ export default function HomePage() {
                 {!connected && <Link className="no-fancy" to="/connect"><Button size="xl">Connect</Button></Link>}
                 <div className={Styles.collections}>
                     <h2>Mintable Collections</h2>
-                    <CollectionCardList />
+                    <ScrollRow>
+                        <CollectionCardList />
+                    </ScrollRow>
                 </div>
                 <div className={Styles.collections}>
                     <h2>Recent Activity</h2>

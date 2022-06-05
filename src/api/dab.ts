@@ -24,15 +24,17 @@ interface LegendEntry extends Entry {
 // Mapping //
 ////////////
 
+// hack to support google drive setup.
+function driveHack(url: string) {
+    return url.replace('file/d/', 'uc?id=').replace('/view?usp=sharing', '');
+}
+
 // Maps an entry from the DAB registry for use in this app.
 function mapDabCanister(entry: Metadata): LegendEntry {
     const details = Object.fromEntries(entry.details);
     return {
         name: entry.name,
-        thumbnail: entry.thumbnail
-            // hack to support google drive setup
-            .replace('file/d/', 'uc?id=')
-            .replace('/view?usp=sharing', ''),
+        thumbnail: driveHack(entry.thumbnail),
         description: entry.description,
         // Principal objects don't survive localstorage, so we text encode here.
         principal: entry.principal_id.toText(),
@@ -40,6 +42,10 @@ function mapDabCanister(entry: Metadata): LegendEntry {
         artists: details.artists.Text,
         // @ts-ignore: TODO improve this
         isDeck: details?.isDeck?.Text === 'true',
+        // @ts-ignore: TODO improve this
+        previewImage: driveHack(details?.preview_image.Text),
+        // @ts-ignore: TODO improve this
+        bannerImage: driveHack(details?.banner_image.Text),
     };
 }
 

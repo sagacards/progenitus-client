@@ -135,7 +135,6 @@ export const createAccountSlice: StoreSlice<AccountStore, CompleteStore> = (
                     pushMessage({ type: 'error', message: 'Transfer failed!' });
                 })
                 .then(r => {
-                    console.log(r);
                     if (r && 'Err' in r) {
                         pushMessage({
                             type: 'error',
