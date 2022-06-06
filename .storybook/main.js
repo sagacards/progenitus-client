@@ -1,3 +1,8 @@
+const path = require('path');
+const { loadConfigFromFile, mergeConfig } = require('vite');
+const react = require('@vitejs/plugin-react').default;
+const tsconfigPaths = require('vite-tsconfig-paths').default;
+
 module.exports = {
     stories: ['../src/**/*.stories.mdx', '../src/**/*stories.@(js|jsx|ts|tsx)'],
     addons: [
@@ -11,8 +16,11 @@ module.exports = {
         builder: '@storybook/builder-vite',
     },
     async viteFinal(config) {
-        return {
-            ...config,
+        const { config: userConfig } = await loadConfigFromFile(
+            path.resolve(__dirname, '../vite.config.ts')
+        );
+        return mergeConfig(config, {
+            ...userConfig,
             define: {
                 ...config.define,
                 global: 'window',
@@ -23,6 +31,8 @@ module.exports = {
             features: {
                 interactionsDebugger: true,
             },
-        };
+            // manually specify plugins to avoid conflict
+            plugins: [tsconfigPaths()],
+        });
     },
 };

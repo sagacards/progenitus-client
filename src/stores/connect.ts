@@ -7,6 +7,7 @@ import { IDL } from '@dfinity/candid';
 import { CompleteStore, StoreSlice } from 'stores/index';
 import { whitelist } from 'stores/actors';
 import { toHexString } from 'ictool';
+import { invalidateIdentity, replaceIdentity } from 'api/actors';
 
 export const icConf = {
     protocol: (import.meta.env.PROGENITUS_IC_PROTOCOL as string) || 'https',
@@ -97,6 +98,8 @@ export const createConnectSlice: StoreSlice<ConnectStore, CompleteStore> = (
                 if (!identity) {
                     identity = await StoicIdentity.connect();
                 }
+
+                replaceIdentity(identity);
 
                 const agent = new HttpAgent({
                     identity,
@@ -206,6 +209,7 @@ export const createConnectSlice: StoreSlice<ConnectStore, CompleteStore> = (
     async disconnect() {
         const { createActors } = get();
         StoicIdentity.disconnect();
+        invalidateIdentity();
         window.ic?.plug?.deleteAgent && window.ic?.plug?.deleteAgent();
         set({
             connected: false,

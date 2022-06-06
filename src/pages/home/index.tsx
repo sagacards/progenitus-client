@@ -19,6 +19,7 @@ import Styles from './styles.module.css'
 import { sortListings, useAllLegendListings } from 'api/listings';
 import { CAPEvent, useAllProvenance } from 'api/cap';
 import { ArcanaArt } from 'api/cards/cards';
+import Page from 'pages/wrapper';
 
 
 export default function HomePage() {
@@ -38,7 +39,7 @@ export default function HomePage() {
     }, []);
 
     const recent = React.useMemo(() => events?.sort((a, b) => b.time.getTime() - a.time.getTime()), [events]);
-    return <>
+    return <Page key="HomePage">
         <Navbar />
         <Container>
             <div className={Styles.root}>
@@ -95,5 +96,5 @@ export default function HomePage() {
             </div>
         </Container>
         <Footer />
-    </>
+    </Page>
 };

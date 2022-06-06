@@ -45,7 +45,7 @@ export function replaceIdentity(identity: Agent.Identity) {
     agent.replaceIdentity(identity);
 }
 
-// When use disconnects an identity, we update our agent.
+// When user disconnects an identity, we update our agent.
 export function invalidateIdentity() {
     agent.invalidateIdentity();
 }

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Route, Routes } from 'react-router-dom';
+import { AnimatePresence } from "framer-motion";
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { createWebStoragePersistor } from 'react-query/createWebStoragePersistor-experimental';
 import { persistQueryClient } from 'react-query/persistQueryClient-experimental';
@@ -17,10 +18,11 @@ import DropDetailPage from 'pages/drop-detail';
 import Messages from 'ui/messages';
 import ScrollToTop from 'ui/scroll-to-top';
 import Modal from 'ui/modal';
+import TokenPage from 'pages/token';
 
 
 // This query agent does the heavy lifting for querying, caching and persisting data from backend canisters.
-const queryClient = new QueryClient()
+export const queryClient = new QueryClient()
 const localStoragePersistor = createWebStoragePersistor({ storage: window.localStorage });
 persistQueryClient({
     queryClient,
@@ -35,22 +37,25 @@ function App() {
     }, []);
     return <>
         <QueryClientProvider client={queryClient}>
-            <Routes>
-                <Route path="/" element={<HomePage />} />
-                <Route path="/connect" element={<ConnectPage />} />
-                <Route path="/account" element={<AccountPage />} />
-                <Route path="/drops/:canister/:index">
-                    <Route index element={<DropDetailPage />} />
-                    <Route path="mints" element={<DropDetailPage />} />
-                    <Route path="transfers" element={<DropDetailPage />} />
-                </Route>
-                <Route path="/drops" element={<DropsPage />} />
-                <Route path="/collection/:canister" element={<CollectionsPage />} />
-                <Route path="/profile" element={<ProfilePage />} />
-            </Routes>
-            <Messages />
-            <ScrollToTop />
-            <Modal />
+            <AnimatePresence exitBeforeEnter>
+                <Routes>
+                    <Route path="/" element={<HomePage />} />
+                    <Route path="/connect" element={<ConnectPage />} />
+                    <Route path="/account" element={<AccountPage />} />
+                    <Route path="/drops/:canister/:index">
+                        <Route index element={<DropDetailPage />} />
+                        <Route path="mints" element={<DropDetailPage />} />
+                        <Route path="transfers" element={<DropDetailPage />} />
+                    </Route>
+                    <Route path="/drops" element={<DropsPage />} />
+                    <Route path="/token/:identifier" element={<TokenPage />} />
+                    <Route path="/collection/:canister" element={<CollectionsPage />} />
+                    <Route path="/profile" element={<ProfilePage />} />
+                </Routes>
+                <Messages />
+                <ScrollToTop />
+                <Modal />
+            </AnimatePresence>
         </QueryClientProvider>
     </>
 }

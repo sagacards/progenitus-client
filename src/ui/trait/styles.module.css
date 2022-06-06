@@ -1,0 +1,44 @@
+.root {
+    padding: 5px 10px;
+    border-radius: 10px;
+    box-shadow: 0 0 0 1px var(--chrome-2);
+}
+
+.label {
+    margin-bottom: 5px;
+    color: var(--chrome-4);
+    font-size: 12px;
+    text-transform: uppercase;
+}
+
+.value {
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.common {
+    color: var(--foreground);
+}
+
+.uncommon {
+    color: hsl(90deg, 100%, 50%);
+}
+
+.rare {
+    color: hsl(2020deg, 100%, 50%);
+}
+
+.epic {
+    color: hsl(280deg, 100%, 50%);
+}
+
+.legendary {
+    color: hsl(360deg, 100%, 50%);
+}

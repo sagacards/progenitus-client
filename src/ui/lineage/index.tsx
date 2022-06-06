@@ -15,7 +15,8 @@ interface Props {
     collection?: {
         name: string;
         thumbnail: string;
-    }
+    };
+    size?: 'lg';
 }
 
 const toLabel = {
@@ -32,8 +33,8 @@ const fromLabel = {
     'listing': 'seller',
 }
 
-export default function Lineage (props : Props) {
-    return <div className={Styles.root}>
+export default function Lineage(props: Props) {
+    return <div className={[Styles.root, props?.size ? Styles[props.size] : ''].join(' ')}>
         <div className={Styles.item}>
             <div className={Styles.disk}><img className={Styles.image} src={Saga} /></div>
             <div className={Styles.tip}>Creator: Saga Cards</div>

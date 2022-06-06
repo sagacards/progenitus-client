@@ -11,6 +11,7 @@ import { decodeTokenIdentifier, principalToAddress } from 'ictool'
 import { priceDisplay, priceConvertDisplay } from 'api/listings'
 import { CAPEvent, Transaction } from 'api/cap'
 import { useDirectory } from 'api/dab'
+import { Link } from 'react-router-dom'
 
 dayjs.extend(relativetime);
 
@@ -87,13 +88,15 @@ export default function NFTPreview(props: Props) {
 
     return <div className={[Styles.root, mine ? Styles.mine : ''].join(' ')} onMouseEnter={() => { setPlay(true); fetchAnimated(); }} onMouseLeave={() => setPlay(false)}>
         <Lineage to={props.to} from={props.from || props.listing?.seller} collection={collection} operation={props.event?.type || 'listing'} />
-        <div className={Styles.stage}>
-            {readyStatic && <img className={Styles.static} src={`https://${token.canister}.raw.ic0.app/${token.index}.webp`} />}
-            {animated && <video className={[Styles.animated, play && animated ? Styles.animatedPlay : ''].join(' ')} loop autoPlay muted>
-                <source src={`${animated}`} type="video/webm" />
-            </video>}
-            <div className={[Styles.loader, readyStatic && play && !animated ? Styles.loaderHover : ''].join(' ')}><Spinner /></div>
-        </div>
+        <Link to={`/token/${props.tokenid}`}>
+            <div className={Styles.stage}>
+                {readyStatic && <img className={Styles.static} src={`https://${token.canister}.raw.ic0.app/${token.index}.webp`} />}
+                {animated && <video className={[Styles.animated, play && animated ? Styles.animatedPlay : ''].join(' ')} loop autoPlay muted>
+                    <source src={`${animated}`} type="video/webm" />
+                </video>}
+                <div className={[Styles.loader, readyStatic && play && !animated ? Styles.loaderHover : ''].join(' ')}><Spinner /></div>
+            </div>
+        </Link>
         <div className={Styles.meta}>
             <div className={Styles.details}>
                 <div className={Styles.title}>

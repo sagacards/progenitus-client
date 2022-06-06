@@ -2,9 +2,10 @@ import React from 'react';
 import * as THREE from 'three';
 import { useLoader } from '@react-three/fiber';
 import { icConf } from 'stores/index';
-import { ic, legend } from './actors/actors';
+import { legend } from './actors';
 import { useQueries, useQuery } from 'react-query';
 import { useDirectory } from './dab';
+import { rarity, Rarity } from './rarity';
 
 ////////////
 // Types //
@@ -14,6 +15,8 @@ export interface LegendManifest {
     back: string;
     border: string;
     ink: string;
+    stock?: string;
+    mask?: string;
     maps: {
         normal: string;
         layers: [string];
@@ -28,11 +31,11 @@ export interface LegendManifest {
         emissive: string;
         background: string;
     };
-    stock: {
-        base: string;
-        specular: string;
-        emissive: string;
-    };
+    // stock: {
+    //     base: string;
+    //     specular: string;
+    //     emissive: string;
+    // };
     views: {
         flat: string;
         sideBySide: string;
@@ -80,6 +83,62 @@ export function mapStats(
 // Fetching //
 /////////////
 
+export function fetchLegend(canister: string, index: number) {
+    return fetchLegendManifest(canister, index).then(manifest =>
+        fetchLegendTextures(canister, manifest)
+    );
+}
+
+export function fetchLegendManifest(
+    canister: string,
+    index: number
+): Promise<LegendManifest> {
+    return fetch(
+        `${icConf.protocol}://${canister}.raw.${icConf.host}/${index}.json`
+    ).then(r => r.json() as unknown as LegendManifest);
+}
+
+export function fetchTexture(
+    canister: string,
+    filename: string
+): THREE.Texture {
+    return useLoader(
+        THREE.TextureLoader,
+        `${icConf.protocol}://${canister}.raw.${icConf.host}/${filename}`
+    );
+}
+
+export function fetchLegendTextures(
+    canister: string,
+    manifest: LegendManifest
+) {
+    return {
+        back: fetchTexture(canister, manifest.maps.back),
+        border: fetchTexture(canister, manifest.maps.border),
+        normal: fetchTexture(canister, manifest.maps.normal),
+        face: fetchTexture(canister, manifest.views.flat),
+    };
+}
+
+// Retrieve markdown format long description from a legend canister.
+export async function fetchDescriptionMarkdown(canisterId: string) {
+    return (
+        await fetch(
+            `${icConf.protocol}://${canisterId}.raw.${icConf.host}/assets/description.md`
+        )
+    ).text();
+}
+
+export function useDescriptionMarkdown(canisterId: string) {
+    return useQuery(`description-markdown-${canisterId}`, () =>
+        fetchDescriptionMarkdown(canisterId)
+    );
+}
+
+////////////
+// Hooks //
+//////////
+
 // Retrieve fixed supply for all canisters.
 export function useSupplyAll() {
     // Retrieve all tarot NFT canisters.
@@ -104,7 +163,7 @@ export function useSupplyAll() {
                     complete: agg?.complete === false ? false : query.isSuccess,
                     data: {
                         ...agg.data,
-                        [query.data.id]: Number(query.data.stats.supply),
+                        [query.data.id]: Number(query.data?.stats?.supply),
                     },
                 };
             } else {
@@ -115,18 +174,19 @@ export function useSupplyAll() {
     );
 }
 
-// Retrieve markdown format long description from a legend canister.
-export async function fetchDescriptionMarkdown(canisterId: string) {
-    return (
-        await fetch(
-            `${icConf.protocol}://${canisterId}.raw.${icConf.host}/assets/description.md`
-        )
-    ).text();
-}
-
-export function useDescriptionMarkdown(canisterId: string) {
-    return useQuery(`description-markdown-${canisterId}`, () =>
-        fetchDescriptionMarkdown(canisterId)
+// Retrieve fixed supply for specific canister.
+export function useSupply(canister: string) {
+    return useQuery(
+        `${canister}-supply`,
+        async () => {
+            const stats = await legend(canister).stats().then(mapStats);
+            console.log(stats?.supply);
+            return stats.supply;
+        },
+        {
+            cacheTime: 30 * 24 * 60 * 60_000,
+            staleTime: 30 * 24 * 60 * 60_000,
+        }
     );
 }
 
@@ -183,39 +243,48 @@ export function useUnminted() {
     return registries;
 }
 
-export function fetchLegend(canister: string, index: number) {
-    return fetchLegendManifest(canister, index).then(manifest =>
-        fetchLegendTextures(canister, manifest)
+export function useManifest<LegendManifest>(canister: string, index: number) {
+    return useQuery(
+        `manifest-${canister}-${index}`,
+        () => fetchLegendManifest(canister, index),
+        {
+            cacheTime: 60_000 * 60 * 24 * 365,
+            staleTime: 60_000 * 60 * 24 * 365,
+        }
     );
 }
 
-export function fetchLegendManifest(
-    canister: string,
-    index: number
-): Promise<LegendManifest> {
-    return fetch(
-        `${icConf.protocol}://${canister}.raw.${icConf.host}/${index}.json`
-    ).then(r => r.json() as unknown as LegendManifest);
+interface Traits {
+    back: [string, Rarity | undefined];
+    border: [string, Rarity | undefined];
+    stock?: [string, Rarity | undefined];
+    mask?: [string, Rarity | undefined];
+    ink: [string, Rarity | undefined];
 }
-
-export function fetchTexture(
-    canister: string,
-    filename: string
-): THREE.Texture {
-    return useLoader(
-        THREE.TextureLoader,
-        `${icConf.protocol}://${canister}.raw.${icConf.host}/${filename}`
+export function useTraits(canister: string, index: number) {
+    const manifest = useManifest(canister, index);
+    return (
+        manifest?.data &&
+        ({
+            back: [manifest.data.back, rarity('back', manifest.data.back)],
+            border: [
+                manifest.data.border,
+                rarity('border', manifest.data.border),
+            ],
+            stock:
+                typeof manifest.data.stock === 'string'
+                    ? [
+                          manifest.data.stock,
+                          manifest.data.stock
+                              ? rarity('stock', manifest.data.stock)
+                              : 'common',
+                      ]
+                    : undefined,
+            ink: [manifest.data.ink, rarity('ink', manifest.data.ink)],
+            mask: typeof manifest.data.mask === 'string' && [
+                manifest.data.mask,
+                'common',
+            ],
+        } as Traits)
     );
-}
-
-export function fetchLegendTextures(
-    canister: string,
-    manifest: LegendManifest
-) {
-    return {
-        back: fetchTexture(canister, manifest.maps.back),
-        border: fetchTexture(canister, manifest.maps.border),
-        normal: fetchTexture(canister, manifest.maps.normal),
-        face: fetchTexture(canister, manifest.views.flat),
-    };
 }

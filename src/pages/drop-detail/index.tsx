@@ -27,6 +27,7 @@ import MintScene from 'src/three/mint-scene';
 import Styles from './styles.module.css'
 import { CAPEvent, useProvenance } from 'api/cap';
 import CollectionTop from 'ui/collections/top';
+import Page from 'pages/wrapper';
 
 interface Props { };
 
@@ -191,7 +192,7 @@ export default function DropDetailPage(props: Props) {
         return true;
     }), [events, principal]);
 
-    return <>
+    return <Page key="DropPage">
         <Navbar />
         <Container>
             <div className={[Styles.root, fetching ? Styles.fetching : ''].join(' ')}>
@@ -299,7 +300,7 @@ export default function DropDetailPage(props: Props) {
             </div>
         </Container>
         <Footer />
-    </>;
+    </Page>;
 };
 
 function StoicWarning(props: { canister: string }) {

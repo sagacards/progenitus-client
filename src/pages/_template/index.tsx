@@ -1,10 +1,13 @@
 import Styles from './styles.module.css'
 import React from 'react';
+import Page from 'pages/wrapper';
 
-interface Props {};
+interface Props { };
 
-export default function Page (props : Props) {
-    return <div className={Styles.root}>
-        ...
-    </div>
+export default function NewPage(props: Props) {
+    return <Page key="NewPage">
+        <div className={Styles.root}>
+            ...
+        </div>
+    </Page>;
 };

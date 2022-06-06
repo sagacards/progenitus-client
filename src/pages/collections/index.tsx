@@ -13,6 +13,7 @@ import { sortListings, useCanisterListings } from 'api/listings';
 import More from 'ui/more';
 import NFTPreview from 'ui/nft-preview';
 import Tabs from 'ui/tabs';
+import Page from 'pages/wrapper';
 
 interface Props { };
 
@@ -23,7 +24,7 @@ export default function CollectionsPage(props: Props) {
     const { data: description } = useDescriptionMarkdown(canister as string)
     const { listings } = useCanisterListings(canister as string);
     const collection = React.useMemo(() => canister ? directory?.find(x => x.principal === canister) : undefined, [canister, directory]);
-    return <>
+    return <Page key="CollectionsPage">
         <Navbar />
         <Container>
             <div className={Styles.root}>
@@ -57,5 +58,5 @@ export default function CollectionsPage(props: Props) {
             </div>
         </Container>
         <Footer />
-    </>
+    </Page>
 };
