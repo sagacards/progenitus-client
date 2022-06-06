@@ -16,6 +16,7 @@ import { FaArrowLeft, FaArrowRight } from 'react-icons/fa';
 import { useBackNext } from './hooks';
 import { useTraits } from 'api/legends';
 import { Trait, Traits } from 'ui/trait';
+import AssetPreload from 'ui/asset-preload';
 
 interface Props { };
 
@@ -34,10 +35,25 @@ export default function TokenPage(props: Props) {
         <Container>
             <div className={Styles.root}>
                 <div className={Styles.stage}>
-                    <iframe className={Styles.feature} src={`https://${canister}.raw.ic0.app/${index}`} />
+                    <AssetPreload
+                        type='iframe'
+                        className={Styles.feature}
+                        uri={`https://${canister}.raw.ic0.app/${index}`}
+                        asset={<iframe src={`https://${canister}.raw.ic0.app/${index}`} />}
+                    />
                     <div className={Styles.featurettes}>
-                        <img src={`https://${canister}.raw.ic0.app/${index}.webp`} className={Styles.featurette} />
-                        <video autoPlay loop src={`https://${canister}.raw.ic0.app/${index}.webm`} className={Styles.featurette} />
+                        <AssetPreload
+                            type='image'
+                            className={Styles.featurette}
+                            uri={`https://${canister}.raw.ic0.app/${index}.webp`}
+                            asset={<img src={`https://${canister}.raw.ic0.app/${index}.webp`} />}
+                        />
+                        <AssetPreload
+                            type='video'
+                            className={Styles.featurette}
+                            uri={`https://${canister}.raw.ic0.app/${index}.webm`}
+                            asset={<video autoPlay loop src={`https://${canister}.raw.ic0.app/${index}.webm`} />}
+                        />
                         <div className={Styles.info}>
                             <div className={Styles.widgets}>
                                 <Lineage size='lg' operation='listing' collection={collection} />

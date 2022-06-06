@@ -15,6 +15,7 @@
     background-color: var(--chrome-2);
     border-radius: 18px;
     box-shadow: 0 0 0 1px var(--chrome-2);
+    overflow: hidden;
 }
 
 .feature {
