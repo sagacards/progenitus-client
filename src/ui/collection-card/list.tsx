@@ -13,6 +13,6 @@ export default function CollectionCardList(props: Props) {
         return Object.values(unminted).filter(x => x.unminted > 0)
     }, [unminted])
     return <div className={Styles.list}>
-        {mintable.map((drop, i) => <CollectionCard unminted={drop.unminted} key={`drop${i}`} thumbnail={drop.data.thumbnail} bannerImage={drop.data.previewImage} name={drop.data.name} slug={drop.data.principal} />)}
+        {mintable.map((drop, i) => <CollectionCard unminted={drop.unminted} key={`drop${i}`} thumbnail={drop.data.thumbnail} bannerImage={drop.data.bannerImage} name={drop.data.name} slug={drop.data.principal} />)}
     </div>
 }

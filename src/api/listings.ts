@@ -4,7 +4,7 @@ import { mapDate } from 'stores/minting';
 import { useQueries, useQuery } from 'react-query';
 import { getLegendActor } from 'stores/actors';
 import { encodeTokenIdentifier } from 'ictool';
-import { useTarotDAB } from './dab';
+import { useDirectory } from './dab';
 
 ////////////
 // Types //
@@ -109,7 +109,7 @@ export function useCanisterListings(canister: string) {
 
 // Hook to retrieve listings for all Legends canisters.
 export function useAllLegendListings() {
-    const { data: dab } = useTarotDAB();
+    const { data: dab } = useDirectory();
     const query = useQueries(
         dab?.map(canister => ({
             queryKey: `listings-${canister.principal}`,

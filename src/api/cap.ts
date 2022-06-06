@@ -10,7 +10,7 @@ import {
 import { decodeTokenIdentifier } from 'ictool';
 import { useQueries, useQuery } from 'react-query';
 import { host } from 'stores/connect';
-import { useTarotDAB } from './dab';
+import { useDirectory } from './dab';
 import { Price } from './listings';
 
 ////////////
@@ -217,7 +217,7 @@ export function useProvenance(canister: string) {
 // Hook to retrieve provenance for all NFT canisters.
 export function useAllProvenance() {
     // Retrieve all tarot NFT canisters.
-    const { data: canisters } = useTarotDAB();
+    const { data: canisters } = useDirectory();
 
     // Retrieve cap root for all canisters
     const roots = useQueries(

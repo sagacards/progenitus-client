@@ -45,7 +45,7 @@ function App() {
                     <Route path="transfers" element={<DropDetailPage />} />
                 </Route>
                 <Route path="/drops" element={<DropsPage />} />
-                <Route path="/collections" element={<CollectionsPage />} />
+                <Route path="/collection/:canister" element={<CollectionsPage />} />
                 <Route path="/profile" element={<ProfilePage />} />
             </Routes>
             <Messages />

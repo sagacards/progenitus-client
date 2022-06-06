@@ -14,10 +14,12 @@ import { defaultAgent } from 'stores/connect';
 
 type Entry = Omit<Metadata, 'details' | 'principal_id' | 'frontend'>;
 
-interface LegendEntry extends Entry {
+export interface LegendEntry extends Entry {
     artists: string;
     principal: string;
     isDeck: boolean;
+    previewImage?: string;
+    bannerImage?: string;
 }
 
 //////////////
@@ -69,7 +71,7 @@ function getAll() {
 //////////
 
 // The hook providing our tarot NFT registry.
-export function useTarotDAB() {
+export function useDirectory() {
     return useQuery('dab', getAll, {
         cacheTime: 7 * 24 * 60 * 60_000,
         staleTime: 60 * 60_000,

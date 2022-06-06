@@ -10,7 +10,7 @@ import { Principal } from '@dfinity/principal'
 import { decodeTokenIdentifier, principalToAddress } from 'ictool'
 import { priceDisplay, priceConvertDisplay } from 'api/listings'
 import { CAPEvent, Transaction } from 'api/cap'
-import { useTarotDAB } from 'api/dab'
+import { useDirectory } from 'api/dab'
 
 dayjs.extend(relativetime);
 
@@ -82,7 +82,7 @@ export default function NFTPreview(props: Props) {
         };
     }, [likes, principal]);
 
-    const { data: dab } = useTarotDAB();
+    const { data: dab } = useDirectory();
     const collection = React.useMemo(() => dab?.find(c => c.principal === token.canister), [dab]);
 
     return <div className={[Styles.root, mine ? Styles.mine : ''].join(' ')} onMouseEnter={() => { setPlay(true); fetchAnimated(); }} onMouseLeave={() => setPlay(false)}>

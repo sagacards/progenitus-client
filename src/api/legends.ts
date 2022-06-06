@@ -2,9 +2,9 @@ import React from 'react';
 import * as THREE from 'three';
 import { useLoader } from '@react-three/fiber';
 import { icConf } from 'stores/index';
-import { legend } from './actors/actors';
-import { useQueries } from 'react-query';
-import { useTarotDAB } from './dab';
+import { ic, legend } from './actors/actors';
+import { useQueries, useQuery } from 'react-query';
+import { useDirectory } from './dab';
 
 ////////////
 // Types //
@@ -83,15 +83,17 @@ export function mapStats(
 // Retrieve fixed supply for all canisters.
 export function useSupplyAll() {
     // Retrieve all tarot NFT canisters.
-    const { data: canisters } = useTarotDAB();
+    const { data: canisters } = useDirectory();
 
     return useQueries(
         canisters?.map(c => ({
             queryKey: `${c.principal}-supply`,
-            queryFn: async () => ({
-                id: c.principal,
-                stats: mapStats(await legend(c.principal).stats()),
-            }),
+            queryFn: async () => {
+                return {
+                    id: c.principal,
+                    stats: mapStats(await legend(c.principal).stats()),
+                };
+            },
             cacheTime: 30 * 24 * 60 * 60_000,
             staleTime: 30 * 24 * 60 * 60_000,
         })) || []
@@ -113,9 +115,24 @@ export function useSupplyAll() {
     );
 }
 
+// Retrieve markdown format long description from a legend canister.
+export async function fetchDescriptionMarkdown(canisterId: string) {
+    return (
+        await fetch(
+            `${icConf.protocol}://${canisterId}.raw.${icConf.host}/assets/description.md`
+        )
+    ).text();
+}
+
+export function useDescriptionMarkdown(canisterId: string) {
+    return useQuery(`description-markdown-${canisterId}`, () =>
+        fetchDescriptionMarkdown(canisterId)
+    );
+}
+
 export function useUnminted() {
     // Retrieve all tarot NFT canisters.
-    const { data: canisters } = useTarotDAB();
+    const { data: canisters } = useDirectory();
 
     const supply = useSupplyAll();
 

@@ -26,6 +26,7 @@ import MintScene from 'src/three/mint-scene';
 
 import Styles from './styles.module.css'
 import { CAPEvent, useProvenance } from 'api/cap';
+import CollectionTop from 'ui/collections/top';
 
 interface Props { };
 
@@ -194,11 +195,11 @@ export default function DropDetailPage(props: Props) {
         <Navbar />
         <Container>
             <div className={[Styles.root, fetching ? Styles.fetching : ''].join(' ')}>
-                <div className={Styles.top}>
-                    <img className={Styles.banner} src={collection?.banner} />
-                    <img className={Styles.collection} src={collection?.icon} />
-                </div>
-                <div className={Styles.name}>{collection?.name}</div>
+                <CollectionTop
+                    banner={collection?.banner}
+                    thumbnail={collection?.icon}
+                    name={collection?.name}
+                />
                 <div className={Styles.stats}>
                     <div className={Styles.stat}>
                         <div className={Styles.statLabel}>Supply</div>

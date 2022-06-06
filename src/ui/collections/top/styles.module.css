@@ -1,0 +1,48 @@
+.root {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    gap: 24px;
+}
+
+.banner {
+    height: 240px;
+
+    border-radius: 20px;
+    background-color: var(--chrome-2);
+    object-fit: cover;
+}
+
+.thumbnail {
+    width: 100px;
+    height: 100px;
+
+    margin: -104px auto 0;
+
+    background-color: var(--chrome-3);
+    border-radius: 50%;
+    box-shadow: 0 0 0 1px var(--chrome-2), 0 0 0 10px var(--background);
+    transition: box-shadow 320ms ease-out, background-color 320ms ease-out;
+}
+
+.name {
+    min-height: 34px;
+    font-size: 28px;
+    font-weight: 600;
+    text-align: center;
+}
+
+.description {
+    margin: 0 auto;
+    max-width: 40em;
+    text-align: center;
+    color: var(--chrome-4);
+}
+
+.description h1 {
+    font-size: 24px;
+}
+
+.description h2 {
+    font-size: 20px;
+}
