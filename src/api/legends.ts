@@ -15,7 +15,7 @@ export interface LegendManifest {
     back: string;
     border: string;
     ink: string;
-    stock?: string;
+    // stock?: string;
     mask?: string;
     maps: {
         normal: string;
@@ -31,11 +31,11 @@ export interface LegendManifest {
         emissive: string;
         background: string;
     };
-    // stock: {
-    //     base: string;
-    //     specular: string;
-    //     emissive: string;
-    // };
+    stock: {
+        base: string;
+        specular: string;
+        emissive: string;
+    };
     views: {
         flat: string;
         sideBySide: string;

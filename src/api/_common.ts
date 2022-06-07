@@ -1,3 +1,4 @@
+import { Principal } from '@dfinity/principal';
 import { DateTime } from 'luxon';
 
 ////////////
@@ -30,4 +31,15 @@ export interface ICP8s {
 
 export function mapToken(candid: { e8s: bigint }): ICP8s {
     return { e8s: Number(candid.e8s) };
+}
+
+///////////
+// Util //
+/////////
+
+export function asPrincipal(principal: string | Principal): Principal {
+    if (typeof principal === 'string') {
+        return Principal.fromText(principal);
+    }
+    return principal;
 }

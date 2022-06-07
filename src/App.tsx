@@ -19,11 +19,12 @@ import Messages from 'ui/messages';
 import ScrollToTop from 'ui/scroll-to-top';
 import Modal from 'ui/modal';
 import TokenPage from 'pages/token';
+import { deserialize, serialize } from 'util/serialize';
 
 
 // This query agent does the heavy lifting for querying, caching and persisting data from backend canisters.
 export const queryClient = new QueryClient()
-const localStoragePersistor = createWebStoragePersistor({ storage: window.localStorage });
+const localStoragePersistor = createWebStoragePersistor({ storage: window.localStorage, serialize, deserialize });
 persistQueryClient({
     queryClient,
     persistor: localStoragePersistor,
@@ -52,10 +53,10 @@ function App() {
                     <Route path="/collection/:canister" element={<CollectionsPage />} />
                     <Route path="/profile" element={<ProfilePage />} />
                 </Routes>
-                <Messages key={`messagesProvider`} />
-                <ScrollToTop key={`scrollToTopProvider`} />
-                <Modal key={`modalProvider`} />
             </AnimatePresence>
+            <Messages />
+            <ScrollToTop />
+            <Modal />
         </QueryClientProvider>
     </>
 }

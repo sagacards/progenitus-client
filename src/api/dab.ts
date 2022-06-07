@@ -38,7 +38,6 @@ function mapDabCanister(entry: Metadata): LegendEntry {
         name: entry.name,
         thumbnail: driveHack(entry.thumbnail),
         description: entry.description,
-        // Principal objects don't survive localstorage, so we text encode here.
         principal: entry.principal_id.toText(),
         // @ts-ignore: TODO improve this
         artists: details.artists.Text,
