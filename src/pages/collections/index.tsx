@@ -28,11 +28,14 @@ export default function CollectionsPage(props: Props) {
     const { data: directory } = useDirectory();
     const { data: description } = useDescriptionMarkdown(canister as string)
     const { listings } = useCanisterListings(canister as string);
+
     const collection = React.useMemo(() => canister ? directory?.find(x => x.principal === canister) : undefined, [canister, directory]);
+
     return <Page key="CollectionsPage">
         <Navbar />
         <Container>
             <div className={Styles.root}>
+
                 <CollectionTop
                     banner={collection?.bannerImage}
                     thumbnail={collection?.thumbnail}
@@ -40,11 +43,12 @@ export default function CollectionsPage(props: Props) {
                     address={collection?.principal}
                     description={description}
                 />
+
                 {mintingEvent && <div className={Styles.mint}>
-                    <h2>Mint</h2>
                     <StatBar supply={supply} remaining={mintingEvent.data?.supply} price={mintingEvent.data?.event.price} />
                     {mintingEvent.data && <Mint canister={canister as string} event={mintingEvent.data?.event} remaining={mintingEvent.data?.supply} />}
                 </div>}
+
                 <Tabs
                     tabs={[
                         ['Items', <>
