@@ -52,9 +52,9 @@ function App() {
                     <Route path="/collection/:canister" element={<CollectionsPage />} />
                     <Route path="/profile" element={<ProfilePage />} />
                 </Routes>
-                <Messages />
-                <ScrollToTop />
-                <Modal />
+                <Messages key={`messagesProvider`} />
+                <ScrollToTop key={`scrollToTopProvider`} />
+                <Modal key={`modalProvider`} />
             </AnimatePresence>
         </QueryClientProvider>
     </>

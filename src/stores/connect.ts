@@ -5,9 +5,14 @@ import { Principal } from '@dfinity/principal';
 import { ActorSubclass, HttpAgent } from '@dfinity/agent';
 import { IDL } from '@dfinity/candid';
 import { CompleteStore, StoreSlice } from 'stores/index';
-import { whitelist } from 'stores/actors';
 import { toHexString } from 'ictool';
-import { invalidateIdentity, replaceIdentity } from 'api/actors';
+import {
+    invalidateIdentity,
+    replaceIdentity,
+    respawnActorsPlug,
+    respawnActorsStandard,
+    whitelist as getWhitelist,
+} from 'api/actors';
 
 export const icConf = {
     protocol: (import.meta.env.PROGENITUS_IC_PROTOCOL as string) || 'https',
@@ -120,6 +125,8 @@ export const createConnectSlice: StoreSlice<ConnectStore, CompleteStore> = (
 
     // Request connection to user's plug wallet.
     async plugConnect() {
+        const whitelist = await getWhitelist();
+
         const { idempotentConnect, postConnect } = get();
 
         // Ensure singular connection attempt.
@@ -143,6 +150,7 @@ export const createConnectSlice: StoreSlice<ConnectStore, CompleteStore> = (
 
     // Attempt to restore a live connection to user's plug wallet.
     async plugReconnect() {
+        const whitelist = await getWhitelist();
         const { postConnect } = get();
         const plug = window?.ic?.plug;
         if (
@@ -185,7 +193,10 @@ export const createConnectSlice: StoreSlice<ConnectStore, CompleteStore> = (
         // Track connected wallet
         wallet && window.localStorage.setItem('wallet', wallet);
 
-        // Update identity on actors
+        // Plug actors workaround.
+        if (wallet === 'plug') respawnActorsPlug();
+
+        // Update identity on actors (deprecated)
         await createActors();
 
         const {
@@ -208,15 +219,22 @@ export const createConnectSlice: StoreSlice<ConnectStore, CompleteStore> = (
     // Disconnect from users wallet.
     async disconnect() {
         const { createActors } = get();
-        StoicIdentity.disconnect();
+
+        // Plug actors workaround.
+        const { wallet } = get();
+        if (wallet === 'plug') respawnActorsStandard();
+
         invalidateIdentity();
+        StoicIdentity.disconnect();
         window.ic?.plug?.deleteAgent && window.ic?.plug?.deleteAgent();
+
         set({
             connected: false,
             principal: undefined,
             wallet: undefined,
             agent: undefined,
         });
+
         window.localStorage.removeItem('wallet');
         await createActors();
     },

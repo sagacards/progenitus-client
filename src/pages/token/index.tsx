@@ -67,9 +67,12 @@ export default function TokenPage(props: Props) {
                             </div>
                             <h2>{collection?.name} #{index}</h2>
                             {traits && <Traits>
-                                {Object.entries(traits).filter(x => x[1] !== undefined).map(([trait, value]) => <div>
-                                    <Trait label={trait} value={value[0]} rarity={value[1]} />
-                                </div>)}
+                                {Object.entries(traits).filter(x => x[1] !== undefined).map(([trait, value]) => <Trait
+                                    key={`trait-${value[0]}`}
+                                    label={trait}
+                                    value={value[0]}
+                                    rarity={value[1]}
+                                />)}
                             </Traits>}
                             <div className={Styles.buy}>
                                 <div className={Styles.label}>Market Listing</div>
@@ -86,6 +89,9 @@ export default function TokenPage(props: Props) {
                             </div>
                         </div>
                     </div>
+                </div>
+                <div>
+                    <h1>Legends</h1>
                 </div>
             </div>
         </Container>

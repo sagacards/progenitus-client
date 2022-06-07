@@ -6,7 +6,7 @@ import { useQuery } from 'react-query';
 import { Metadata, TarotDAB } from 'canisters/tarot-dab/tarot-dab.did.d';
 import { idlFactory } from 'canisters/tarot-dab/tarot-dab.did';
 
-import { defaultAgent } from 'stores/connect';
+import { agent } from 'api/actors';
 
 ////////////
 // Types //
@@ -57,12 +57,12 @@ function mapDabCanister(entry: Metadata): LegendEntry {
 
 // Just a plain actor we can use to make requests.
 const actor = Actor.createActor<TarotDAB>(idlFactory, {
-    agent: defaultAgent,
+    agent,
     canisterId: import.meta.env.PROGENITUS_DAB_CANISTER_ID,
 });
 
 // Retrieve all tarot NFTS.
-function getAll() {
+export function getAll() {
     return actor.getAll().then(r => r.map(mapDabCanister));
 }
 
