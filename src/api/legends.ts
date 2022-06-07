@@ -180,7 +180,6 @@ export function useSupply(canister: string) {
         `${canister}-supply`,
         async () => {
             const stats = await legend(canister).stats().then(mapStats);
-            console.log(stats?.supply);
             return stats.supply;
         },
         {

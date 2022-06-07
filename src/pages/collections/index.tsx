@@ -14,12 +14,14 @@ import More from 'ui/more';
 import NFTPreview from 'ui/nft-preview';
 import Tabs from 'ui/tabs';
 import Page from 'pages/wrapper';
+import { useOpenEvent } from 'api/minting';
 
 interface Props { };
 
 export default function CollectionsPage(props: Props) {
     const { canister } = useParams();
-    const { events } = useProvenance(canister as string);
+    const { events: provenance } = useProvenance(canister as string);
+    const mintingEvent = useOpenEvent(canister as string);
     const { data: directory } = useDirectory();
     const { data: description } = useDescriptionMarkdown(canister as string)
     const { listings } = useCanisterListings(canister as string);
@@ -35,6 +37,10 @@ export default function CollectionsPage(props: Props) {
                     address={collection?.principal}
                     description={description}
                 />
+                {mintingEvent && <>
+                    <h2>Mint</h2>
+                    <div>{mintingEvent.data?.supply} available to mint</div>
+                </>}
                 <Tabs
                     tabs={[
                         ['Items', <>

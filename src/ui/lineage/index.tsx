@@ -4,6 +4,7 @@ import Styles from './styles.module.css'
 
 import Saga from 'assets/disk/8.png'
 import Hash from 'ui/hash';
+import { Link } from 'react-router-dom';
 
 type operation = 'sale' | 'mint' | 'transfer' | 'listing';
 
@@ -15,6 +16,7 @@ interface Props {
     collection?: {
         name: string;
         thumbnail: string;
+        principal: string;
     };
     size?: 'lg';
 }
@@ -40,7 +42,7 @@ export default function Lineage(props: Props) {
             <div className={Styles.tip}>Creator: Saga Cards</div>
         </div>
         <div className={Styles.item}>
-            <div className={Styles.disk}>{props?.collection?.thumbnail ? <img className={Styles.image} src={props.collection.thumbnail} /> : <Hashatar name={props?.collection?.name} />}</div>
+            <div className={Styles.disk}><Link to={`/collection/${props?.collection?.principal}`}>{props?.collection?.thumbnail ? <img className={Styles.image} src={props.collection.thumbnail} /> : <Hashatar name={props?.collection?.name} />}</Link></div>
             <div className={Styles.tip}>Collection: {props?.collection?.name}</div>
         </div>
         {props.from && <div className={Styles.item}>

@@ -17,6 +17,7 @@ import { useBackNext } from './hooks';
 import { useTraits } from 'api/legends';
 import { Trait, Traits } from 'ui/trait';
 import AssetPreload from 'ui/asset-preload';
+import { useOpenEvents } from 'api/minting';
 
 interface Props { };
 

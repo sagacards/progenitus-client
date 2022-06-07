@@ -11,7 +11,7 @@ interface Props {
 export function Trait({ label, value, rarity }: Props) {
     return <div className={[Styles.root, Styles[rarity]].join(' ')}>
         <div className={Styles.label}>{label}</div>
-        <div className={Styles.value}>{value.replaceAll('-', ' ')}</div>
+        <div className={Styles.value}>{value?.replaceAll('-', ' ')}</div>
     </div>
 }
 
