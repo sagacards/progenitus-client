@@ -1,3 +1,5 @@
+// Explanation of the module.
+
 import { useQuery } from 'react-query';
 
 ////////////
@@ -11,7 +13,7 @@ export interface SomeType {}
 // Mapping //
 ////////////
 
-// ...
+// Map something for use in this app.
 function mapSomething(input: any): SomeType {
     return {};
 }
@@ -20,10 +22,14 @@ function mapSomething(input: any): SomeType {
 // Fetching //
 /////////////
 
-// ...
+// Retrieve something.
 function fetchSomething(input: string): Promise<SomeType[]> {
     return new Promise(resolve => resolve([]));
 }
+
+////////////
+// Hooks //
+//////////
 
 // Hook to retrieve something.
 export function useSomething(input: string) {

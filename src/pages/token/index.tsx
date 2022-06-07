@@ -5,7 +5,7 @@ import Navbar from 'ui/navbar';
 import Page from 'pages/wrapper';
 import Lineage from 'ui/lineage';
 import { Link, useParams } from 'react-router-dom';
-import { decodeTokenIdentifier, encodeTokenIdentifier } from 'ictool';
+import { decodeTokenIdentifier, encodeTokenIdentifier, principalToAddress } from 'ictool';
 import { useDirectory } from 'api/dab';
 import { priceConvertDisplay, priceDisplay, priceFloat, useCanisterListings } from 'api/listings';
 import ICP from 'assets/currency/icp.png';
@@ -17,19 +17,29 @@ import { useBackNext } from './hooks';
 import { useTraits } from 'api/legends';
 import { Trait, Traits } from 'ui/trait';
 import AssetPreload from 'ui/asset-preload';
+import { useOwner } from 'api/ext';
 
 interface Props { };
 
 export default function TokenPage(props: Props) {
     const { identifier } = useParams();
-    const { icpToUSD } = useStore();
+
+    const { icpToUSD, principal } = useStore();
+
     const { index, canister } = React.useMemo(() => decodeTokenIdentifier(identifier as string), [identifier]);
     const { back, next } = useBackNext(canister, index)
     const { data: directory } = useDirectory();
     const { listings } = useCanisterListings(canister as string);
+    const { data: owner, status: ownerStatus } = useOwner(identifier as string);
     const traits = useTraits(canister, index);
+
     const listing = React.useMemo(() => listings?.find(x => x.token === identifier), [listings, identifier]);
     const collection = React.useMemo(() => canister ? directory?.find(x => x.principal === canister) : undefined, [canister, directory]);
+
+    const owned = React.useMemo(() => principal && principalToAddress(principal) === owner, [principal, owner]);
+
+    console.log(owner)
+
     return <Page key={`TokenPage-${identifier}`}>
         <Navbar />
         <Container>
@@ -56,7 +66,7 @@ export default function TokenPage(props: Props) {
                         />
                         <div className={Styles.info}>
                             <div className={Styles.widgets}>
-                                <Lineage size='lg' operation='listing' collection={collection} />
+                                <Lineage size='lg' operation='none' collection={collection} from={owner} />
                                 <div className={Styles.widgetsGroup}>
                                     <Like size='lg' outline token={identifier as string} />
                                     <div className={Styles.nav}>
@@ -76,16 +86,20 @@ export default function TokenPage(props: Props) {
                             </Traits>}
                             <div className={Styles.buy}>
                                 <div className={Styles.label}>Market Listing</div>
-                                {listing ? <>
-                                    <div className={Styles.price}>
-                                        <img src={ICP} height='30' width='30' />
-                                        {priceDisplay(listing.price)}
-                                        {icpToUSD && <div className={Styles.usd}>{priceConvertDisplay(listing.price, icpToUSD)}</div>}
-                                    </div>
-                                    <Button size='large'>Buy</Button>
-                                </> : <>
-                                    This token is not currently listed for sale.
-                                </>}
+                                {ownerStatus === 'error' ? <>
+                                    This token has not been minted yet.
+                                </> :
+                                    listing ? <>
+                                        <div className={Styles.price}>
+                                            <img src={ICP} height='30' width='30' />
+                                            {priceDisplay(listing.price)}
+                                            {icpToUSD && <div className={Styles.usd}>{priceConvertDisplay(listing.price, icpToUSD)}</div>}
+                                        </div>
+                                        <Button size='large'>Buy</Button>
+                                    </> : <>
+                                        This token is not currently listed for sale.
+                                    </>}
+                                {owned && <Button>List</Button>}
                             </div>
                         </div>
                     </div>

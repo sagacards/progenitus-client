@@ -6,7 +6,7 @@ import Saga from 'assets/disk/8.png'
 import Hash from 'ui/hash';
 import { Link } from 'react-router-dom';
 
-type operation = 'sale' | 'mint' | 'transfer' | 'listing';
+type operation = 'sale' | 'mint' | 'transfer' | 'listing' | 'none';
 
 interface Props {
     children?: React.ReactNode;
@@ -26,6 +26,7 @@ const toLabel = {
     'mint': 'minter',
     'transfer': 'recipient',
     'listing': 'seller',
+    'none': 'recipient',
 }
 
 const fromLabel = {
@@ -33,6 +34,7 @@ const fromLabel = {
     'mint': 'agent',
     'transfer': 'sender',
     'listing': 'seller',
+    'none': 'owner',
 }
 
 export default function Lineage(props: Props) {
