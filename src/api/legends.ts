@@ -129,12 +129,6 @@ export async function fetchDescriptionMarkdown(canisterId: string) {
     ).text();
 }
 
-export function useDescriptionMarkdown(canisterId: string) {
-    return useQuery(`description-markdown-${canisterId}`, () =>
-        fetchDescriptionMarkdown(canisterId)
-    );
-}
-
 ////////////
 // Hooks //
 //////////
@@ -285,5 +279,12 @@ export function useTraits(canister: string, index: number) {
                 'common',
             ],
         } as Traits)
+    );
+}
+
+// Retrieve markdown description asset from canister.
+export function useDescriptionMarkdown(canisterId: string) {
+    return useQuery(`description-markdown-${canisterId}`, () =>
+        fetchDescriptionMarkdown(canisterId)
     );
 }

@@ -7,7 +7,7 @@ import { useParams } from 'react-router-dom';
 import { CAPEvent, useProvenance } from 'api/cap';
 import { useDirectory } from 'api/dab';
 import CollectionTop from 'ui/collections/top';
-import { useDescriptionMarkdown } from 'api/legends';
+import { useDescriptionMarkdown, useSupply } from 'api/legends';
 import Grid from 'ui/grid';
 import { sortListings, useCanisterListings } from 'api/listings';
 import More from 'ui/more';
@@ -15,12 +15,15 @@ import NFTPreview from 'ui/nft-preview';
 import Tabs from 'ui/tabs';
 import Page from 'pages/wrapper';
 import { useOpenEvent } from 'api/minting';
+import StatBar from 'ui/stat-bar';
+import Mint from 'ui/mint';
 
 interface Props { };
 
 export default function CollectionsPage(props: Props) {
     const { canister } = useParams();
     const { events: provenance } = useProvenance(canister as string);
+    const { data: supply } = useSupply(canister as string);
     const mintingEvent = useOpenEvent(canister as string);
     const { data: directory } = useDirectory();
     const { data: description } = useDescriptionMarkdown(canister as string)
@@ -37,10 +40,11 @@ export default function CollectionsPage(props: Props) {
                     address={collection?.principal}
                     description={description}
                 />
-                {mintingEvent && <>
+                {mintingEvent && <div className={Styles.mint}>
                     <h2>Mint</h2>
-                    <div>{mintingEvent.data?.supply} available to mint</div>
-                </>}
+                    <StatBar supply={supply} remaining={mintingEvent.data?.supply} price={mintingEvent.data?.event.price} />
+                    {mintingEvent.data && <Mint canister={canister as string} event={mintingEvent.data?.event} remaining={mintingEvent.data?.supply} />}
+                </div>}
                 <Tabs
                     tabs={[
                         ['Items', <>

@@ -6,6 +6,7 @@ import { createWebStoragePersistor } from 'react-query/createWebStoragePersistor
 import { persistQueryClient } from 'react-query/persistQueryClient-experimental';
 
 import useStore from 'stores/index';
+import useMessageStore from 'stores/messages';
 
 import HomePage from 'pages/home';
 import ConnectPage from 'pages/connect';
@@ -14,11 +15,12 @@ import DropsPage from 'pages/drops';
 import CollectionsPage from 'pages/collections';
 import ProfilePage from 'pages/profile';
 import DropDetailPage from 'pages/drop-detail';
+import TokenPage from 'pages/token';
 
 import Messages from 'ui/messages';
 import ScrollToTop from 'ui/scroll-to-top';
 import Modal from 'ui/modal';
-import TokenPage from 'pages/token';
+
 import { deserialize, serialize } from 'util/serialize';
 
 
@@ -33,8 +35,10 @@ persistQueryClient({
 
 function App() {
     const { init } = useStore();
+    const { init: initMessageStore } = useMessageStore();
     React.useEffect(() => {
         init();
+        initMessageStore();
     }, []);
     return <>
         <QueryClientProvider client={queryClient}>

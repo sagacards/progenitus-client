@@ -1,0 +1,101 @@
+.root {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+.stage {
+    position: relative;
+    overflow: hidden;
+    padding: 3px;
+    width: 100%;
+    max-width: 500px;
+    height: 400px;
+    transition: box-shadow 320ms ease-out, background-color 320ms ease-out;
+    border-radius: 23px;
+}
+
+.minted .externalLink {
+    opacity: 1;
+}
+
+.externalLink {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    z-index: 10;
+    color: white !important;
+    fill: white;
+
+    opacity: 0;
+
+    transition: opacity 240ms ease-out;
+}
+
+.stage > *:not(.externalLink) {
+    z-index: 1;
+    background: linear-gradient(#202059, #1c367c);
+    transition: box-shadow 320ms ease-out, background-color 320ms ease-out;
+    border-radius: 20px;
+}
+
+.stage:after {
+    content: '';
+    position: absolute;
+    z-index: 0;
+    top: -50%;
+    right: -50%;
+    bottom: -50%;
+    left: -50%;
+    background: conic-gradient(
+        var(--gold-1),
+        var(--gold-2),
+        var(--background),
+        var(--background),
+        var(--background),
+        var(--background),
+        var(--background),
+        var(--background),
+        var(--background),
+        var(--background),
+        var(--background),
+        var(--gold-2),
+        var(--gold-1)
+    );
+    background-position: 0 50%;
+    opacity: 0;
+    transition: 320ms opacity ease-out;
+}
+
+.stage.minting:after {
+    opacity: 1;
+    animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.button {
+    position: relative;
+    z-index: 10;
+    margin-top: -38px;
+    box-shadow: 0 0 0 8px var(--chrome-1);
+    background: var(--chrome-1);
+    border-radius: 28px;
+    transition: box-shadow 320ms ease-out, background-color 320ms ease-out;
+}
+
+.message {
+    display: flex;
+    gap: 4px;
+    color: var(--chrome-4);
+    font-size: 12px;
+}

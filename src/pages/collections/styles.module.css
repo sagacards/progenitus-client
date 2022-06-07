@@ -1,1 +1,8 @@
-.root {}
+.root {
+}
+
+.mint {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}

@@ -3,7 +3,13 @@
 import { Principal } from '@dfinity/principal';
 import { DateTime } from 'luxon';
 import { useQueries, useQuery } from 'react-query';
-import { CanisterId, ICP8s, mapDate, mapToken } from 'api/_common';
+import {
+    CanisterId,
+    ICP8s,
+    mapDate,
+    mapToken,
+    unpackResult,
+} from 'api/_common';
 import { Data, Rex } from 'canisters/progenitus/progenitus.did.d';
 import { ActorSubclass } from '@dfinity/agent';
 import { bazaar, legend } from './actors';
@@ -91,11 +97,45 @@ async function fetchEvents(canister: string): Promise<MintingEvent[]> {
     });
 }
 
+// Retrieve specific minting event.
+async function fetchEvent(canister: string, event: number) {
+    try {
+        return mapEvent(
+            Principal.fromText(canister),
+            unpackResult(
+                await bazaar.getEvent(
+                    Principal.fromText(canister),
+                    BigInt(event)
+                )
+            ),
+            BigInt(event)
+        );
+    } catch {
+        throw new Error(`Failed to fetch event ${canister} ${event}`);
+    }
+}
+
 // Retrieve remaining mint supply for an event.
 async function fetchSupply(canister: string, event: number): Promise<number> {
     return Number(
         await legend(canister).launchpadTotalAvailable(BigInt(event))
     );
+}
+
+// Retrieve event whitelist spots for principal.
+async function fetchSpots(canister: string, event: number): Promise<number> {
+    try {
+        return Number(
+            unpackResult(
+                await bazaar.getAllowlistSpots(
+                    Principal.fromText(canister),
+                    BigInt(event)
+                )
+            )
+        );
+    } catch {
+        throw new Error(`Failed to fetch spots ${canister} ${event}`);
+    }
 }
 
 ////////////
@@ -135,6 +175,43 @@ export function useOpenEvent(canister: string) {
     );
 
     return withSupply.find(x => x.data?.supply && x.data.supply > 0);
+}
+
+// Hook to consume user whitelist spots for an event.
+export function useSpots(canister: string, event: number) {
+    return useQuery(
+        `event-spots-${canister}-${event}`,
+        () => fetchSpots(canister, event),
+        {
+            cacheTime: 60_000 * 60 * 24,
+            staleTime: 60_000,
+        }
+    );
+}
+
+// Hook to consume a specific event.
+export function useEvent(canister: string, event: number) {
+    return useQuery(
+        `event-${canister}-${event}`,
+        () => fetchEvent(canister, event),
+        {
+            cacheTime: 60_000 * 60 * 24 * 7,
+            staleTime: 60_000 * 60 * 24,
+        }
+    );
+}
+
+// Hook to consume mintable supply for specific event.
+export function useEventSupply(canister: string, event: number) {
+    return useQuery(
+        `event-supply-${canister}-${event}`,
+        () => fetchSupply(canister, event),
+        {
+            cacheTime: 60_000 * 60 * 24,
+            staleTime: 60_000,
+            refetchInterval: 60_000,
+        }
+    );
 }
 
 ////////////////////

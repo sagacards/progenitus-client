@@ -7,12 +7,13 @@ import WalletIcon from 'ui/wallet-icon';
 import Styles from './styles.module.css'
 import { FaArrowDown } from 'react-icons/fa'
 import useMessageStore from 'stores/messages';
+import useModalStore from 'ui/modal/store';
 
 interface Props {
     children?: React.ReactNode;
 }
 
-export default function Swap (props : Props) {
+export default function Swap(props: Props) {
 
     const { principal, deposit, withdraw, icpToUSD, fetchBalance } = useStore()
     const { pushMessage } = useMessageStore();
@@ -49,22 +50,22 @@ export default function Swap (props : Props) {
         </div>
         <div className={Styles.wallet}>
             <Hash icon={<WalletIcon />} size='large' alt>{principal?.toText()}</Hash>
-        </div>                
+        </div>
         <div className={Styles.actions}>
             <Button full onClick={() => {
                 setLoading(true);
                 if (active === 'deposit') {
-                    deposit(parseFloat(amount) * 10**8)
-                    .finally(() => {
-                        setLoading(false);
-                        fetchBalance();
-                    });
+                    deposit(parseFloat(amount) * 10 ** 8)
+                        .finally(() => {
+                            setLoading(false);
+                            fetchBalance();
+                        });
                 } else {
-                    withdraw(parseFloat(amount) * 10**8)
-                    .finally(() => {
-                        setLoading(false);
-                        fetchBalance();
-                    });
+                    withdraw(parseFloat(amount) * 10 ** 8)
+                        .finally(() => {
+                            setLoading(false);
+                            fetchBalance();
+                        });
                 };
             }}>{loading ? <Spinner size='small' /> : active}</Button>
         </div>
@@ -74,11 +75,11 @@ export default function Swap (props : Props) {
 interface SwitchProps {
     children?: React.ReactNode;
     options: { label: string, value: string }[];
-    onChange: (v : string) => void; 
+    onChange: (v: string) => void;
     active: string;
 };
 
-function Switch (props : SwitchProps) {
+function Switch(props: SwitchProps) {
     return <div className={Styles.switch}>
         {props.options.map(option => <div
             key={`switch${option.value}`}
@@ -88,4 +89,18 @@ function Switch (props : SwitchProps) {
             {option.label}
         </div>)}
     </div>
+};
+
+export function SwapModal() {
+    const { close } = useModalStore();
+    const { balanceDisplay, walletBalanceDisplay } = useStore();
+    return <>
+        <Swap />
+        <div>
+            <small className="t-mono">Mint account: {balanceDisplay() !== undefined ? balanceDisplay()?.toFixed(2) : <Spinner size='small' />} <span className={Styles.icp}>ICP</span> </small>
+            <br />
+            <small className="t-mono">Wallet: {walletBalanceDisplay() !== undefined ? walletBalanceDisplay()?.toFixed(2) : <Spinner size='small' />} <span className={Styles.icp}>ICP</span> </small>
+        </div>
+        <a onClick={close}>Done</a>
+    </>;
 };

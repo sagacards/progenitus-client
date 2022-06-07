@@ -43,3 +43,28 @@ export function asPrincipal(principal: string | Principal): Principal {
     }
     return principal;
 }
+
+// Adds a discriminated union field to canister result types.
+export function typeResult<T, U>(
+    result: { ok: T } | { err: U }
+): { status: 'ok'; ok: T } | { status: 'err'; err: U } {
+    return 'ok' in result
+        ? {
+              status: 'ok',
+              ...(result as { ok: T }),
+          }
+        : {
+              status: 'err',
+              ...(result as { err: U }),
+          };
+}
+
+export function unpackResult<T, U>(result: { ok: T } | { err: U }): T {
+    const r = typeResult(result);
+    switch (r.status) {
+        case 'ok':
+            return r.ok;
+        case 'err':
+            throw new Error(`Error from canister: ${r.err}`);
+    }
+}
