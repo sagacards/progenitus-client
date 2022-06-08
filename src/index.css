@@ -61,7 +61,8 @@ body,
     background-color: var(--background);
     color: var(--foreground);
 
-    transition: background-color 320ms ease-out, color 320ms ease-out;
+    transition: background-color 320ms ease-out, box-shadow 320ms ease-out,
+        color 320ms ease-out;
 
     font-family: inter, sans-serif;
 }
@@ -145,4 +146,39 @@ iframe {
 
 .t-mono {
     font-family: 'Space Mono', monospace;
+}
+
+label {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+
+    color: var(--chrome-5);
+    font-size: 14px;
+    text-transform: uppercase;
+}
+
+input {
+    padding: 10px 12px;
+
+    background: var(--chrome-2);
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 0 0 1px var(--chrome-3);
+
+    color: var(--chrome-4);
+    font-size: 20px;
+
+    outline: none;
+}
+
+input,
+label {
+    width: 100%;
+}
+
+input:focus {
+    color: var(--foreground);
+    outline: var(--chrome-4) solid 2px;
 }

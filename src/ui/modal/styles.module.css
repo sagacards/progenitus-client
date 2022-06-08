@@ -1,26 +1,22 @@
-.root, .overlay {
+.root,
+.overlay {
     position: fixed;
-    top: 0; right: 0; bottom: 0; left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
 
     z-index: 100;
 
     display: flex;
     align-items: center;
     justify-content: center;
-
-    opacity: 0;
-    display: none;
-}
-
-.root.open {
-    opacity: 1;
-    display: flex;
 }
 
 .open .overlay {
     display: block;
     background: var(--background);
-    opacity: .75;
+    opacity: 0.75;
     cursor: pointer;
     backdrop-filter: blur(5px);
 }
@@ -48,8 +44,11 @@
     text-align: center;
 }
 
-.root, .overlay, .frame {
-    transition: opacity 320ms ease-out, background-color 320ms ease-out, box-shadow 320ms ease-out;
+.root,
+.overlay,
+.frame {
+    transition: opacity 320ms ease-out, background-color 320ms ease-out,
+        box-shadow 320ms ease-out;
 }
 
 .content > * {

@@ -1,10 +1,17 @@
 import { DateTime } from 'luxon';
-import { ExtListing, TokenIndex } from 'canisters/legends/legends.did.d';
+import {
+    ExtListing,
+    ListResponse,
+    TokenIndex,
+} from 'canisters/legends/legends.did.d';
 import { mapDate } from 'stores/minting';
-import { useQueries, useQuery } from 'react-query';
+import { useMutation, useQueries, useQuery } from 'react-query';
 import { getLegendActor } from 'stores/actors';
-import { encodeTokenIdentifier } from 'ictool';
+import { decodeTokenIdentifier, encodeTokenIdentifier } from 'ictool';
 import { useDirectory } from './dab';
+import { ICP8s, unpackResult } from './_common';
+import { legend } from './actors';
+import { queryClient } from 'src/App';
 
 ////////////
 // Types //
@@ -18,6 +25,7 @@ export interface Listing {
     locked?: DateTime;
     seller: string;
     price: Price;
+    listed: boolean;
 }
 
 // An exponent price object (from CAP).
@@ -43,6 +51,7 @@ function mapListing(
         locked: listing.locked.length ? mapDate(listing.locked[0]) : undefined,
         seller: listing.seller.toText(),
         price: mapPrice(listing.price),
+        listed: Number(listing.price) !== 0,
     };
 }
 
@@ -94,6 +103,41 @@ function fetchListings(canister: string): Promise<Listing[]> {
         });
 }
 
+////////////////
+// Mutations //
+//////////////
+
+interface MutateListingRequest {
+    token: string;
+    price?: ICP8s;
+}
+
+export function useMutateListing() {
+    return useMutation<null, { err: string }, MutateListingRequest, unknown>({
+        mutationFn({ token, price }: MutateListingRequest) {
+            const { canister } = decodeTokenIdentifier(token);
+            return legend(canister)
+                .list({
+                    token,
+                    from_subaccount: [],
+                    price: price ? [BigInt(price.e8s)] : [],
+                })
+                .then(unpackResult);
+        },
+        onSuccess(data, { token, price }: MutateListingRequest) {
+            const { canister } = decodeTokenIdentifier(token);
+            queryClient.invalidateQueries(`listings-${canister}`);
+        },
+        onError(data) {
+            alert(`Failed to update listing: ${data.err}`);
+        },
+    });
+}
+
+////////////
+// Hooks //
+//////////
+
 // Hook to retrieve listings for a specific canister.
 export function useCanisterListings(canister: string) {
     const query = useQuery<Listing[], string>(`listings-${canister}`, () =>
@@ -122,6 +166,24 @@ export function useAllLegendListings() {
         (agg, query) => [...agg, ...(query?.data || [])],
         [] as Listing[]
     );
+}
+
+// Hook to retrieve listing for specific token.
+export function useListing(token: string) {
+    const { canister } = decodeTokenIdentifier(token);
+    const query = useQuery(
+        `listings-${canister}`,
+        () => fetchListings(canister),
+        {
+            cacheTime: 60_000 * 5,
+            staleTime: 10_000,
+            refetchInterval: 10_000,
+        }
+    );
+    return {
+        ...query,
+        data: query?.data && query.data.find(x => x.token === token),
+    };
 }
 
 /////////////////

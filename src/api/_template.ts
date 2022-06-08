@@ -33,13 +33,7 @@ function fetchSomething(input: string): Promise<SomeType[]> {
 
 // Hook to retrieve something.
 export function useSomething(input: string) {
-    const query = useQuery<SomeType[], string>(`something-${input}`, () =>
+    return useQuery<SomeType[], string>(`something-${input}`, () =>
         fetchSomething(input)
     );
-    return {
-        something: query.data,
-        isLoading: query.isLoading,
-        error: query.error,
-        query,
-    };
 }

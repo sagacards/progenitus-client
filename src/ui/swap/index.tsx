@@ -16,13 +16,29 @@ interface Props {
 export default function Swap(props: Props) {
 
     const { principal, deposit, withdraw, icpToUSD, fetchBalance } = useStore()
-    const { pushMessage } = useMessageStore();
 
     const [active, setActive] = React.useState<'deposit' | 'withdraw'>('deposit');
     const [amount, setAmount] = React.useState<string>('0');
     const [loading, setLoading] = React.useState<boolean>(false);
 
     const usd = React.useMemo(() => icpToUSD ? (icpToUSD * Number(amount)).toFixed(2) : 0, [amount, icpToUSD])
+
+    const handleTransfer = React.useMemo(() => () => {
+        setLoading(true);
+        if (active === 'deposit') {
+            deposit(parseFloat(amount) * 10 ** 8)
+                .finally(() => {
+                    setLoading(false);
+                    fetchBalance();
+                });
+        } else {
+            withdraw(parseFloat(amount) * 10 ** 8)
+                .finally(() => {
+                    setLoading(false);
+                    fetchBalance();
+                });
+        };
+    }, [deposit, withdraw, amount, active])
 
     return <div className={[Styles.root, Styles[active]].join(' ')}>
         <div className={Styles.top}>
@@ -52,22 +68,7 @@ export default function Swap(props: Props) {
             <Hash icon={<WalletIcon />} size='large' alt>{principal?.toText()}</Hash>
         </div>
         <div className={Styles.actions}>
-            <Button full onClick={() => {
-                setLoading(true);
-                if (active === 'deposit') {
-                    deposit(parseFloat(amount) * 10 ** 8)
-                        .finally(() => {
-                            setLoading(false);
-                            fetchBalance();
-                        });
-                } else {
-                    withdraw(parseFloat(amount) * 10 ** 8)
-                        .finally(() => {
-                            setLoading(false);
-                            fetchBalance();
-                        });
-                };
-            }}>{loading ? <Spinner size='small' /> : active}</Button>
+            <Button full onClick={() => handleTransfer()}>{loading ? <Spinner size='small' /> : active}</Button>
         </div>
     </div>
 }

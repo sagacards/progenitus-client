@@ -9,6 +9,7 @@ import { idlFactory as CyclesIDL } from 'canisters/cycles/cycles.did';
 import { idlFactory as LikesIDL } from 'canisters/likes/likes.did';
 import { idlFactory as LegendsIDL } from 'canisters/legends/legends.did';
 import { idlFactory as NnsIDL } from 'canisters/ledger/ledger.did';
+import { Cycles } from 'canisters/cycles/cycles.did.d';
 import { Ledger } from 'canisters/ledger/ledger.did.d';
 import { LegendsNFT } from 'canisters/legends/legends.did.d';
 import { Likes } from 'canisters/likes/likes.did.d';
@@ -79,7 +80,7 @@ export let bazaar = actor<Rex>(
     BazaarIDL
 );
 
-export let cycles = actor<Ledger>(
+export let cycles = actor<Cycles>(
     import.meta.env.PROGENITUS_CYCLES_CANISTER_ID,
     CyclesIDL
 );
@@ -150,7 +151,7 @@ export async function respawnActorsPlug() {
         interfaceFactory: BazaarIDL,
     });
 
-    cycles = await window.ic.plug.createActor<Ledger>({
+    cycles = await window.ic.plug.createActor<Cycles>({
         canisterId: import.meta.env.PROGENITUS_CYCLES_CANISTER_ID,
         interfaceFactory: CyclesIDL,
     });
@@ -174,7 +175,7 @@ export function respawnActorsStandard() {
 
     bazaar = actor<Rex>(import.meta.env.PROGENITUS_CANISTER_ID, BazaarIDL);
 
-    cycles = actor<Ledger>(
+    cycles = actor<Cycles>(
         import.meta.env.PROGENITUS_CYCLES_CANISTER_ID,
         CyclesIDL
     );

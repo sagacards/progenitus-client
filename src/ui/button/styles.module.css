@@ -123,6 +123,10 @@
     width: 100%;
 }
 
+/* .root:not(.full) {
+    align-self: flex-start;
+} */
+
 .error .frame {
     animation: shake 1s ease-out;
 }
@@ -154,4 +158,26 @@
     60% {
         transform: translate3d(4px, 0, 0);
     }
+}
+
+/* Loading Styles */
+
+.loader {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    bottom: 5px;
+    left: 10px;
+    opacity: 0;
+    z-index: 0;
+    transition: opacity 320ms ease-out;
+    background-color: var(--background);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.loading .loader {
+    z-index: 2;
+    opacity: 1;
 }

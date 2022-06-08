@@ -18,6 +18,9 @@ import { useTraits } from 'api/legends';
 import { Trait, Traits } from 'ui/trait';
 import AssetPreload from 'ui/asset-preload';
 import { useOwner } from 'api/ext';
+import Modal from 'ui/modal';
+import MarketListForm from 'src/forms/market-list';
+import useModalStore from 'ui/modal/store';
 
 interface Props { };
 
@@ -25,6 +28,7 @@ export default function TokenPage(props: Props) {
     const { identifier } = useParams();
 
     const { icpToUSD, principal } = useStore();
+    const { open } = useModalStore();
 
     const { index, canister } = React.useMemo(() => decodeTokenIdentifier(identifier as string), [identifier]);
     const { back, next } = useBackNext(canister, index)
@@ -37,8 +41,6 @@ export default function TokenPage(props: Props) {
     const collection = React.useMemo(() => canister ? directory?.find(x => x.principal === canister) : undefined, [canister, directory]);
 
     const owned = React.useMemo(() => principal && principalToAddress(principal) === owner, [principal, owner]);
-
-    console.log(owner)
 
     return <Page key={`TokenPage-${identifier}`}>
         <Navbar />
@@ -99,13 +101,12 @@ export default function TokenPage(props: Props) {
                                     </> : <>
                                         This token is not currently listed for sale.
                                     </>}
-                                {owned && <Button>List</Button>}
+                                {owned && <Button
+                                    onClick={() => open(`Manage "${collection?.name} #${index}" Listing`, <MarketListForm token={identifier as string} />)}
+                                >List</Button>}
                             </div>
                         </div>
                     </div>
-                </div>
-                <div>
-                    <h1>Legends</h1>
                 </div>
             </div>
         </Container>

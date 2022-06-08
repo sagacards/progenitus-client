@@ -101,7 +101,6 @@ export const createAccountSlice: StoreSlice<AccountStore, CompleteStore> = (
 
     async deposit(amount: number) {
         const { address, wallet } = get();
-        const { pushMessage } = useMessageStore();
 
         if (!address || !wallet) return;
 
@@ -110,7 +109,7 @@ export const createAccountSlice: StoreSlice<AccountStore, CompleteStore> = (
                 ?.requestTransfer({ to, amount })
                 .catch(e => {
                     console.error(e);
-                    pushMessage({ type: 'error', message: 'Transfer failed!' });
+                    alert('Transfer failed!');
                 })
                 .then(() => void setTimeout(get().fetchBalance, 1000));
         }
@@ -119,7 +118,6 @@ export const createAccountSlice: StoreSlice<AccountStore, CompleteStore> = (
             const {
                 actors: { nns },
             } = get();
-            const { pushMessage } = useMessageStore();
             if (!nns) return;
             return nns
                 .transfer({
@@ -132,14 +130,11 @@ export const createAccountSlice: StoreSlice<AccountStore, CompleteStore> = (
                 })
                 .catch(e => {
                     console.error(e);
-                    pushMessage({ type: 'error', message: 'Transfer failed!' });
+                    alert('Transfer failed!');
                 })
                 .then(r => {
                     if (r && 'Err' in r) {
-                        pushMessage({
-                            type: 'error',
-                            message: Object.keys(r.Err)[0],
-                        });
+                        alert(Object.keys(r.Err)[0]);
                     } else {
                         setTimeout(get().fetchBalance, 1000);
                     }
