@@ -13,7 +13,7 @@ import { sortListings, useCanisterListings } from 'api/listings';
 import More from 'ui/more';
 import NFTPreview from 'ui/nft-preview';
 import Tabs from 'ui/tabs';
-import Page from 'pages/wrapper';
+import Page, { NotFound } from 'pages/wrapper';
 import { useOpenEvent } from 'api/minting';
 import StatBar from 'ui/stat-bar';
 import Mint from 'ui/mint';
@@ -30,6 +30,10 @@ export default function CollectionsPage(props: Props) {
     const { listings } = useCanisterListings(canister as string);
 
     const collection = React.useMemo(() => canister ? directory?.find(x => x.principal === canister) : undefined, [canister, directory]);
+
+    if (directory?.length && !collection) {
+        return <NotFound />
+    }
 
     return <Page key="CollectionsPage">
         <Navbar />

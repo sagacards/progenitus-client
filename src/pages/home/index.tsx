@@ -20,12 +20,14 @@ import { sortListings, useAllLegendListings } from 'api/listings';
 import { CAPEvent, useAllProvenance } from 'api/cap';
 import { ArcanaArt } from 'api/cards/cards';
 import Page from 'pages/wrapper';
+import { useDirectory } from 'api/dab';
 
 
 export default function HomePage() {
     const { connected } = useStore();
     const listings = useAllLegendListings();
     const events = useAllProvenance();
+    const { data: dab } = useDirectory();
 
     const cards = React.useMemo(() => {
         const cards = Array(22).fill(undefined).map((x, i) => ({
@@ -33,6 +35,7 @@ export default function HomePage() {
             flavour: TarotDeckData[i].keywords.slice(0, 3).join(', '),
             image: ArcanaArt[i],
             featured: false,
+            canister: dab?.find(x => x.name === TarotDeckData[i].name)?.principal
         }));
         cards[0].featured = true;
         return cards;

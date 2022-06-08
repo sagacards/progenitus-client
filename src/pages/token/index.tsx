@@ -2,7 +2,7 @@ import Styles from './styles.module.css'
 import React from 'react';
 import Container from 'ui/container';
 import Navbar from 'ui/navbar';
-import Page from 'pages/wrapper';
+import Page, { NotFound } from 'pages/wrapper';
 import Lineage from 'ui/lineage';
 import { Link, useParams } from 'react-router-dom';
 import { decodeTokenIdentifier, encodeTokenIdentifier, principalToAddress } from 'ictool';
@@ -42,6 +42,11 @@ export default function TokenPage(props: Props) {
     const collection = React.useMemo(() => canister ? directory?.find(x => x.principal === canister) : undefined, [canister, directory]);
 
     const owned = React.useMemo(() => principal && principalToAddress(principal) === owner, [principal, owner]);
+
+    console.log(directory?.length, collection);
+    if (directory?.length && !collection) {
+        return <NotFound />
+    }
 
     return <Page key={`TokenPage-${identifier}`}>
         <Navbar />
