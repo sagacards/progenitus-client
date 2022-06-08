@@ -73,7 +73,6 @@ export const createAccountSlice: StoreSlice<AccountStore, CompleteStore> = (
             principal,
             fetchBalance,
         } = get();
-        const { pushMessage } = useMessageStore();
 
         if (!principal || !bazaar) return;
 
@@ -85,11 +84,11 @@ export const createAccountSlice: StoreSlice<AccountStore, CompleteStore> = (
             .transfer({ e8s: BigInt(amount.toFixed()) }, address)
             .catch(e => {
                 console.error(e);
-                pushMessage({ type: 'error', message: 'Transfer failed!' });
+                alert({ type: 'error', message: 'Transfer failed!' });
             })
             .then(r => {
                 if (r && 'Err' in r) {
-                    pushMessage({
+                    alert({
                         type: 'error',
                         message: Object.keys(r.Err)[0],
                     });

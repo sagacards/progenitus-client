@@ -1,0 +1,52 @@
+.root {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 40px;
+}
+
+.body {
+    width: 100%;
+    display: flex;
+    gap: 30px;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 20px;
+    width: 100%;
+}
+
+.thumbnail {
+    border-radius: 8px;
+    box-shadow: 0 0 0 1px var(--chrome-2);
+}
+
+.status {
+    font-size: 24px;
+}
+
+.actions {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.actions small {
+    color: var(--chrome-4);
+}
+
+.price {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    align-items: flex-start;
+}
+
+.usd {
+    color: var(--chrome-4);
+    font-size: 14px;
+}

@@ -9,7 +9,7 @@ import {
     mapDate,
     mapToken,
     unpackResult,
-} from 'api/_common';
+} from 'api/.common';
 import { Data, Rex } from 'canisters/progenitus/progenitus.did.d';
 import { ActorSubclass } from '@dfinity/agent';
 import { bazaar, legend } from './actors';

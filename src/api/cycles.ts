@@ -3,7 +3,6 @@
 import { IcpXdrConversionResponse } from 'canisters/cycles/cycles.did.d';
 import { useQuery } from 'react-query';
 import { cycles } from './actors';
-import { ICP8s } from './_common';
 
 ////////////
 // Types //

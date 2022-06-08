@@ -1,4 +1,4 @@
-import { ICP8s } from 'api/_common';
+import { ICP8s } from 'api/.common';
 import React from 'react'
 import Styles from './styles.module.css'
 

@@ -1,8 +1,7 @@
 // Form to list an NFT that you own for sale on secondary markets.
 
-import { legend } from 'api/actors';
 import { useIcpToUsd } from 'api/cycles';
-import { Listing, priceDisplay, useMutateListing, useListing } from 'api/listings';
+import { priceDisplay, useMutateListing, useListing, useIsLocked } from 'api/listings';
 import { decodeTokenIdentifier } from 'ictool';
 import React from 'react'
 import Button from 'ui/button';
@@ -14,8 +13,6 @@ interface Props {
     token: string;
 }
 
-type Status = 'listed' | 'unlisted' | 'locked';
-
 export default function MarketListForm(props: Props) {
 
     const [price, setPrice] = React.useState<string>('')
@@ -23,6 +20,7 @@ export default function MarketListForm(props: Props) {
     const listing = useListing(props.token);
     const manageListing = useMutateListing();
     const conversion = useIcpToUsd();
+    const locked = useIsLocked(listing?.data);
 
     const usd = React.useMemo(() => conversion?.data && price && (conversion.data * parseFloat(price)).toFixed(2), [price, conversion])
     const { canister, index } = decodeTokenIdentifier(props.token);
@@ -63,9 +61,10 @@ export default function MarketListForm(props: Props) {
                     </div>
                 </label>
                 <div className={Styles.actions}>
-                    <Button loading={manageListing.isLoading || listing.isLoading} disabled={!!listing.data?.locked || manageListing.isLoading} onClick={() => handleList()}>{listing?.data?.listed ? 'Update Listing' : 'List'}</Button>
+                    <Button loading={manageListing.isLoading || listing.isLoading} disabled={!!listing.data?.locked || manageListing.isLoading || locked} onClick={() => handleList()}>{listing?.data?.listed ? 'Update Listing' : 'List'}</Button>
                     {listing?.data?.listed && <a href="#" onClick={handleDelist}><small>Remove listing</small></a>}
                 </div>
+                {locked && <small>Pending purchase ({listing.data?.locked?.diffNow('seconds').seconds.toFixed(0)}s)</small>}
             </div>
         </div>
         <Button onClick={close} size='small'>Done</Button>

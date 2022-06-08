@@ -21,6 +21,7 @@ import { useOwner } from 'api/ext';
 import Modal from 'ui/modal';
 import MarketListForm from 'src/forms/market-list';
 import useModalStore from 'ui/modal/store';
+import MarketBuyForm from 'src/forms/market-buy';
 
 interface Props { };
 
@@ -97,13 +98,21 @@ export default function TokenPage(props: Props) {
                                             {priceDisplay(listing.price)}
                                             {icpToUSD && <div className={Styles.usd}>{priceConvertDisplay(listing.price, icpToUSD)}</div>}
                                         </div>
-                                        <Button size='large'>Buy</Button>
+                                        <Button
+                                            size='large'
+                                            onClick={() => open(
+                                                `Purchase "${collection?.name} #${index}"`,
+                                                <MarketBuyForm token={identifier as string} />,
+                                            )}>Buy</Button>
                                     </> : <>
                                         This token is not currently listed for sale.
                                     </>}
                                 {owned && <Button
-                                    onClick={() => open(`Manage "${collection?.name} #${index}" Listing`, <MarketListForm token={identifier as string} />)}
-                                >List</Button>}
+                                    onClick={() => open(
+                                        `Manage "${collection?.name} #${index}" Listing`,
+                                        <MarketListForm token={identifier as string} />
+                                    )}
+                                >Manage Listing</Button>}
                             </div>
                         </div>
                     </div>

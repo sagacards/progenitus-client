@@ -3,7 +3,7 @@
 import { decodeTokenIdentifier } from 'ictool';
 import { useQuery } from 'react-query';
 import { legend } from './actors';
-import { unpackResult } from './_common';
+import { unpackResult } from './.common';
 
 ////////////
 // Types //

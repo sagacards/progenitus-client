@@ -92,7 +92,7 @@ export default function Mint({ remaining, event, canister }: Props) {
             <Button
                 size='large'
                 disabled={mintable !== 'mintable'}
-                children={mintable === 'minting' ? <Spinner size='small' /> : <>Mint {mintable === 'mintable' ? mintResult !== undefined ? 'Another' : 'Now' : 'Unavailable'}</>}
+                children={mintable === 'minting' ? <Spinner size='small' /> : <>Mint {mintResult !== undefined ? 'Another' : 'Now'}</>}
                 onClick={handleMint}
                 error={error}
             />

@@ -1,16 +1,13 @@
+import React from 'react';
 import { DateTime } from 'luxon';
-import {
-    ExtListing,
-    ListResponse,
-    TokenIndex,
-} from 'canisters/legends/legends.did.d';
-import { mapDate } from 'stores/minting';
 import { useMutation, useQueries, useQuery } from 'react-query';
-import { getLegendActor } from 'stores/actors';
 import { decodeTokenIdentifier, encodeTokenIdentifier } from 'ictool';
-import { useDirectory } from './dab';
-import { ICP8s, unpackResult } from './_common';
-import { legend } from './actors';
+import { ExtListing, TokenIndex } from 'canisters/legends/legends.did.d';
+import { mapDate } from 'stores/minting';
+import { getLegendActor } from 'stores/actors';
+import { useDirectory } from 'api/dab';
+import { ICP8s, unpackResult } from 'api/.common';
+import { legend } from 'api/actors';
 import { queryClient } from 'src/App';
 
 ////////////
@@ -81,12 +78,12 @@ export function priceDisplay(price: Price): string {
     return `${priceFloat(price).toFixed(2)} ${price.currency}`;
 }
 
-///////////////
-// Fetching //
 /////////////
+// Quries //
+///////////
 
 // Retrieve NFT marketplace listings from a specific canister.
-function fetchListings(canister: string): Promise<Listing[]> {
+function queryListings(canister: string): Promise<Listing[]> {
     return getLegendActor(canister)
         .listings()
         .then(resp =>
@@ -103,35 +100,35 @@ function fetchListings(canister: string): Promise<Listing[]> {
         });
 }
 
-////////////////
-// Mutations //
 //////////////
+// Updates //
+////////////
 
-interface MutateListingRequest {
-    token: string;
-    price?: ICP8s;
+// Call to edit a listing.
+// TODO: Error/result handling
+function updateListing(token: string, price?: ICP8s) {
+    const { canister } = decodeTokenIdentifier(token);
+    return legend(canister)
+        .list({
+            token,
+            from_subaccount: [],
+            price: price ? [BigInt(price.e8s)] : [],
+        })
+        .then(unpackResult);
 }
 
-export function useMutateListing() {
-    return useMutation<null, { err: string }, MutateListingRequest, unknown>({
-        mutationFn({ token, price }: MutateListingRequest) {
-            const { canister } = decodeTokenIdentifier(token);
-            return legend(canister)
-                .list({
-                    token,
-                    from_subaccount: [],
-                    price: price ? [BigInt(price.e8s)] : [],
-                })
-                .then(unpackResult);
-        },
-        onSuccess(data, { token, price }: MutateListingRequest) {
-            const { canister } = decodeTokenIdentifier(token);
-            queryClient.invalidateQueries(`listings-${canister}`);
-        },
-        onError(data) {
-            alert(`Failed to update listing: ${data.err}`);
-        },
-    });
+/** Call to lock a listing for purchase.
+ * @param token ext identifier of token to be purchased
+ * @param price price to pay in e8s form, must match list price
+ * @param buyer address format of the purchasing principal
+ * @returns address to transfer funds to complete purchase
+ */
+// TODO: Error/result handling
+async function updateLock(token: string, price: ICP8s, buyer: string) {
+    const { canister } = decodeTokenIdentifier(token);
+    return unpackResult(
+        await legend(canister).lock(token, BigInt(price.e8s), buyer, [])
+    );
 }
 
 ////////////
@@ -141,7 +138,7 @@ export function useMutateListing() {
 // Hook to retrieve listings for a specific canister.
 export function useCanisterListings(canister: string) {
     const query = useQuery<Listing[], string>(`listings-${canister}`, () =>
-        fetchListings(canister)
+        queryListings(canister)
     );
     return {
         listings: query.data,
@@ -157,7 +154,7 @@ export function useAllLegendListings() {
     const query = useQueries(
         dab?.map(canister => ({
             queryKey: `listings-${canister.principal}`,
-            queryFn: () => fetchListings(canister.principal),
+            queryFn: () => queryListings(canister.principal),
             enabled: !!dab,
             refetchInterval: 60_000,
         })) || []
@@ -173,7 +170,7 @@ export function useListing(token: string) {
     const { canister } = decodeTokenIdentifier(token);
     const query = useQuery(
         `listings-${canister}`,
-        () => fetchListings(canister),
+        () => queryListings(canister),
         {
             cacheTime: 60_000 * 5,
             staleTime: 10_000,
@@ -184,6 +181,46 @@ export function useListing(token: string) {
         ...query,
         data: query?.data && query.data.find(x => x.token === token),
     };
+}
+
+interface MutateListingRequest {
+    token: string;
+    price?: ICP8s;
+}
+
+// Hook to edit a listing.
+export function useMutateListing() {
+    return useMutation<null, { err: string }, MutateListingRequest, unknown>({
+        mutationFn: ({ token, price }) => updateListing(token, price),
+        onSuccess(data, { token, price }: MutateListingRequest) {
+            const { canister } = decodeTokenIdentifier(token);
+            queryClient.invalidateQueries(`listings-${canister}`);
+        },
+        onError(data) {
+            alert(`Failed to update listing: ${data.err}`);
+        },
+    });
+}
+
+interface MutateLockRequest {
+    token: string;
+    price: ICP8s;
+    buyer: string;
+}
+
+// Hook to lock a listing for purchase
+export function useMutateLock() {
+    return useMutation<string, null, MutateLockRequest, unknown>({
+        mutationFn: ({ token, price, buyer }) =>
+            updateLock(token, price, buyer),
+    });
+}
+
+// Hook to determine whether a listing is locked.
+export function useIsLocked(listing?: Listing) {
+    return React.useMemo(() => {
+        return listing?.locked && listing.locked.diffNow().milliseconds > 0;
+    }, [listing]);
 }
 
 /////////////////
