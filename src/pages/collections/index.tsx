@@ -4,7 +4,7 @@ import Navbar from 'ui/navbar';
 import Footer from 'ui/footer';
 import Container from 'ui/container';
 import { useParams } from 'react-router-dom';
-import { CAPEvent, useProvenance } from 'api/cap';
+import { useProvenance } from 'api/cap';
 import { useDirectory } from 'api/dab';
 import CollectionTop from 'ui/collections/top';
 import { useDescriptionMarkdown, useSupply } from 'api/legends';

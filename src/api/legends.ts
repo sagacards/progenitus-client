@@ -170,17 +170,23 @@ export function useSupplyAll() {
 
 // Retrieve fixed supply for specific canister.
 export function useSupply(canister: string) {
-    return useQuery(
+    const query = useQuery(
         `${canister}-supply`,
         async () => {
-            const stats = await legend(canister).stats().then(mapStats);
-            return stats.supply;
+            return {
+                id: canister,
+                stats: mapStats(await legend(canister).stats()),
+            };
         },
         {
             cacheTime: 30 * 24 * 60 * 60_000,
             staleTime: 30 * 24 * 60 * 60_000,
         }
     );
+    return {
+        ...query,
+        data: query.data?.stats.supply,
+    };
 }
 
 export function useUnminted() {
