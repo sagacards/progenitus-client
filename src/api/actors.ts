@@ -9,11 +9,11 @@ import { idlFactory as CyclesIDL } from 'canisters/cycles/cycles.did';
 import { idlFactory as LikesIDL } from 'canisters/likes/likes.did';
 import { idlFactory as LegendsIDL } from 'canisters/legends/legends.did';
 import { idlFactory as NnsIDL } from 'canisters/ledger/ledger.did';
-import { Cycles } from 'canisters/cycles/cycles.did.d';
-import { Ledger } from 'canisters/ledger/ledger.did.d';
-import { LegendsNFT } from 'canisters/legends/legends.did.d';
-import { Likes } from 'canisters/likes/likes.did.d';
-import { Rex } from 'canisters/progenitus/progenitus.did.d';
+import type { Cycles } from 'canisters/cycles/cycles.did.d';
+import type { Ledger } from 'canisters/ledger/ledger.did.d';
+import type { LegendsNFT } from 'canisters/legends/legends.did.d';
+import type { Likes } from 'canisters/likes/likes.did.d';
+import type { Rex } from 'canisters/progenitus/progenitus.did.d';
 
 /////////////
 // Config //

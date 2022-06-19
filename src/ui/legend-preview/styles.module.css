@@ -62,3 +62,21 @@
 
     width: 100%;
 }
+
+.comingSoon {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+
+    background-color: var(--background);
+    box-shadow: 0 0 0 1px var(--chrome-4);
+    border-radius: 16px;
+
+    padding: 5px 10px;
+
+    font-size: 12px;
+}
+
+.disabled {
+    pointer-events: none;
+}

@@ -15,6 +15,9 @@ import { agent } from 'api/actors';
 type Entry = Omit<Metadata, 'details' | 'principal_id' | 'frontend'>;
 
 export interface LegendEntry extends Entry {
+    name: string;
+    thumbnail: string;
+    description: string;
     artists: string;
     principal: string;
     isDeck: boolean;

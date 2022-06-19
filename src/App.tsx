@@ -22,6 +22,7 @@ import ScrollToTop from 'ui/scroll-to-top';
 import Modal from 'ui/modal';
 
 import { deserialize, serialize } from 'util/serialize';
+import { NotFound } from 'pages/wrapper';
 
 
 // This query agent does the heavy lifting for querying, caching and persisting data from backend canisters.
@@ -56,6 +57,7 @@ function App() {
                     <Route path="/token/:identifier" element={<TokenPage />} />
                     <Route path="/collection/:canister" element={<CollectionsPage />} />
                     <Route path="/profile" element={<ProfilePage />} />
+                    <Route path="*" element={<NotFound />} />
                 </Routes>
             </AnimatePresence>
             <Messages />
