@@ -6,30 +6,28 @@ interface SingleModalStore {
     title?: string;
     content: React.ReactNode;
 
-    open: (t? : string, c? : React.ReactNode) => void;
+    open: (t?: string, c?: React.ReactNode) => void;
     close: () => void;
-    setContent: (c : React.ReactNode) => void;
-};
+    setContent: (c: React.ReactNode) => void;
+}
 
 const useModalStore = create<SingleModalStore>((set, get) => ({
-
     title: undefined,
     state: false,
     content: undefined,
 
-    open (title, content) {
+    open(title, content) {
         set({ state: true });
         content && set({ title, content });
     },
 
-    close () {
+    close() {
         set({ state: false });
     },
 
-    setContent (content) {
+    setContent(content) {
         set({ content });
     },
-
 }));
 
 export default useModalStore;

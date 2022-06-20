@@ -1,103 +1,49 @@
 import React from 'react';
 import { Link, Navigate, useParams } from 'react-router-dom';
-import useStore, { CAPEvent, ic } from 'stores/index';
-import { eventIsMintable, mint } from 'src/logic/minting';
-import Navbar from 'ui/navbar';
-import Footer from 'ui/footer';
-import Container from 'ui/container';
-import Tabs from 'ui/tabs';
-import Grid from 'ui/grid';
-import NFTPreview from 'ui/nft-preview';
-import More from 'ui/more';
+import { principalToAddress } from 'ictool';
+import { DateTime } from 'luxon';
+
+import useStore, { eventIsMintable } from 'stores/index';
+import useMessageStore from 'stores/messages';
+
 import Button from 'ui/button';
+import Container from 'ui/container';
+import Footer from 'ui/footer';
+import Grid from 'ui/grid';
+import More from 'ui/more';
+import Navbar from 'ui/navbar';
+import NFTPreview from 'ui/nft-preview';
 import Revealer from 'ui/revealer';
 import Spinner from 'ui/spinner';
+import Tabs from 'ui/tabs';
 import Timer from 'ui/timer';
-import MintScene from 'src/three/mint-scene';
+
 import Styles from './styles.module.css'
-import { FiExternalLink } from 'react-icons/fi';
-import { useTokenStore } from 'stores/tokens';
-import { Principal } from '@dfinity/principal';
-import { principalToAddress } from 'ictool';
-import useModalStore from 'ui/modal/store';
-import Copyable from 'ui/copyable';
-import { DateTime } from 'luxon';
-import Swap from 'ui/swap';
+import { CAPEvent, useProvenance } from 'api/cap';
+import CollectionTop from 'ui/collections/top';
+import Page from 'pages/wrapper';
+import Mint from 'ui/mint';
+import { useDescriptionMarkdown, useSupply } from 'api/legends';
+import { useEvent, useEventSupply, useSpots } from 'api/minting';
 
-interface Props {};
+interface Props { };
 
-export default function DropDetailPage (props : Props) {
+export default function DropDetailPage(props: Props) {
     const { canister, index } = useParams();
-    const { actor, principal, connecting, connected, getEvent, eventsLastFetch, fetchEvents, pushMessage, balance, fetchSupply, eventSupply, isMinting, setIsMinting, setMintResult, mintResult, fetchBalance, wallet } = useStore();
-    const { cap : { [canister as string] : transactions }, capPoll, filtersSet, capRoots } = useTokenStore();
-    const { open } = useModalStore();
+    const { principal, connecting, connected, getEvent, eventsLastFetch, fetchEvents, balance, fetchSupply, eventSupply, isMinting } = useStore();
+    const { pushMessage } = useMessageStore();
 
-    const eventsAreFresh = React.useMemo(() => new Date().getTime() - (eventsLastFetch?.getTime() || 0) < 60_000, [eventsLastFetch])
-    const event = React.useMemo(() => (canister && index) ? getEvent(canister, Number(index)) : undefined, [eventsAreFresh]);
-    const fetching = React.useMemo(() => !event && !eventsAreFresh, [event, eventsAreFresh]);
-    
+    const { events } = useProvenance(canister as string);
+    const { data: supply } = useSupply(canister as string);
+    const { data: spots, isLoading: spotsLoading } = useSpots(canister as string, Number(index));
+    const { data: description } = useDescriptionMarkdown(canister as string);
+    const { data: event, isLoading, status } = useEvent(canister as string, Number(index));
+    const { data: remaining } = useEventSupply(canister as string, Number(index));
+
     const [timerSentinel, setTimerSentinel] = React.useState(0);
-    const [error, setError] = React.useState<string>();
-    const [description, setDescription] = React.useState<string>();
-    const [spots, setSpots] = React.useState<number>();
-    const [spotsLoading, setSpotsLoading] = React.useState<boolean>(false);
-    const [supply, setSupply] = React.useState<number>();
     const [mine, setMine] = React.useState<boolean>(false);
 
-    const remainingInterval = React.useRef<number>();
-
-
-    // Fetch spots
-    React.useEffect(() => {
-        if (!actor || !canister || !index) return;
-        setSpotsLoading(true)
-        actor?.getAllowlistSpots(Principal.fromText(canister), BigInt(index))
-        .then(r => {
-            if ('ok' in r) {
-                setSpots(Number(r.ok))
-            } else {
-                console.error(r);
-            }
-        })
-        .finally(() => setSpotsLoading(false));
-    }, [mintResult, actor, canister, index]);
-
-    // Fetch supply
-    React.useEffect(() => {
-        fetch(`https://${canister}.raw.ic0.app/supply`)
-        .then(r => r.text())
-        .then(r => setSupply(Number(r)));
-    }, []);
-
-    // Fetch description markdown
-    React.useEffect(() => {
-        if (!event || !event.collection.description) return;
-        fetch(event.collection.description)
-        .then(r => r.text())
-        .then(setDescription);
-    }, [event]);
-
-    const supplyRemaining = React.useMemo(() => {
-        if (!canister || !index) return;
-        return eventSupply?.[canister]?.[Number(index)];
-    }, [eventSupply, canister, index]);
-
-    const mintable = React.useMemo(() => eventIsMintable(event, supplyRemaining, !connecting && connected, balance, spots, isMinting), [event, supplyRemaining, balance, spots, timerSentinel, isMinting]);
-
-    const MintableMessage = React.useMemo(() => {
-        const messages = {
-            'loading': () => <Spinner size='small' />,
-            'not-connected': () => <><Link to="/connect" state={{referrer : window.location.pathname}}>Connect</Link> your wallet to mint</>,
-            'no-access': () => <>Your wallet is not on the allow list</>,
-            'insufficient-funds': () => <>Insufficient funds in mint account <a onClick={() => open('Deposit Minting Funds', <SwapModal />)}>deposit from wallet</a></>,
-            'not-started': (p : {time : DateTime}) => <>Starts in <Timer time={p.time} /></>,
-            'ended': () => <>Event ended!</>,
-            'no-supply': () => <>Sold out</>,
-            'mintable': (p : {end : DateTime}) => <>Your wallet will be charged. Ends <Timer time={p.end} /></>,
-            'minting': () => <>Minting...</>,
-        };
-        return messages[mintable];
-    }, [mintable]);
+    const mintable = React.useMemo(() => eventIsMintable(event, remaining, !connecting && connected, balance, spots, isMinting), [event, remaining, balance, spots, timerSentinel, isMinting]);
 
     // Rerender on intervals if a timer is ongoing 😵.
     const [timer, setTimer] = React.useState<number>();
@@ -117,97 +63,43 @@ export default function DropDetailPage (props : Props) {
             setTimer(undefined);
         }
     }, [mintable]);
-    
-    // Attempt to retrieve the relevant event
-    React.useEffect(() => {
-        if (!eventsAreFresh) {
-            fetchEvents();
-        } else if (!event) {
-            // Push a not found message if event isn't found.
-            pushMessage({
-                type: 'error',
-                message: 'Could not find that event.'
-            });
-        };
-    }, [event, eventsAreFresh]);
-
-    React.useEffect(() => {
-        if (!canister || !index) return;
-        fetchSupply(canister, Number(index));
-        remainingInterval.current = setInterval(() => fetchSupply(canister, Number(index)), 5000) as unknown as number;
-        return () => clearInterval(remainingInterval.current);
-    }, [canister, index]);
-
-    const handleMint = React.useMemo(() => function () {
-        if (canister && wallet === 'stoic' && !window.localStorage.getItem(`stoicwarning${canister}`)) {
-            window.localStorage.setItem(`stoicwarning${canister}`, 'true');
-            open('Notice For Stoic Wallet Users', <StoicWarning canister={canister} />);
-        };
-        setError(undefined);
-        setIsMinting(true);
-        setMintResult(undefined);
-        mint(event, supplyRemaining, connected, balance, spots, actor, Number(index))
-        ?.then(r => {
-            if (r && 'ok' in r) {
-                setMintResult(Number(r.ok));
-                alert('Mint success!');
-                fetchBalance();
-            } else {
-                console.error(r)
-                setError('Mint failure!');
-                alert('Mint failure!');
-            }
-        })
-        .catch(r => {
-            console.error(r);
-            setError('Mint failure!');
-            alert('Mint failure!');
-        })
-        .finally(() => setIsMinting(false));
-    }, [event, supplyRemaining, connected, balance, spots, actor, index]);
-
-    React.useEffect(() => {
-        if (!canister) return;
-        filtersSet([Principal.fromText(canister)]);
-        capPoll(canister);
-    }, [canister, capRoots]);
 
     // Redirect home if event not found.
-    if (!event && eventsAreFresh || !canister) return <Navigate to="/" />;
+    if (!event && status === 'error' || !canister) return <Navigate to="/" />;
 
     const collection = event?.collection;
 
-    const mints = React.useMemo(() => transactions?.filter(x => {
+    const mints = React.useMemo(() => events?.filter(x => {
         if (x.operation !== 'mint') return false;
         if (mine) {
             if (!principal) return false;
             if (principalToAddress(principal) !== x.to) return false
         };
         return true;
-    }), [transactions, mine, principal]);
+    }), [events, mine, principal]);
 
-    const transfers = React.useMemo(() => transactions?.filter(x => {
+    const transfers = React.useMemo(() => events?.filter(x => {
         if (!['transfer', 'sale'].includes(x.operation)) return false;
         return true;
-    }), [transactions, principal]);
-    
-    return <>
+    }), [events, principal]);
+
+    return <Page key="DropPage">
         <Navbar />
         <Container>
-            <div className={[Styles.root, fetching ? Styles.fetching : ''].join(' ')}>
-                <div className={Styles.top}>
-                    <img className={Styles.banner} src={collection?.banner} />
-                    <img className={Styles.collection} src={collection?.icon} />
-                </div>
-                <div className={Styles.name}>{collection?.name}</div>
+            <div className={[Styles.root, isLoading ? Styles.fetching : ''].join(' ')}>
+                <CollectionTop
+                    banner={collection?.banner}
+                    thumbnail={collection?.icon}
+                    name={collection?.name}
+                />
                 <div className={Styles.stats}>
                     <div className={Styles.stat}>
                         <div className={Styles.statLabel}>Supply</div>
                         <div className={Styles.statValue}>{supply}</div>
                     </div>
                     <div className={Styles.stat}>
-                        <div className={Styles.statLabel}>For Sale</div>
-                        <div className={Styles.statValue}>{supplyRemaining}</div>
+                        <div className={Styles.statLabel}>Unminted</div>
+                        <div className={Styles.statValue}>{remaining}</div>
                     </div>
                     <div className={Styles.stat}>
                         <div className={Styles.statLabel}>Price</div>
@@ -223,42 +115,25 @@ export default function DropDetailPage (props : Props) {
                             {
                                 spotsLoading
                                     ? <Spinner size='small' />
-                                    : spots
-                                        ? spots !== -1
-                                            ? <>{spots} Mints</>
-                                            : <>∞ Mints</>
-                                        : <>No Access</>
+                                    : connected
+                                        ? spots
+                                            ? spots !== -1
+                                                ? <>{spots} Mints</>
+                                                : <>∞ Mints</>
+                                            : <>No Access</>
+                                        : <><Link to="/connect" state={{ referrer: window.location.pathname }}>Connect</Link></>
                             }
                         </div>
                     </div>
                 </div>
-                {event && DateTime.now().toMillis() < event.startDate.toMillis() ? <div className={Styles.timer}>Starts <Timer time={event.startDate} /></div> : event && DateTime.now().toMillis() <= event.endDate.toMillis() && supplyRemaining !== 0 && <div className={Styles.timer}>Ends <Timer time={event.endDate} /></div>}
+                {event && DateTime.now().toMillis() < event.startDate.toMillis() ? <div className={Styles.timer}>Starts <Timer time={event.startDate} /></div> : event && DateTime.now().toMillis() <= event.endDate.toMillis() && remaining !== 0 && <div className={Styles.timer}>Ends <Timer time={event.endDate} /></div>}
                 {description && <div className={Styles.description}><Revealer content={description} /></div>}
-                <div className={[Styles.mintingStage, mintResult ? Styles.minted : ''].join(' ')}>
-                    <div className={[Styles.stage, isMinting ? Styles.minting : ''].join(' ')}>
-                        <a href={`${ic.protocol}://${canister}.raw.${ic.host}/${mintResult}`} target="_blank" className={Styles.externalLink}>
-                            <Button>
-                                <FiExternalLink />
-                            </Button>
-                        </a>
-                        <MintScene canister={canister} />
-                    </div>
-                    <div className={Styles.button}>
-                        <Button
-                            size='large'
-                            disabled={mintable !== 'mintable'}
-                            children={mintable === 'minting' ? <Spinner size='small' /> : <>Mint {mintable === 'mintable' ? mintResult !== undefined ? 'Another' : 'Now' : 'Unavailable'}</>}
-                            onClick={handleMint}
-                            error={error}
-                        />
-                    </div>
-                    <div className={Styles.message}>{event && <MintableMessage time={event.startDate} end={event.endDate} />}</div>
-                </div>
+                {event && <Mint canister={canister} event={event} />}
                 <div className={Styles.activity}>
                     <Tabs
                         tabs={[
                             ['Mints', <>
-                                <div style={{ display: 'flex', gap: '10px', padding: '10px'}}>
+                                <div style={{ display: 'flex', gap: '10px', padding: '10px' }}>
                                     <Button active={!mine} onClick={() => setMine(false)} size='small'>All</Button>
                                     <Button active={mine} onClick={() => setMine(true)} size='small'>Mine</Button>
                                 </div>
@@ -266,7 +141,7 @@ export default function DropDetailPage (props : Props) {
                                     {mints ? <More>
                                         {mints.map(x => <NFTPreview
                                             tokenid={x.token}
-                                            minter={x.to}
+                                            to={x.to}
                                             key={`preview${x.token}`}
                                             event={{
                                                 type: x.operation as CAPEvent['type'],
@@ -281,7 +156,7 @@ export default function DropDetailPage (props : Props) {
                                     {transfers ? <More>
                                         {transfers.map(x => <NFTPreview
                                             tokenid={x.token}
-                                            minter={x.to}
+                                            to={x.to}
                                             key={`preview${x.token}`}
                                             event={{
                                                 type: x.operation as CAPEvent['type'],
@@ -297,28 +172,5 @@ export default function DropDetailPage (props : Props) {
             </div>
         </Container>
         <Footer />
-    </>;
-};
-
-function StoicWarning (props : { canister : string }) {
-    const { close } = useModalStore();
-    return <>
-        <p>You must add this canister to see your new NFT in your stoic wallet.</p>
-        <Copyable>{props.canister}</Copyable>
-        <Button size='large' onClick={() => close()}>Okay</Button>
-    </>
-}
-
-function SwapModal () {
-    const { close } = useModalStore();
-    const { balanceDisplay, walletBalanceDisplay } = useStore();
-    return <>
-        <Swap />
-        <div>
-            <small className="t-mono">Mint account: {balanceDisplay() !== undefined ? balanceDisplay()?.toFixed(2) : <Spinner size='small' />} <span className={Styles.icp}>ICP</span> </small>
-            <br />
-            <small className="t-mono">Wallet: {walletBalanceDisplay() !== undefined ? walletBalanceDisplay()?.toFixed(2) : <Spinner size='small' />} <span className={Styles.icp}>ICP</span> </small>
-        </div>
-        <a onClick={close}>Done</a>
-    </>;
+    </Page>;
 };

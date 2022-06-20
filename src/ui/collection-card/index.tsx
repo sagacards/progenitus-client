@@ -6,13 +6,17 @@ interface Props {
     children?: React.ReactNode;
     name: string;
     slug: string;
+    unminted: number;
+    thumbnail: string;
+    bannerImage: string;
 }
 
-export default function CollectionCard (props : Props) {
-    
+export default function CollectionCard(props: Props) {
+
     return <Link className={[Styles.card, 'no-fancy'].join(' ')} to={`/collection/${props.slug}`}>
-        <div className={Styles.art}></div>
-        <div className={Styles.collection}></div>
+        <img className={Styles.art} src={props.bannerImage} />
+        <img className={Styles.collection} src={props.thumbnail} />
         <div className={Styles.name}>{props.name}</div>
+        <div className={Styles.supply}>{props.unminted} Mints Available</div>
     </Link>
 }

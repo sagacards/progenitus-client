@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import React from 'react';
 import { animated, useSpring, useSpringRef } from '@react-spring/three';
 import { cardMovementSpringConf, cardSpringConf } from './springs';
-import { LegendManifest } from 'src/apis/legends';
+import { LegendManifest } from 'api/legends';
 import CardInk from './ink';
 import { createPortal, ThreeEvent, useFrame, useLoader, useThree } from '@react-three/fiber';
 import { useCardGeometry } from './geometry';
@@ -15,7 +15,7 @@ import { useCardGeometry } from './geometry';
 const d = [2681, 4191]; // Dimensions of the art assets
 const e = 1.41 / 1000; // Factor to normalize art assets to tarot card dimensions
 const f = [2.75, 4.75]; // Tarot card dimensions
-    
+
 // Layers comprising the card face, layed out on the Z axis.
 function CardArt(props: { textures: THREE.Texture[] }) {
     const scale = 1;
@@ -31,7 +31,7 @@ function CardArt(props: { textures: THREE.Texture[] }) {
 };
 
 // Renders card art onto card mesh using default camera and a portal to create the depth effect.
-export function Legend ({ manifest, canister } : { canister: string, manifest : LegendManifest }) {
+export function Legend({ manifest, canister }: { canister: string, manifest: LegendManifest }) {
 
     // Legends traits
     const { layers, colorBase, colorSpecular, colorEmissive, colorBackground, stockBase, stockSpecular, stockEmissive, normal, mask, back, border } = React.useMemo(() => {
@@ -151,7 +151,7 @@ export function Legend ({ manifest, canister } : { canister: string, manifest : 
             rotation: ([
                 THREE.MathUtils.degToRad(0 + mouse.current.y * 5),
                 (flip ? 0 : Math.PI) - (
-                    mouse.current.hover 
+                    mouse.current.hover
                         ? THREE.MathUtils.degToRad(mouse.current.x * 5)
                         : Math.sin(-state.clock.getElapsedTime()) * Math.PI * .10
                 ),
@@ -231,7 +231,7 @@ export function Legend ({ manifest, canister } : { canister: string, manifest : 
 function Card({
     materials,
     ...props
-} : {
+}: {
     materials?: React.ReactNode;
     children?: React.ReactNode;
 }) {
@@ -249,7 +249,7 @@ function Card({
 };
 
 
-function host (canister : string) {
+function host(canister: string) {
     return `https://${canister}.raw.ic0.app`;
 };
 

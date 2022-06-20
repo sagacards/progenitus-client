@@ -1,0 +1,106 @@
+.root {
+    --card-width: 18vw;
+
+    position: relative;
+
+    width: 100%;
+}
+
+.root a {
+    -webkit-user-drag: none;
+    user-drag: none;
+}
+
+.scroll {
+    overflow: hidden;
+    overflow-x: auto;
+
+    scrollbar-width: thin;
+    touch-action: none;
+    -webkit-user-select: none;
+    user-select: none;
+
+    box-sizing: border-box;
+
+    padding-bottom: 24px;
+}
+
+.scroll::-webkit-scrollbar {
+    opacity: 1;
+    height: 8px;
+}
+
+.scroll::-webkit-scrollbar-thumb {
+    background-color: transparent;
+    box-shadow: 0 0 0 1px inset var(--chrome-2);
+    outline: none;
+    border-radius: 4px;
+    transition: 320ms ease-out box-shadow, 320ms ease-out background-color;
+}
+
+.scroll::-webkit-scrollbar-thumb:hover {
+    box-shadow: 0 0 0 1px inset var(--chrome-3);
+}
+
+.scroll::-webkit-scrollbar-button {
+    display: none;
+}
+
+.row {
+    display: flex;
+    gap: 24px;
+}
+
+.back, .next {
+    z-index: 10;
+    position: absolute;
+    top: 50%;
+    margin-top: -20px;
+
+    transition: 240ms ease-out opacity;
+}
+
+.back {
+    left: -10px;
+}
+
+.min .back {
+    opacity: 0;
+}
+
+.next {
+    right: -10px;
+}
+
+.max .next {
+    opacity: 0;
+}
+
+.edgeLeft, .edgeRight {
+    z-index: 5;
+    position: absolute;
+    top: 0;
+    bottom: 20px;
+
+    width: 62px;
+
+    transition: 240ms ease-out opacity;
+}
+
+.edgeLeft {
+    left: 0;
+    background: linear-gradient(90deg, var(--background), rgba(0, 0, 0, 0));
+}
+
+.min .edgeLeft {
+    opacity: 0;
+}
+
+.edgeRight {
+    right: 0;
+    background: linear-gradient(90deg, rgba(0, 0, 0, 0), var(--background));
+}
+
+.max .edgeRight {
+    opacity: 0;
+}

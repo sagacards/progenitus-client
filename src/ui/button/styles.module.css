@@ -20,7 +20,8 @@
 /* Provides a fluid visual frame unbounded by the box model */
 .frame {
     position: absolute;
-    top: 0; left: 0;
+    top: 0;
+    left: 0;
     z-index: 0;
 
     width: 100%;
@@ -29,12 +30,13 @@
     /* border-radius: 20px; */
     background-color: var(--background);
     box-shadow: 0 0 0 1px var(--chrome-3);
-    transition: 160ms box-shadow ease-out, 160ms transform ease-out, 320ms background-color ease-out;
+    transition: 160ms box-shadow ease-out, 160ms transform ease-out,
+        320ms background-color ease-out;
 }
 
 .active .frame {
     box-shadow: 0 0 0 1px var(--chrome-4);
-};
+}
 
 .root.disabled .body {
     box-shadow: 0 0 0 1px var(--chrome-2);
@@ -50,7 +52,7 @@
 }
 
 .root:active:not(.disabled) .frame {
-    transform: scale(.95);
+    transform: scale(0.95);
 }
 
 /* The contents of the component */
@@ -60,7 +62,7 @@
 
     height: 100%;
     width: 100%;
- 
+
     display: flex;
     align-items: center;
     justify-content: center;
@@ -80,7 +82,9 @@
 
 .icon {
     position: absolute;
-    left: .5em; top: 0; bottom: 0;
+    left: 0.5em;
+    top: 0;
+    bottom: 0;
 
     display: flex;
     align-items: center;
@@ -119,29 +123,61 @@
     width: 100%;
 }
 
+/* .root:not(.full) {
+    align-self: flex-start;
+} */
+
 .error .frame {
     animation: shake 1s ease-out;
 }
 
 @keyframes shake {
-    0%, 100% {
+    0%,
+    100% {
         box-shadow: 0 0 0 1px var(--chrome-3);
     }
 
-    10%, 90% {
+    10%,
+    90% {
         transform: translate3d(-1px, 0, 0);
     }
-    
-    20%, 80% {
+
+    20%,
+    80% {
         transform: translate3d(2px, 0, 0);
         box-shadow: 0 0 0 1px rgb(121, 48, 57);
     }
-  
-    30%, 50%, 70% {
+
+    30%,
+    50%,
+    70% {
         transform: translate3d(-4px, 0, 0);
     }
-  
-    40%, 60% {
+
+    40%,
+    60% {
         transform: translate3d(4px, 0, 0);
     }
+}
+
+/* Loading Styles */
+
+.loader {
+    position: absolute;
+    top: 5px;
+    right: 10px;
+    bottom: 5px;
+    left: 10px;
+    opacity: 0;
+    z-index: 0;
+    transition: opacity 320ms ease-out;
+    background-color: var(--background);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.loading .loader {
+    z-index: 2;
+    opacity: 1;
 }

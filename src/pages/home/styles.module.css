@@ -7,7 +7,7 @@
 
 .splash {
     width: 100%;
-    
+
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -23,6 +23,11 @@
     /* -webkit-text-fill-color: transparent; */
 }
 
+.title {
+    font-size: 38px;
+    font-weight: 800;
+}
+
 .tagline {
     color: var(--chrome-5);
     /* font-family: 'Space Grotesk'; */
@@ -33,13 +38,13 @@
     transition: 320ms ease-out color;
 }
 
-.drops, .collections {
+.drops,
+.collections {
     width: 100%;
 
     display: flex;
     flex-direction: column;
-    gap: 38px;
+    /* gap: 38px; */
 
-    text-align: center;
-
+    /* text-align: center; */
 }

@@ -3,10 +3,10 @@ import * as THREE from 'three';
 import { useThree, Canvas, useFrame, useLoader } from '@react-three/fiber'
 import { animated, useSpring, useSpringRef } from '@react-spring/three'
 import Threads from 'assets/textures/threads.png'
-import useStore, { ic } from 'stores/index';
+import useStore from 'stores/index';
 import { cardMovementSpringConf, cardSpringConf } from './springs';
 import { Legend } from './legend';
-import { fetchLegendManifest, LegendManifest } from 'src/apis/legends';
+import { fetchLegendManifest, LegendManifest } from 'api/legends';
 
 const center = new THREE.Vector3(0, 0, 0);
 const centerVec = new THREE.Object3D();
@@ -14,7 +14,7 @@ centerVec.position.x = 0;
 centerVec.position.y = 0;
 centerVec.position.z = 0;
 
-function Scene ({ canister } : { canister : string }) {
+function Scene({ canister }: { canister: string }) {
     const { isMinting, mintResult } = useStore();
     const { camera } = useThree();
 
@@ -23,13 +23,13 @@ function Scene ({ canister } : { canister : string }) {
         camera.lookAt(center);
     }, []);
 
-    function lightPos () {
+    function lightPos() {
         return mintResult !== undefined
             ? [0, 6.5, 2]
             : [0, 4, 5];
     };
 
-    function lightInt () {
+    function lightInt() {
         return mintResult !== undefined
             ? .5
             : .125;
@@ -51,8 +51,8 @@ function Scene ({ canister } : { canister : string }) {
             return;
         };
         fetchLegendManifest(canister, mintResult)
-        .then(setManifest)
-        .catch(console.error);
+            .then(setManifest)
+            .catch(console.error);
     }, [mintResult]);
 
     return <>
@@ -70,7 +70,7 @@ function Scene ({ canister } : { canister : string }) {
     </>
 };
 
-function LegendBox ({ open, minting } : { open : boolean, minting : boolean }) {
+function LegendBox({ open, minting }: { open: boolean, minting: boolean }) {
     const thickness = .05;
 
     const rootPos = React.useMemo(() => () => ([open ? 0 : -1.5, open ? -3.5 : 0, open ? -3 : 0] as [number, number, number]), [open]);
@@ -102,7 +102,7 @@ function LegendBox ({ open, minting } : { open : boolean, minting : boolean }) {
 
     const alpha = useLoader(THREE.TextureLoader, Threads);
 
-    {/* @ts-ignore: r3f shorthand types not included */}
+    {/* @ts-ignore: r3f shorthand types not included */ }
     return <animated.group {...rootSpring}>
         {/* Front half */}
         {/* @ts-ignore: r3f shorthand types not included */}
@@ -158,7 +158,7 @@ function LegendBox ({ open, minting } : { open : boolean, minting : boolean }) {
                 <boxGeometry args={[3 - .25, .0625, thickness]} />
                 <meshStandardMaterial color={'rgb(255, 196, 0)'} />
             </mesh>
-            <mesh position={[1.5, 2.4375 - .01 -.0625, thickness + .01]}>
+            <mesh position={[1.5, 2.4375 - .01 - .0625, thickness + .01]}>
                 <boxGeometry args={[3 - .25, .0625, thickness]} />
                 <meshStandardMaterial color={'rgb(255, 196, 0)'} />
             </mesh>
@@ -188,10 +188,10 @@ function LegendBox ({ open, minting } : { open : boolean, minting : boolean }) {
     </animated.group>
 };
 
-function Sprites () {
+function Sprites() {
     // Light ref
     const light = React.useRef<THREE.DirectionalLight>(null);
-    
+
     // Particles
     const { count, roam, color, speed } = {
         count: 50,
@@ -204,7 +204,7 @@ function Sprites () {
     const dummy = React.useMemo(() => new THREE.Object3D(), []);
     const particles = React.useMemo(() => {
         const particles = [];
-        const posEquations : ((position : number[], time : number, factor : number, speed : number) => number[])[] = [
+        const posEquations: ((position: number[], time: number, factor: number, speed: number) => number[])[] = [
             (p, t, f, s) => [
                 p[0] + Math.sin(t * s) * f,
                 p[1] + Math.cos(t * s) * f,
@@ -236,7 +236,7 @@ function Sprites () {
                 Math.random() * Math.PI * 2,
             ] as [number, number, number];
             const equation = posEquations[Math.floor(Math.random() * posEquations.length)];
-            particles.push({ factor, speed : s, position, rotation, equation, flicker });
+            particles.push({ factor, speed: s, position, rotation, equation, flicker });
         };
         return particles;
     }, [count, roam, speed]);
@@ -255,7 +255,7 @@ function Sprites () {
         particles.forEach((particle, i) => {
             if (!mesh.current) return;
             const s = Math.cos(phase * particle.flicker * 5 * speed) * .25 + .3;
-            const [ x, y, z ] = particle.equation(particle.position, phase, particle.factor, particle.speed * speed)
+            const [x, y, z] = particle.equation(particle.position, phase, particle.factor, particle.speed * speed)
             dummy.position.set(x, y, z);
             dummy.rotation.set(...particle.rotation)
             dummy.scale.set(s, s, s);
@@ -269,7 +269,7 @@ function Sprites () {
         <directionalLight ref={light} position={[0, 1, 4.5]} intensity={0} />
 
         <group ref={group}>
-            <instancedMesh ref={mesh} args={[,,count]}>
+            <instancedMesh ref={mesh} args={[, , count]}>
                 <dodecahedronGeometry args={[.1, 0]} />
                 <meshPhongMaterial color={color} emissive={color} />
             </instancedMesh>
@@ -277,7 +277,7 @@ function Sprites () {
     </>
 };
 
-export default function MintScene ({ canister } : { canister : string }) {
+export default function MintScene({ canister }: { canister: string }) {
     return <>
         <Canvas>
             <React.Suspense fallback={<></>}>
@@ -288,7 +288,7 @@ export default function MintScene ({ canister } : { canister : string }) {
     </>
 };
 
-export function Loader () {
+export function Loader() {
     const mesh = React.useRef<THREE.Mesh>(null);
 
     useFrame(state => {
@@ -306,7 +306,7 @@ export function Loader () {
     </mesh>
 }
 
-function Light({ i } : { i : number}) {
+function Light({ i }: { i: number }) {
     return <>
         <directionalLight
             intensity={.5 * i}

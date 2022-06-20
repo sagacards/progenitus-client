@@ -11,6 +11,9 @@ import './index.css'
 import 'react-toastify/dist/ReactToastify.css'
 import App from './App'
 
+import { Globals } from "@react-spring/shared";
+
+
 const container = document.getElementById('root') as HTMLDivElement;
 const root = createRoot(container);
 root.render(
@@ -20,3 +23,8 @@ root.render(
         </BrowserRouter>
     </React.StrictMode>,
 )
+
+// This resolves an issue with react-spring web and three incompatibility. https://github.com/pmndrs/react-spring/issues/1586
+Globals.assign({
+    frameLoop: "always",
+});

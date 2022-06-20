@@ -10,6 +10,7 @@ import useStore from 'stores/index';
 import { Navigate } from 'react-router-dom';
 import WalletIcon from 'ui/wallet-icon';
 import Swap from 'ui/swap';
+import Page from 'pages/wrapper';
 
 interface Props { };
 
@@ -71,40 +72,40 @@ export default function AccountPage(props: Props) {
         {
             accessor: 'id',
             Header: 'Tx',
-            Cell: ({ v } : { v : Transaction['id']}) => <Hash>{v}</Hash>
+            Cell: ({ v }: { v: Transaction['id'] }) => <Hash>{v}</Hash>
         },
         {
             accessor: 'operation',
             Header: 'Operation',
-            Cell: ({ v } : { v : Transaction['operation']}) => <>{v}</>
+            Cell: ({ v }: { v: Transaction['operation'] }) => <>{v}</>
         },
         {
             accessor: 'amount',
             Header: 'Amount',
-            Cell: ({ v } : { v : Transaction['amount']}) => <>{v} <small>ICP</small></>
+            Cell: ({ v }: { v: Transaction['amount'] }) => <>{v} <small>ICP</small></>
         },
         {
             accessor: 'from',
             Header: 'From',
-            Cell: ({ v } : { v : Transaction['from']}) => <Hash>{v}</Hash>
+            Cell: ({ v }: { v: Transaction['from'] }) => <Hash>{v}</Hash>
         },
         {
             accessor: 'to',
             Header: 'To',
-            Cell: ({ v } : { v : Transaction['to']}) => <Hash>{v}</Hash>
+            Cell: ({ v }: { v: Transaction['to'] }) => <Hash>{v}</Hash>
         },
         {
             accessor: 'timestamp',
             Header: 'Timestamp',
-            Cell: ({ v } : { v : Transaction['timestamp']}) => <>{v.toLocaleString()}</>
+            Cell: ({ v }: { v: Transaction['timestamp'] }) => <>{v.toLocaleString()}</>
         },
     ], []);
 
-    function nextPage () {
+    function nextPage() {
         setPageIndex(Math.min(pageIndex + 1, pageCount - 1));
     };
 
-    function prevPage () {
+    function prevPage() {
         setPageIndex(Math.max(pageIndex - 1, 0));
     };
 
@@ -116,7 +117,7 @@ export default function AccountPage(props: Props) {
 
     if (!connected) return <Navigate to="/" />
 
-    return <>
+    return <Page key="AccountPage">
         <Navbar />
         <Container>
             <div className={Styles.root}>
@@ -183,5 +184,5 @@ export default function AccountPage(props: Props) {
             </div>
         </Container>
         {/* <Footer /> */}
-    </>
+    </Page>
 };

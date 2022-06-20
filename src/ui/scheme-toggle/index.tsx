@@ -1,5 +1,5 @@
 import React from 'react'
-import useStore from 'stores/index';
+import useThemeStore from 'stores/theme';
 import Button from 'ui/button';
 import { MoonIcon, SunIcon } from 'ui/svgcons';
 import Styles from './styles.module.css'
@@ -7,11 +7,11 @@ import Styles from './styles.module.css'
 interface Props {};
 
 export default function SchemeToggle (props: Props) {
-    const { colorScheme, setColorScheme } = useStore();
+    const { theme, setTheme } = useThemeStore();
     return <Button flush>
-        <div className={[Styles.root, Styles[colorScheme]].join(' ')} onClick={() => setColorScheme(colorScheme === 'dark' ? 'light' : 'dark')}>
+        <div className={[Styles.root, Styles[theme]].join(' ')} onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>
             <PlaneSwitcher
-                toggle={colorScheme === 'light'}
+                toggle={theme === 'light'}
                 a={<SunIcon />}
                 b={<MoonIcon />}
             />

@@ -1,41 +1,93 @@
-import Styles from './styles.module.css'
 import React from 'react';
-import Container from 'ui/container';
-import SplashPanel from 'ui/splash-panel';
-import LineText from 'ui/line-text';
-import Button from 'ui/button';
-import DropCardList from 'ui/drop-card/list';
-import CollectionCardList from 'ui/collection-card/list';
 import { Link } from 'react-router-dom';
-import Navbar from 'ui/navbar';
-import Footer from 'ui/footer';
+
 import useStore from 'stores/index';
+import { TarotDeckData } from 'api/cards';
 
-interface Props {};
+import Button from 'ui/button';
+import CollectionCardList from 'ui/collection-card/list';
+import Container from 'ui/container';
+import Footer from 'ui/footer';
+import Grid from 'ui/grid';
+import LegendPreview from 'ui/legend-preview';
+import More from 'ui/more';
+import Navbar from 'ui/navbar';
+import NFTPreview from 'ui/nft-preview';
+import ScrollRow from 'ui/scroll-row';
 
-export default function HomePage () {
+import Styles from './styles.module.css'
+import { sortListings, useAllLegendListings } from 'api/listings';
+import { useAllProvenance } from 'api/cap';
+import { ArcanaArt } from 'api/cards/cards';
+import Page from 'pages/wrapper';
+import { useDirectory } from 'api/dab';
+import Activity from 'ui/activity';
+
+
+export default function HomePage() {
     const { connected } = useStore();
-    return <>
+    const listings = useAllLegendListings();
+    const events = useAllProvenance();
+    const { data: dab } = useDirectory();
+
+    const cards = React.useMemo(() => {
+        const cards = Array(22).fill(undefined).map((x, i) => ({
+            title: TarotDeckData[i].name,
+            flavour: TarotDeckData[i].keywords.slice(0, 3).join(', '),
+            image: ArcanaArt[i],
+            featured: false,
+            canister: dab?.find(x => x.name === TarotDeckData[i].name)?.principal
+        }));
+        cards[0].featured = true;
+        return cards;
+    }, []);
+
+    const recent = React.useMemo(() => events?.sort((a, b) => b.time.getTime() - a.time.getTime()), [events]);
+    return <Page key="HomePage">
         <Navbar />
         <Container>
             <div className={Styles.root}>
+                <ScrollRow>
+                    {/* This padding gives space for hover effects. */}
+                    {cards.map((card, i) => <div style={{ paddingTop: '24px ' }} key={`card-${card.title}`}>
+                        <LegendPreview {...card} />
+                    </div>)}
+                </ScrollRow>
                 <div className={Styles.splash}>
-                    <SplashPanel />
+                    <h2>The Open Tarot Marketplace</h2>
                     <div className={Styles.tagline}>
-                        <strong>The Bazaar</strong> is the <span className={Styles.rainbow}>Saga Tarot NFT Drop Hub</span> where we are bringing Open Tarot to life, one Legend mint at a time
+                        Buy, sell and trade digital tarot collectibles that work with apps in the Open Tarot ecosystem
                     </div>
                 </div>
                 {!connected && <Link className="no-fancy" to="/connect"><Button size="xl">Connect</Button></Link>}
-                <div className={Styles.drops}>
-                    <h2><LineText>Upcoming Drops</LineText></h2>
-                    <DropCardList />
+                <div className={Styles.collections}>
+                    <h2>Mintable Collections</h2>
+                    <ScrollRow>
+                        <CollectionCardList />
+                    </ScrollRow>
                 </div>
-                {/* <div className={Styles.collections}>
-                    <h2><LineText>Collections</LineText></h2>
-                    <CollectionCardList />
-                </div> */}
+                <div className={Styles.collections}>
+                    <h2>Explore Listings</h2>
+                    <Grid>
+                        {listings ? <More>
+                            {sortListings(listings).map(x => <NFTPreview
+                                tokenid={x.token}
+                                key={`preview${x.token}`}
+                                listing={x}
+                            />)}
+                        </More> : <>None yet!</>}
+                    </Grid>
+                </div>
+                <div className={Styles.collections}>
+                    <h2>Recent Activity</h2>
+                    <Grid>
+                        <More interval={9}>
+                            {recent.map(x => <Activity event={x} key={`recent-${x.time}${x.token}`} />)}
+                        </More>
+                    </Grid>
+                </div>
             </div>
         </Container>
         <Footer />
-    </>
+    </Page>
 };

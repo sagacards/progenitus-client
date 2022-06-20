@@ -5,6 +5,8 @@
     box-shadow: 0 0 0 1px var(--chrome);
     animation: fadein 1s ease-out forwards;
     transition: transform 160ms ease-out, box-shadow 320ms ease-out;
+
+    text-align: left;
 }
 
 .root.mine {
@@ -165,6 +167,9 @@
 }
 
 .price {
+    color: var(--foreground);
+    font-size: 14px;
+
     display: flex;
     justify-content: flex-end;
     align-items: center;

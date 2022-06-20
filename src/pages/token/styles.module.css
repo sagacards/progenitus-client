@@ -1,0 +1,95 @@
+.root {
+    padding-top: 20px;
+    display: flex;
+    flex-flow: column;
+    gap: 40px;
+}
+
+.stage {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.feature,
+.featurette {
+    flex-shrink: 0;
+    flex-grow: 0;
+    background-color: var(--chrome-2);
+    border-radius: 18px;
+    box-shadow: 0 0 0 1px var(--chrome-2);
+    overflow: hidden;
+}
+
+.feature {
+    width: calc(50% - 20px);
+    aspect-ratio: 1;
+    border: none;
+}
+
+.featurettes {
+    display: flex;
+    flex-wrap: wrap;
+    width: 50%;
+    gap: 20px;
+}
+
+.featurette {
+    width: calc(50% - 10px);
+    aspect-ratio: 1;
+}
+
+.info {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 24px;
+    width: 100%;
+    aspect-ratio: 2/1;
+}
+
+.nav {
+    display: flex;
+    gap: 5px;
+}
+
+.widgets {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.widgetsGroup {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.buy {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 20px;
+
+    border-radius: 20px;
+    box-shadow: 0 0 0 1px var(--chrome-2);
+}
+
+.label {
+    font-size: 18px;
+    font-weight: 500;
+    color: var(--chrome-4);
+}
+
+.price {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+
+    font-size: 18px;
+}
+
+.usd {
+    font-size: 14px;
+    color: var(--chrome-4);
+}

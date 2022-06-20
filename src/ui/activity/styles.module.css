@@ -1,0 +1,25 @@
+.root {
+    width: 100%;
+    max-width: 400px;
+    display: flex;
+    flex-flow: column;
+    gap: 20px;
+
+    padding: 20px;
+    border-radius: 20px;
+    box-shadow: 0 0 0 1px var(--chrome-2);
+}
+
+.title {
+    font-size: 18px;
+    font-weight: 500;
+}
+
+.sideBy {
+    display: flex;
+    place-content: space-between;
+}
+
+.body:first-letter {
+    text-transform: capitalize;
+}

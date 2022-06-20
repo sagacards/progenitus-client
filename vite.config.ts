@@ -1,8 +1,8 @@
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
-import tsconfigPaths from 'vite-tsconfig-paths'
-import NodeGlobalsPolyfillPlugin from '@esbuild-plugins/node-globals-polyfill'
-import content from '@originjs/vite-plugin-content'
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import tsconfigPaths from 'vite-tsconfig-paths';
+import NodeGlobalsPolyfillPlugin from '@esbuild-plugins/node-globals-polyfill';
+import content from '@originjs/vite-plugin-content';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -16,8 +16,8 @@ export default defineConfig({
         tsconfigPaths(),
         content({
             xml: {
-                enabled: true
-            }
+                enabled: true,
+            },
         }),
     ],
     define: {
@@ -28,8 +28,8 @@ export default defineConfig({
             plugins: [
                 NodeGlobalsPolyfillPlugin({
                     buffer: true,
-                })
-            ]
-        }
-    }
-})
+                }),
+            ],
+        },
+    },
+});

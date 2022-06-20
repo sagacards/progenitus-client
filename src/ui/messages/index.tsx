@@ -1,14 +1,15 @@
 import React from 'react'
 import { toast, ToastContainer } from 'react-toastify';
-import useStore, { Message } from 'stores/index';
-import Styles from './styles.module.css'
+import useMessageStore from 'stores/messages';
+import useThemeStore from 'stores/theme';
 
 interface Props {
     children?: React.ReactNode;
 }
 
 export default function Messages (props : Props) {
-    const { messages, readMessage, colorScheme } = useStore();
+    const { theme } = useThemeStore();
+    const { messages, readMessage } = useMessageStore();
 
     React.useEffect(() => {
         const unread = Object.entries(messages).filter(([i, message]) => !message.read);
@@ -18,5 +19,5 @@ export default function Messages (props : Props) {
         });
     }, [messages]);
 
-    return <ToastContainer theme={colorScheme} position='bottom-center' />
+    return <ToastContainer theme={theme} position='bottom-center' />
 }
