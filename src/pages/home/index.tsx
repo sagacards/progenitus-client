@@ -17,10 +17,11 @@ import ScrollRow from 'ui/scroll-row';
 
 import Styles from './styles.module.css'
 import { sortListings, useAllLegendListings } from 'api/listings';
-import { CAPEvent, useAllProvenance } from 'api/cap';
+import { useAllProvenance } from 'api/cap';
 import { ArcanaArt } from 'api/cards/cards';
 import Page from 'pages/wrapper';
 import { useDirectory } from 'api/dab';
+import Activity from 'ui/activity';
 
 
 export default function HomePage() {
@@ -66,25 +67,6 @@ export default function HomePage() {
                     </ScrollRow>
                 </div>
                 <div className={Styles.collections}>
-                    <h2>Recent Activity</h2>
-                    <ScrollRow>
-                        {/* This padding gives space for lineage tooltips. */}
-                        {recent ? recent.slice(0, 12).map(x => <div style={{ paddingTop: '24px ' }} key={`recent-${x.time}${x.token}`}>
-                            <NFTPreview
-                                tokenid={x.token}
-                                to={x.to}
-                                from={x.from}
-                                key={`preview${x.time}${x.token}`}
-                                event={{
-                                    type: x.operation as CAPEvent['type'],
-                                    timestamp: x.time
-                                }}
-                                price={x.price}
-                            />
-                        </div>) : <>None yet!</>}
-                    </ScrollRow>
-                </div>
-                <div className={Styles.collections}>
                     <h2>Explore Listings</h2>
                     <Grid>
                         {listings ? <More>
@@ -94,6 +76,14 @@ export default function HomePage() {
                                 listing={x}
                             />)}
                         </More> : <>None yet!</>}
+                    </Grid>
+                </div>
+                <div className={Styles.collections}>
+                    <h2>Recent Activity</h2>
+                    <Grid>
+                        <More interval={9}>
+                            {recent.map(x => <Activity event={x} key={`recent-${x.time}${x.token}`} />)}
+                        </More>
                     </Grid>
                 </div>
             </div>

@@ -5,9 +5,9 @@ import Navbar from 'ui/navbar';
 import Page, { NotFound } from 'pages/wrapper';
 import Lineage from 'ui/lineage';
 import { Link, useParams } from 'react-router-dom';
-import { decodeTokenIdentifier, encodeTokenIdentifier, principalToAddress } from 'ictool';
+import { decodeTokenIdentifier, principalToAddress } from 'ictool';
 import { useDirectory } from 'api/dab';
-import { priceConvertDisplay, priceDisplay, priceFloat, useCanisterListings } from 'api/listings';
+import { priceConvertDisplay, priceDisplay, useCanisterListings } from 'api/listings';
 import ICP from 'assets/currency/icp.png';
 import useStore from 'stores/index';
 import Button from 'ui/button';
@@ -18,10 +18,14 @@ import { useTraits } from 'api/legends';
 import { Trait, Traits } from 'ui/trait';
 import AssetPreload from 'ui/asset-preload';
 import { useOwner } from 'api/ext';
-import Modal from 'ui/modal';
 import MarketListForm from 'src/forms/market-list';
 import useModalStore from 'ui/modal/store';
 import MarketBuyForm from 'src/forms/market-buy';
+import Grid from 'ui/grid';
+import More from 'ui/more';
+import Activity from 'ui/activity';
+import { useTokenProvenance } from 'api/cap';
+import Tabs from 'ui/tabs';
 
 interface Props { };
 
@@ -37,13 +41,13 @@ export default function TokenPage(props: Props) {
     const { listings } = useCanisterListings(canister as string);
     const { data: owner, status: ownerStatus } = useOwner(identifier as string);
     const traits = useTraits(canister, index);
+    const { events: provenance } = useTokenProvenance(identifier as string);
 
     const listing = React.useMemo(() => listings?.find(x => x.token === identifier), [listings, identifier]);
     const collection = React.useMemo(() => canister ? directory?.find(x => x.principal === canister) : undefined, [canister, directory]);
 
     const owned = React.useMemo(() => principal && principalToAddress(principal) === owner, [principal, owner]);
 
-    console.log(directory?.length, collection);
     if (directory?.length && !collection) {
         return <NotFound />
     }
@@ -122,6 +126,14 @@ export default function TokenPage(props: Props) {
                         </div>
                     </div>
                 </div>
+                <Tabs tabs={[
+                    [`Activity (${provenance?.length})`,
+                    <Grid>
+                        {provenance ? <More interval={9}>
+                            {provenance.map(x => <Activity key={`activity${x.token}${x.time.getTime()}`} event={x} title={false} />)}
+                        </More> : <>None yet!</>}
+                    </Grid>]
+                ]} />
             </div>
         </Container>
     </Page>

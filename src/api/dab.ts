@@ -79,3 +79,11 @@ export function useDirectory() {
         staleTime: 60 * 60_000,
     });
 }
+
+// Hook providing details on the given canister
+export function useCanisterDetails(canister: string) {
+    return useQuery('dab', getAll, {
+        cacheTime: 7 * 24 * 60 * 60_000,
+        staleTime: 60 * 60_000,
+    }).data?.find(x => x.principal === canister);
+}

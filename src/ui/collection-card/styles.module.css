@@ -39,7 +39,7 @@
 
     background-color: var(--chrome-3);
     border-radius: 50%;
-    box-shadow: 0 0 0 1px var(--chrome-2), 0 0 0 10px var(--background);
+    box-shadow: 0 0 0 1px var(--chrome-2), 0 0 0 5px var(--background);
     transition: box-shadow 320ms ease-out;
 }
 

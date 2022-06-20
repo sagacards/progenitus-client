@@ -17,6 +17,7 @@ import Page, { NotFound } from 'pages/wrapper';
 import { useOpenEvent } from 'api/minting';
 import StatBar from 'ui/stat-bar';
 import Mint from 'ui/mint';
+import Activity from 'ui/activity';
 
 interface Props { };
 
@@ -68,7 +69,9 @@ export default function CollectionsPage(props: Props) {
                         </>],
                         ['Activity', <>
                             <Grid>
-
+                                {provenance ? <More interval={9}>
+                                    {provenance.map(x => <Activity event={x} />)}
+                                </More> : <>None yet!</>}
                             </Grid>
                         </>],
                     ]}

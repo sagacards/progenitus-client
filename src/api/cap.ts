@@ -8,6 +8,7 @@ import {
     prettifyCapTransactions,
 } from '@psychedelic/cap-js';
 import { decodeTokenIdentifier } from 'ictool';
+import React from 'react';
 import { useQueries, useQuery } from 'react-query';
 import { host } from 'stores/connect';
 import { useDirectory } from './dab';
@@ -16,6 +17,8 @@ import { Price } from './listings';
 ////////////
 // Types //
 //////////
+
+export type operation = 'sale' | 'mint' | 'transfer' | 'listing' | 'none';
 
 // ...
 export interface Transaction
@@ -27,7 +30,7 @@ export interface Transaction
     to: string;
     from: string;
     caller: string;
-    operation: string;
+    operation: operation;
     time: Date;
     token: string;
     price: Price;
@@ -178,6 +181,26 @@ async function fetchEvents(canisterId: string): Promise<Transaction[]> {
     return mapCAP(response.reduce((agg, i) => [...agg, ...i.data], []));
 }
 
+// Get provenance events from a given CAP canister.
+async function fetchAllEvents(canisterId: string): Promise<Transaction[]> {
+    // We grab the two most recent pages from the history canister.
+    const root = await CapRoot.init({ canisterId, host });
+
+    let transactions: TransactionEvent[] = [];
+    let done = false;
+    let page = 1;
+
+    while (!done) {
+        const response = await root.get_transactions({ witness: false, page });
+        transactions = [...transactions, ...response.data];
+        if (response.data.length === 0) done = true;
+        page++;
+    }
+
+    // Map and return the data for use in this app.
+    return mapCAP(transactions);
+}
+
 ////////////
 // Hooks //
 //////////
@@ -196,8 +219,8 @@ export function useProvenance(canister: string) {
 
     // Retrieve provenance events for this NFT canister.
     const query = useQuery(
-        `provenance-events-${canister}`,
-        () => fetchEvents(root as string),
+        `provenance-events-${canister}-all`,
+        () => fetchAllEvents(root as string),
         {
             enabled: !!root,
             cacheTime: 60_000,
@@ -245,4 +268,18 @@ export function useAllProvenance() {
         (agg, x) => [...agg, ...(x.data || [])],
         [] as Transaction[]
     );
+}
+
+export function useTokenProvenance(token: string) {
+    const { canister } = React.useMemo(
+        () => decodeTokenIdentifier(token),
+        [token]
+    );
+    const provenance = useProvenance(canister);
+    return {
+        ...provenance,
+        events: provenance.events?.filter(
+            x => x.token.toLowerCase() === token.toLowerCase()
+        ),
+    };
 }

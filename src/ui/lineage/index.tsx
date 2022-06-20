@@ -5,8 +5,7 @@ import Styles from './styles.module.css'
 import Saga from 'assets/disk/8.png'
 import Hash from 'ui/hash';
 import { Link } from 'react-router-dom';
-
-type operation = 'sale' | 'mint' | 'transfer' | 'listing' | 'none';
+import { operation } from 'api/cap';
 
 interface Props {
     children?: React.ReactNode;
