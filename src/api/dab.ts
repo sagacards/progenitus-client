@@ -65,7 +65,12 @@ const actor = Actor.createActor<TarotDAB>(idlFactory, {
 
 // Retrieve all tarot NFTS.
 export function getAll() {
-    return actor.getAll().then(r => r.map(mapDabCanister));
+    return actor.getAll().then(r =>
+        r
+            .map(mapDabCanister)
+            // Temporarily fudge around chaos decks, they are missing listings and stats and perhaps more
+            .filter(x => x.principal !== '6e6eb-piaaa-aaaaj-qal6a-cai')
+    );
 }
 
 ////////////
