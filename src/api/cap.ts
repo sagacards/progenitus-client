@@ -188,7 +188,7 @@ async function fetchAllEvents(canisterId: string): Promise<Transaction[]> {
 
     let transactions: TransactionEvent[] = [];
     let done = false;
-    let page = 1;
+    let page = 0;
 
     while (!done) {
         const response = await root.get_transactions({ witness: false, page });
