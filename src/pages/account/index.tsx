@@ -2,7 +2,6 @@ import Styles from './styles.module.css'
 import React from 'react';
 import axios from 'axios'
 import Navbar from 'ui/navbar';
-import Footer from 'ui/footer';
 import Container from 'ui/container';
 import Button from 'ui/button';
 import Hash from 'ui/hash';

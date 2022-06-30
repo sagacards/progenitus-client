@@ -24,7 +24,7 @@ export default function Activity({ event, title = true }: Props) {
             <Like token={event.token} />
         </div>
         <div className={Styles.body}>
-            {event.operation} to <Hash children={event.to} /> {event.price.value > 0 && `for ${priceDisplay(event.price)}`} on {event.time.toLocaleDateString()}
+            {event.operation} to <Hash children={event.to} /> {event.price.value > 0 && `for ${priceDisplay(event.price)}`} on {event.time.toISOWeekDate()}
         </div>
     </div>
 }

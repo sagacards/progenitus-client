@@ -8,7 +8,6 @@ import {
 } from 'ictool';
 import { CompleteStore, StoreSlice } from '.';
 import { ICP8s } from './connect';
-import useMessageStore from './messages';
 
 // Rosetta API Config
 const rosetta = 'https://rosetta-api.internetcomputer.org';

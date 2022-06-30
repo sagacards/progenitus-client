@@ -197,7 +197,7 @@ export function useMutateListing() {
             queryClient.invalidateQueries(`listings-${canister}`);
         },
         onError(data) {
-            alert(`Failed to update listing: ${data.err}`);
+            alert(`Failed to update listing. Sorry!`);
         },
     });
 }

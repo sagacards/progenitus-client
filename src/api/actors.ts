@@ -14,6 +14,7 @@ import type { Ledger } from 'canisters/ledger/ledger.did.d';
 import type { LegendsNFT } from 'canisters/legends/legends.did.d';
 import type { Likes } from 'canisters/likes/likes.did.d';
 import type { Rex } from 'canisters/progenitus/progenitus.did.d';
+import { ActorSubclass } from '@dfinity/agent';
 
 /////////////
 // Config //
@@ -68,7 +69,7 @@ export let likes = actor<Likes>(
 );
 
 const legends: { [key: string]: Agent.ActorSubclass<LegendsNFT> } = {};
-export let legend = (canisterId: string): Agent.ActorSubclass<LegendsNFT> => {
+export const legend = (canisterId: string): Agent.ActorSubclass<LegendsNFT> => {
     if (!(canisterId in legends)) {
         legends[canisterId] = actor<LegendsNFT>(canisterId, LegendsIDL);
     }
@@ -85,7 +86,7 @@ export let cycles = actor<Cycles>(
     CyclesIDL
 );
 
-export let nns = actor<Ledger>(
+export let nns: undefined | ActorSubclass<Ledger> = actor<Ledger>(
     import.meta.env.PROGENITUS_NNS_CANISTER_ID,
     NnsIDL
 );
@@ -156,10 +157,7 @@ export async function respawnActorsPlug() {
         interfaceFactory: CyclesIDL,
     });
 
-    nns = await window.ic.plug.createActor<Ledger>({
-        canisterId: import.meta.env.PROGENITUS_NNS_CANISTER_ID,
-        interfaceFactory: NnsIDL,
-    });
+    nns = undefined;
 }
 
 // Recreate all actors using our standard method. Should be called when Plug is disconnected.

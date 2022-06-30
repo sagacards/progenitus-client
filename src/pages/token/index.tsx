@@ -130,7 +130,7 @@ export default function TokenPage(props: Props) {
                     [`Activity (${provenance?.length})`,
                     <Grid>
                         {provenance ? <More interval={9}>
-                            {provenance.map(x => <Activity key={`activity${x.token}${x.time.getTime()}`} event={x} title={false} />)}
+                            {provenance.map(x => <Activity key={`activity${x.token}${x.time.toMillis()}`} event={x} title={false} />)}
                         </More> : <>None yet!</>}
                     </Grid>]
                 ]} />

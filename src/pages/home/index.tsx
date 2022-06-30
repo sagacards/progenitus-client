@@ -42,7 +42,7 @@ export default function HomePage() {
         return cards;
     }, []);
 
-    const recent = React.useMemo(() => events?.sort((a, b) => b.time.getTime() - a.time.getTime()), [events]);
+    const recent = React.useMemo(() => events?.sort((a, b) => b.time.toMillis() - a.time.toMillis()), [events]);
     return <Page key="HomePage">
         <Navbar />
         <Container>

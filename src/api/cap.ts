@@ -8,6 +8,7 @@ import {
     prettifyCapTransactions,
 } from '@psychedelic/cap-js';
 import { decodeTokenIdentifier } from 'ictool';
+import { DateTime } from 'luxon';
 import React from 'react';
 import { useQueries, useQuery } from 'react-query';
 import { host } from 'stores/connect';
@@ -31,7 +32,7 @@ export interface Transaction
     from: string;
     caller: string;
     operation: operation;
-    time: Date;
+    time: DateTime;
     token: string;
     price: Price;
 }
@@ -141,7 +142,7 @@ export function mapCAP(data?: TransactionEvent[]): Transaction[] {
                         },
                         token: tokenField && details[tokenField],
                         operation: transaction.operation,
-                        time: new Date(t),
+                        time: DateTime.fromJSDate(new Date(t)),
                     },
                 ];
             }, [])
@@ -149,7 +150,7 @@ export function mapCAP(data?: TransactionEvent[]): Transaction[] {
             // because the natural order that the data is presented
             // from the response, is at the very top
             // showing the oldest transaction in the page
-            .sort((a, b) => b.time.getTime() - a.time.getTime())
+            .sort((a, b) => b.time.toMillis() - a.time.toMillis())
     );
 }
 
