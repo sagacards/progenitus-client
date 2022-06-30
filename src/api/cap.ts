@@ -78,6 +78,9 @@ export function mapCAP(data?: TransactionEvent[]): Transaction[] {
                 while (t > 9999999999999) {
                     t = t / 10;
                 }
+
+                if (!t) return agg;
+
                 const { details } = prettifyCapTransactions(
                     transaction
                 ) as unknown as { details: TransactionDetails };
