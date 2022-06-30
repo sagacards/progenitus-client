@@ -23,6 +23,10 @@ export function transfer(wallet: Wallet, amount: ICP8s, to: string) {
 }
 
 export async function stoicTransferICP(amount: ICP8s, to: string) {
+    if (!nns)
+        throw new Error(
+            'Unreachable: NNS actor unavailable for stoic transfer'
+        );
     return nns
         .transfer({
             to: fromHexString(to),

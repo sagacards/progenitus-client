@@ -145,7 +145,7 @@ export default function DropDetailPage(props: Props) {
                                             key={`preview${x.token}`}
                                             event={{
                                                 type: x.operation as CAPEvent['type'],
-                                                timestamp: x.time
+                                                timestamp: x.time.toJSDate()
                                             }}
                                         />)}
                                     </More> : <>None yet!</>}
@@ -160,7 +160,7 @@ export default function DropDetailPage(props: Props) {
                                             key={`preview${x.token}`}
                                             event={{
                                                 type: x.operation as CAPEvent['type'],
-                                                timestamp: x.time
+                                                timestamp: x.time.toJSDate()
                                             }}
                                         />)}
                                     </More> : <>None yet!</>}
