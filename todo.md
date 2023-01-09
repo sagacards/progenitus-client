@@ -1,0 +1,36 @@
+-   [x] Add plug support to new actor pattern
+-   [x] Link lineage to collections
+-   [x] Fix local storage serializer
+-   [x] Add minting events to the collection page
+-   [x] Show owner on token detail
+-   [x] Add marketplace purchase flow
+    -   [x] Poll lock status
+    -   [x] Add lock, transfer and finalize flow
+    -   [x] Add success screen
+    -   [x] Show locked status
+-   [x] Add list token flow
+-   [x] General error and 404 boundaries
+-   [ ] Add a full screen loading animation when there's no local cache
+-   [x] Create activity component
+-   [ ] Add supply to token and collection pages
+-   [ ] Add wallet view
+-   [ ] Add full deck callout
+-   [ ] Add free RWS with legend purchase callout
+-   [ ] Add SDK callouts
+-   [ ] Add apps callouts
+-   [x] Create open events for all canisters
+-   [ ] Add titles
+-   [ ] Disambiguate wallet vs minting balances
+-   [ ] Bug: plug actors are calling with anonymous principal sometimes
+-   [ ] Basic x-device pass
+-   [ ] Create a web2 api layer for saga using trpc
+-   [ ] SSR / react-query prefetch
+-   [ ]
+-   [ ]
+-   [ ]
+-   [ ]
+-   [ ]
+-   [ ]
+-   [ ]
+-   [ ]
+-   [ ] Add compliance
