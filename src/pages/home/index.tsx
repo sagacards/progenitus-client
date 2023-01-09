@@ -24,7 +24,8 @@ import { useDirectory } from 'api/dab';
 import Activity from 'ui/activity';
 import AppCard, { AppCardList } from 'ui/app-card';
 
-import Midnight from 'assets/backdrop/bgc-midnight.jpg';
+import DailyDraw from 'assets/apps/daily-draw.png';
+import TarotTable from 'assets/apps/tarot-table.png';
 
 export default function HomePage() {
     const { connected } = useStore();
@@ -86,21 +87,15 @@ export default function HomePage() {
                             <AppCardList>
                                 <AppCard
                                     name="Tarot Table"
-                                    tagline="A digital tarot table for your phone"
+                                    tagline="A digital table to do tarot your way"
                                     url="https://table.saga.cards"
-                                    previewImage={Midnight}
+                                    previewImage={TarotTable}
                                 />
                                 <AppCard
-                                    name="Tarot Table"
-                                    tagline="A digital tarot table for your phone"
-                                    url="https://table.saga.cards"
-                                    previewImage={Midnight}
-                                />
-                                <AppCard
-                                    name="Tarot Table"
-                                    tagline="A digital tarot table for your phone"
-                                    url="https://table.saga.cards"
-                                    previewImage={Midnight}
+                                    name="Daily Draw"
+                                    tagline="Daily tarot readings for beginners and folks on the go"
+                                    url="https://l2jyf-nqaaa-aaaah-qadha-cai.raw.ic0.app/"
+                                    previewImage={DailyDraw}
                                 />
                             </AppCardList>
                         </ScrollRow>
