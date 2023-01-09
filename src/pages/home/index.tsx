@@ -15,14 +15,16 @@ import Navbar from 'ui/navbar';
 import NFTPreview from 'ui/nft-preview';
 import ScrollRow from 'ui/scroll-row';
 
-import Styles from './styles.module.css'
+import Styles from './styles.module.css';
 import { sortListings, useAllLegendListings } from 'api/listings';
 import { useAllProvenance } from 'api/cap';
 import { ArcanaArt } from 'api/cards/cards';
 import Page from 'pages/wrapper';
 import { useDirectory } from 'api/dab';
 import Activity from 'ui/activity';
+import AppCard, { AppCardList } from 'ui/app-card';
 
+import Midnight from 'assets/backdrop/bgc-midnight.jpg';
 
 export default function HomePage() {
     const { connected } = useStore();
@@ -31,63 +33,119 @@ export default function HomePage() {
     const { data: dab } = useDirectory();
 
     const cards = React.useMemo(() => {
-        const cards = Array(22).fill(undefined).map((x, i) => ({
-            title: TarotDeckData[i].name,
-            flavour: TarotDeckData[i].keywords.slice(0, 3).join(', '),
-            image: ArcanaArt[i],
-            featured: false,
-            canister: dab?.find(x => x.name === TarotDeckData[i].name)?.principal
-        }));
+        const cards = Array(22)
+            .fill(undefined)
+            .map((x, i) => ({
+                title: TarotDeckData[i].name,
+                flavour: TarotDeckData[i].keywords.slice(0, 3).join(', '),
+                image: ArcanaArt[i],
+                featured: false,
+                canister: dab?.find(x => x.name === TarotDeckData[i].name)
+                    ?.principal,
+            }));
         cards[0].featured = true;
         return cards;
     }, []);
 
-    const recent = React.useMemo(() => events?.sort((a, b) => b.time.toMillis() - a.time.toMillis()), [events]);
-    return <Page key="HomePage">
-        <Navbar />
-        <Container>
-            <div className={Styles.root}>
-                <ScrollRow>
-                    {/* This padding gives space for hover effects. */}
-                    {cards.map((card, i) => <div style={{ paddingTop: '24px ' }} key={`card-${card.title}`}>
-                        <LegendPreview {...card} />
-                    </div>)}
-                </ScrollRow>
-                <div className={Styles.splash}>
-                    <h2>The Open Tarot Marketplace</h2>
-                    <div className={Styles.tagline}>
-                        Buy, sell and trade digital tarot collectibles that work with apps in the Open Tarot ecosystem
+    const recent = React.useMemo(
+        () => events?.sort((a, b) => b.time.toMillis() - a.time.toMillis()),
+        [events]
+    );
+    return (
+        <Page key="HomePage">
+            <Navbar />
+            <Container>
+                <div className={Styles.root}>
+                    <ScrollRow>
+                        {/* This padding gives space for hover effects. */}
+                        {cards.map((card, i) => (
+                            <div
+                                style={{ paddingTop: '24px ' }}
+                                key={`card-${card.title}`}
+                            >
+                                <LegendPreview {...card} />
+                            </div>
+                        ))}
+                    </ScrollRow>
+                    <div className={Styles.splash}>
+                        <h2>The Open Tarot Marketplace</h2>
+                        <div className={Styles.tagline}>
+                            Buy, sell and trade digital tarot collectibles that
+                            work with apps in the Open Tarot ecosystem
+                        </div>
+                    </div>
+                    {!connected && (
+                        <Link className="no-fancy" to="/connect">
+                            <Button size="xl">Connect</Button>
+                        </Link>
+                    )}
+
+                    <div className={Styles.collections}>
+                        <h2>Tarot Apps</h2>
+                        <ScrollRow>
+                            <AppCardList>
+                                <AppCard
+                                    name="Tarot Table"
+                                    tagline="A digital tarot table for your phone"
+                                    url="https://table.saga.cards"
+                                    previewImage={Midnight}
+                                />
+                                <AppCard
+                                    name="Tarot Table"
+                                    tagline="A digital tarot table for your phone"
+                                    url="https://table.saga.cards"
+                                    previewImage={Midnight}
+                                />
+                                <AppCard
+                                    name="Tarot Table"
+                                    tagline="A digital tarot table for your phone"
+                                    url="https://table.saga.cards"
+                                    previewImage={Midnight}
+                                />
+                            </AppCardList>
+                        </ScrollRow>
+                    </div>
+
+                    <div className={Styles.collections}>
+                        <h2>Mintable Collections</h2>
+                        <ScrollRow>
+                            <CollectionCardList />
+                        </ScrollRow>
+                    </div>
+                    <div className={Styles.collections}>
+                        <h2>Explore Listings</h2>
+                        <Grid>
+                            {listings ? (
+                                <More>
+                                    {sortListings(listings).map(x => (
+                                        <NFTPreview
+                                            tokenid={x.token}
+                                            key={`preview${x.token}`}
+                                            listing={x}
+                                        />
+                                    ))}
+                                </More>
+                            ) : (
+                                <>None yet!</>
+                            )}
+                        </Grid>
+                    </div>
+                    <div className={Styles.collections}>
+                        <h2>Recent Activity</h2>
+                        <Grid>
+                            <More interval={9}>
+                                {recent.map(x => (
+                                    <Activity
+                                        event={x}
+                                        key={`recent-${x.time}${x.token}`}
+                                    />
+                                ))}
+                            </More>
+                        </Grid>
                     </div>
                 </div>
-                {!connected && <Link className="no-fancy" to="/connect"><Button size="xl">Connect</Button></Link>}
-                <div className={Styles.collections}>
-                    <h2>Mintable Collections</h2>
-                    <ScrollRow>
-                        <CollectionCardList />
-                    </ScrollRow>
-                </div>
-                <div className={Styles.collections}>
-                    <h2>Explore Listings</h2>
-                    <Grid>
-                        {listings ? <More>
-                            {sortListings(listings).map(x => <NFTPreview
-                                tokenid={x.token}
-                                key={`preview${x.token}`}
-                                listing={x}
-                            />)}
-                        </More> : <>None yet!</>}
-                    </Grid>
-                </div>
-                <div className={Styles.collections}>
-                    <h2>Recent Activity</h2>
-                    <Grid>
-                        <More interval={9}>
-                            {recent.map(x => <Activity event={x} key={`recent-${x.time}${x.token}`} />)}
-                        </More>
-                    </Grid>
-                </div>
-            </div>
-        </Container>
-        <Footer />
-    </Page>
-};
+            </Container>
+            <Footer />
+        </Page>
+    );
+}

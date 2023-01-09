@@ -1,0 +1,53 @@
+.root {
+    aspect-ratio: 16/9;
+    height: 320px;
+
+    padding: 8px 8px 16px;
+
+    border-radius: 20px;
+    box-shadow: 0 0 0 1px var(--chrome-2);
+
+    color: var(--foreground);
+
+    transition: box-shadow 160ms ease-out;
+}
+
+.art {
+    height: 70%;
+    flex-shrink: 1;
+    object-fit: cover;
+
+    border-radius: 10px;
+    background-color: var(--chrome-2);
+    transition: 320ms ease-out box-shadow;
+}
+
+.tagline {
+    display: flex;
+    align-items: center;
+
+    height: 30%;
+    font-size: 1.1em;
+    font-weight: 600;
+}
+
+.category {
+    font-size: 0.8em;
+    color: var(--chrome-4);
+}
+
+.link {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+    height: 100%;
+}
+
+.list {
+    margin-top: 24px;
+    width: 100%;
+    /* overflow: hidden; */
+    display: flex;
+    gap: 24px;
+}

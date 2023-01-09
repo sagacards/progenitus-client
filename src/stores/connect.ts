@@ -92,6 +92,7 @@ export const createConnectSlice: StoreSlice<ConnectStore, CompleteStore> = (
 
     // Request connection to user's stoic wallet.
     async stoicConnect() {
+        console.log('stoicConnect');
         const { idempotentConnect, postConnect } = get();
 
         // Ensure singular connection attempt.
@@ -175,6 +176,7 @@ export const createConnectSlice: StoreSlice<ConnectStore, CompleteStore> = (
 
     // Attempt to restore a live connection to user's stoic wallet.
     async stoicReconnect() {
+        console.log('stoicReconnect');
         const { stoicConnect } = get();
         if (
             window.localStorage.getItem('_scApp') &&
